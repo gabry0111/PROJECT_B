@@ -12,14 +12,14 @@ Struttura progetto:
 
 2.Functions)
 - funzione clear(): per resettare la schermata
-- funzione draw(): per, una volta sistemato tutti gli oggetti e le relative posizioni
-- funzione display() (mandatory dopo draw()): it takes what was drawn since the last call to display and displays it on the window
+- funzione draw(): per, una volta sistemato tutti gli oggetti e le relative posizioni, disegnare su un hidden buffer
+- funzione display() (mandatory dopo draw()): it takes what was drawn() since the last call to display and displays it on the window (from the hidden buffer)
 - 
 
 2. Struttura dei file)
 - Creare per ogni livello due file (un header (per le dichiarazioni della posizione) e un sorgente (definizioni del tipo di ogni oggetto)) 
 - Ogni livello: update della schermata (dal file sorgente)
-  Creare una grid e riempirla di oggetti
+  Creare una grid e riempirla di oggetti 
   Assicurarsi della correttezza delle frasi logiche
 - quando si registra un input, registrare tutti i cambiamenti logici e agire su di essi
 Al raggiungimento delle condizioni dell'evento win, distruggi il livello e rimpiazzalo con una schermata con "Hai vinto!" e tempo usato. Mettere un tasto per chiudere il programma o continuare (se altri livelli)
