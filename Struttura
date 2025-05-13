@@ -28,3 +28,11 @@ Player, inizializzato con l'oggetto Baba e l'aggettivo You.
 - quando si registra un input, registrare tutti i cambiamenti logici e agire su di essi
 Al raggiungimento delle condizioni dell'evento win, distruggi il livello e rimpiazzalo con una schermata con "Hai vinto!" e tempo usato. Mettere un tasto per chiudere il programma o continuare (se altri livelli)
 Al raggiungimento delle condizioni dell'evento lose, distruggi il livello e rimpiazzalo con una schermata con "Hai perso!" e tempo usato. Mettere un tasto per chiudere il programma o ricominciare
+
+3. Livelli - idee
+3.1. Power-ups
+  - Teorema di pitagora: puoi spostarti in diagonale premendo "wd" insieme
+  - costante g: leggera/pesante, cambia l'effetto della gravità
+  - macchina termica: fornisci calore agli oggetti circostanti
+  1) ingrenaggio che se attivato con oggetto leva, apre una porta. Per arrivare a leva, ottieni power-up per superare ostacoli 
+  2) 
