@@ -6,7 +6,11 @@ Struttura progetto:
 
 1.Object)
 - costruire una class con nested (enum class Type (dove si raggruppano tutti i nomi dei possibili oggetti e l'oggetto vuoto) )
-- Movimento: Check stop/push, check movable, move into (se è muro o fine mappa)
+- Movimento: Check stop/push, check movable, move into (se è muro o fine mappa
+- Ci sono due enum class alla base di una terza calsse finale. Alla base c'è l'oggetto Baba e l'aggettivo You, alla classe finale (Avatar o Player) ci sarà, nella parte privata, l'oggetto 
+Player, inizializzato con l'oggetto Baba e l'aggettivo You.
+- Nel main loop controllare gli eventi legati al Player (ossia chi ha l'aggettivo You), e le interazioni.
+
 
 2)
 
