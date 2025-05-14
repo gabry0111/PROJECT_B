@@ -18,6 +18,6 @@ namespace Baba { //sarà il namespace di ogni file di questo progetto
 }
 
 int main {
-    cout << 
+    cout << dslfn 
     
 }
