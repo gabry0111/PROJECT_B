@@ -43,6 +43,14 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   
 };
 
+// Overload the unary + operator to convert an enum to the underlying type
+template <typename T>
+constexpr auto operator+(T a) noexcept
+{
+    return static_cast<std::underlying_type_t<T>>(a);
+}
+
+
 /* sarà inizializzato l'oggetto con tipo Type: voglio sapere se
 
 funzioni per: capire frase logica; convertire Type in numero, font e viceversa
