@@ -1,12 +1,13 @@
+#include <type_traits> //per underlying_type
 
-
-namespace Baba {
+namespace Baba_Is_Us {
 
 enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.com)
   NOUN_TYPE,
   Baba, //aspetto del Player di default
+  Block, //per scriverci le parole (Baba, Is, Hot...) sopra
   Door,  // apribile automaticamente azionando ingranaggio/leva
-  Flag, // avrà come standard l'attributo "win"
+  Flag, 
   Gear,  // fisso
   Lava,
   Lever,  //?trasportabile?
@@ -23,11 +24,12 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Icon_Lever,
   Icon_Rock, 
   Icon_Wall, 
+    Se decidiamo di eliminarli, cambiare Wall con VERB_TYPE in "objects.cpp/createPrintableObject"
 */
   VERB_TYPE, //Anche per i power-up
   And,
   Is,
-  On,
+  On, //vedi Rock
 
   PROPERTY_TYPE,
   Hot,
@@ -43,13 +45,18 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   
 };
 
-// Overload the unary + operator to convert an enum to the underlying type
-template <typename T>
+// Overload the unary + operator to convert an enum class to the underlying type
+template<typename T>
 constexpr auto operator+(T a) noexcept
 {
     return static_cast<std::underlying_type_t<T>>(a);
 }
 
+template<typename T>
+constexpr auto operator-(T a) noexcept
+{
+    return static_cast<T>(a);
+}
 
 /* sarà inizializzato l'oggetto con tipo Type: voglio sapere se
 
@@ -59,9 +66,9 @@ funzioni per: capire frase logica; convertire Type in numero, font e viceversa
 //Funzione che ritorna quale NOUN ha
 //Funzione che ritorna quale VERB ha
 //Funzione che ritorna quale PROPERTY ha
-
-inline Type getNoun() {
+/*
+inline Type getNoun(int iii) {
 
 }
-
+*/
 }
