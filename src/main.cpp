@@ -84,7 +84,7 @@ int main()
     };
     // create the tilemap from the level definition
     TileMap map;
-    if (!map.load("81616e9ab54cc3e36260f80593a4cc33.png", {32, 32}, level.data(), 16, 8))
+    if (!map.load("tileset.png", {32, 32}, level.data(), 16, 8))
         return -1;
     
     // run the main loop
