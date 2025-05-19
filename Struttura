@@ -36,3 +36,43 @@ Al raggiungimento delle condizioni dell'evento lose, distruggi il livello e rimp
   - macchina termica: fornisci calore agli oggetti circostanti
   1) ingrenaggio che se attivato con oggetto leva, apre una porta. Per arrivare a leva, ottieni power-up per superare ostacoli 
   2) 
+
+
+Implementaione:
+Regole grammaticali: (per la formattazione: decidiamo alla fine)
+Funzioni: 
+- nome: iniziale minuscola; prossima parola Maiuscola; NO '_' (e.g. getPlayerPosition(...) {...})
+Variabili:
+- membri privati: 'm_'...
+- globali (DENTRO UN NAMESPACE APPOSITO): 'g_'...
+- static: 's_'...
+- per indici: 'iii', 'jjj', 'kkk', 'count',
+- per iteratori: 'eee' (abbreviazione per "element")
+- locali: iniziale minuscola; prossima parola minuscola; SI '_'
+Classi o Struct
+- 'c_' (o 's_' se struct); Iniziale Maiuscola; prossima parola Maiuscola, NO '_'
+(l'enum: "Type")
+
+
+
+Alcune regole del gioco: N.B.: non devono tirare eccezioni, semplicemente non fanno nulla
+Azioni permesse dalle frasi logiche:
+- una frase deve essere una retta (NO prima orizzontale, poi verticale), ma una parola può essere condivisa da più frasi (SI due frasi a croce)
+- ??? una frase può contenere SOLO un noun (baba is wall) ???
+- se l'azione nel Main Loop è muovere un blocco(che costruisce una frase logica): riassegnare 
+
+Main Loop: ad ogni iterazione:
+- getKeyPressed();
+- verifica lo stato del gioco (ha vinto, ha perso, deve andare avanti coi livelli(vedi più avanti),...) e eventuali azioni
+- WASD = movimento, SPACE = lancio, Alt+f4 = chiusura...
+- verifica se quell'azione è accettabile (targetIsMovable ?)
+
+- (andare avanti coi livelli): ciclo in modo da confrontare, tra due livelli consecutivi, cosa cambia e rimpiazzare le celle diverse
+
+Grafica:
+- è possibile fare il livello come array di array di size fissa? 
+  Movimento più facile da implementare(getPlayerPosition(), WASD = dx o dy, )
+
+
+Oggetti:
+Blocchi con sopra parole: 
