@@ -91,9 +91,10 @@ int main()
     while (window.isOpen())
     {
         // handle events
-        while (const std::optional event = window.pollEvent())
+        sf::Event event;
+        while (window.pollEvent(event))
         {
-            if (event->is<sf::Event::Closed>())
+            if(event.type == sf::Event::Closed)
                 window.close();
         }
 
@@ -102,22 +103,5 @@ int main()
         window.draw(map);
         window.display();
     }
-    /*
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "CMake SFML Project");
-    window.setFramerateLimit(144);
-
-    while (window.isOpen())
-    {
-        while (const std::optional event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-            {
-                window.close();
-            }
-        }
-
-        window.clear();
-        window.display();
-    }
-        */
+    return 0;
 }
