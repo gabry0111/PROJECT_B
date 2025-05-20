@@ -1,21 +1,28 @@
+#ifndef ENUM_OBJECTS.HPP
+#define ENUM_OBJECTS.HPP
+
 #include <type_traits> //per underlying_type
+
 
 namespace Baba_Is_Us {
 
 enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.com)
-  NOUN_TYPE,
-  Baba, //aspetto del Player di default
-  Block, //per scriverci le parole (Baba, Is, Hot...) sopra
+  NOUN_TYPE=-1,
+  Void, // possiamo creare un vector o array così: std::array<std::array<int,colonne>,righe> e inizializzare tutto a void; 
+        //poi aggiungere ciascun elemento
+  Baba, // aspetto del Player di default
+  Block, // per scriverci le parole (Baba, Is, Hot...) sopra
   Door,  // apribile automaticamente azionando ingranaggio/leva
   Flag, 
   Gear,  // fisso
   Lava,
-  Lever,  //?trasportabile?
+  Lever,  // ?trasportabile?
   Rock,  // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per 
-         //poterla lanciare(con tasto space premuto e direzione)
+         // poterla lanciare(con tasto space premuto e direzione)
   Wall,  
-/*
-  ICON_NOUN_TYPE, //da rispettare l'ordine con NOUN_TYPE
+
+  ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante sarà calcolabile facilmente)
+                  // abbinerà ciascun oggetto Objects alla sua sprite
   Icon_Baba, 
   Icon_Door, 
   Icon_Flag,
@@ -24,8 +31,7 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Icon_Lever,
   Icon_Rock, 
   Icon_Wall, 
-    Se decidiamo di eliminarli, cambiare Wall con VERB_TYPE in "objects.cpp/createPrintableObject"
-*/
+  
   VERB_TYPE, //Anche per i power-up
   And,
   Is,
@@ -46,29 +52,39 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
 };
 
 // Overload the unary + operator to convert an enum class to the underlying type
-template<typename T>
+template <typename T>
 constexpr auto operator+(T a) noexcept
 {
-    return static_cast<std::underlying_type_t<T>>(a);
+  static_assert(std::is_enum_v<T> && "Unary plus operator only works on enum types");
+  return static_cast<std::underlying_type_t<T>>(a);
 }
-
-template<typename T>
+/*
+template <typename T>
 constexpr auto operator-(T a) noexcept
 {
-    return static_cast<T>(a);
-}
-
-/* sarà inizializzato l'oggetto con tipo Type: voglio sapere se
-
-funzioni per: capire frase logica; convertire Type in numero, font e viceversa
-*/
-
-//Funzione che ritorna quale NOUN ha
-//Funzione che ritorna quale VERB ha
-//Funzione che ritorna quale PROPERTY ha
-/*
-inline Type getNoun(int iii) {
-
+  static_assert(std::is_integral_v<T> && "Unary minus operator only works on integral types");
+  return static_cast<Type>(a);
 }
 */
+
+constexpr Type toType(int value) {
+  return static_cast<Type>(value);
 }
+
+enum class PlayState {
+  Invalid, // se niente è 'You' (=il gioco è fermo per sempre) 
+  Playing, // per una volta lo posso dire: è ovvio
+  Won, // 'You' ha toccato 'Win'
+  Reset, // se si vuole resettare il livello (da togliere?)
+};
+
+enum class Dircetion {
+  Up,  
+  Down, 
+  Right,
+  Left, 
+};
+
+}
+
+#endif

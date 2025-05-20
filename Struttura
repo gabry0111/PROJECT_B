@@ -66,6 +66,8 @@ Main Loop: ad ogni iterazione:
 - verifica lo stato del gioco (ha vinto, ha perso, deve andare avanti coi livelli(vedi più avanti),...) e eventuali azioni
 - WASD = movimento, SPACE = lancio, Alt+f4 = chiusura...
 - verifica se quell'azione è accettabile (targetIsMovable ?)
+- controllare certe cose: se si è mosso un Block, ricontrollare le regole; You è collegato a qualcosa?;
+
 
 - (andare avanti coi livelli): ciclo in modo da confrontare, tra due livelli consecutivi, cosa cambia e rimpiazzare le celle diverse
 
@@ -75,4 +77,4 @@ Grafica:
 
 
 Oggetti:
-Blocchi con sopra parole: 
+Blocchi con sopra parole: struct a parte con membri: std::vector<Type> e ICON_TYPE (per poi stamparle a schermo).
