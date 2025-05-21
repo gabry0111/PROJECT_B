@@ -19,7 +19,7 @@ namespace Baba_Is_Us{
                     window.close();
             }
     }
-    void Game::render(sf::RenderWindow &window, Map &map){
+    void Game::render(sf::RenderWindow &window, TileMap &map){
         // draw the map
         window.clear();
         window.draw(map);

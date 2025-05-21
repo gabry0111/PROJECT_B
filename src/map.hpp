@@ -16,21 +16,19 @@
 */
 
 namespace Baba_Is_Us{
-using position = std::pair<int,int>;
-using grid = std::array<std::array<int, 16>, 16>;
-class Map: sf::Drawable,  sf::Transformable{
-    private : 
-    grid m_level {};
-    std::size_t m_width {};
-    std::size_t m_length{};
+    
+class TileMap: public sf::Drawable, public sf::Transformable{
+    public:
+        
 
-    public : 
-    Map() = default;
-    Map(grid& level) : m_level{level} {};
-    void load(const std::array<int, 16*16>&) ;
+        bool load(const std::string&, sf::Vector2u, const int*, unsigned int, unsigned int);
 
-}
-;
+    private:
+        virtual void draw(sf::RenderTarget&, sf::RenderStates&) const;
+
+        sf::VertexArray m_vertices;
+        sf::Texture m_tileset;
+};
 
 }
 

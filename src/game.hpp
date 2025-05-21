@@ -8,7 +8,7 @@ namespace Baba_Is_Us{
         public:
             Game() = default;
             void update(sf::RenderWindow &);
-            void render(sf::RenderWindow &, Map &);
+            void render(sf::RenderWindow &, TileMap &);
             
 
         };
