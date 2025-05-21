@@ -1,30 +1,32 @@
 #include <SFML/Graphics.hpp>
+
+#include "game.hpp"
+using namespace Baba_Is_Us;
 //ciao
 //suca
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
-    bool load(const std::filesystem::path& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height)
+    bool load(const std::string& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height)
     {
         // load the tileset texture
         if (!m_tileset.loadFromFile(tileset))
             return false;
 
         // resize the vertex array to fit the level size
-        m_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+        m_vertices.setPrimitiveType(sf::Triangles);
         m_vertices.resize(width * height * 6);
 
         // populate the vertex array, with two triangles per tile
         for (unsigned int i = 0; i < width; ++i)
-        {
             for (unsigned int j = 0; j < height; ++j)
             {
                 // get the current tile number
-                const int tileNumber = tiles[i + j * width];
+                int tileNumber = tiles[i + j * width];
 
                 // find its position in the tileset texture
-                const int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
-                const int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
+                int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
+                int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
 
                 // get a pointer to the triangles' vertices of the current tile
                 sf::Vertex* triangles = &m_vertices[(i + j * width) * 6];
@@ -45,7 +47,6 @@ public:
                 triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
                 triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
             }
-        }
 
         return true;
     }
@@ -83,25 +84,17 @@ int main()
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     };
     // create the tilemap from the level definition
-    TileMap map;
-    if (!map.load("tileset.png", {32, 32}, level.data(), 16, 8))
+    Map map;
+    if (!map.load("/ToBeMoved/Images/Levels/baba-babisyou-v0.png", {32, 32}, level.data(), 16, 16))
         return -1;
-    
+    Game game;
     // run the main loop
     while (window.isOpen())
     {
         // handle events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if(event.type == sf::Event::Closed)
-                window.close();
-        }
+        game.update(window);
+        game.render(window, map);
 
-        // draw the map
-        window.clear();
-        window.draw(map);
-        window.display();
     }
     return 0;
 }
