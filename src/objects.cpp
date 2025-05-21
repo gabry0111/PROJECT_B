@@ -20,7 +20,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
 */
     
     constexpr Objects() = default; //per le celle vuote
-    Objects(std::optional<std::vector<Type>> object_vect) : m_object(object_vect) {};
+    Objects(std::optional<std::vector<Type>> object_vect) : m_object{object_vect} {};
 
     public :
     const std::optional<std::vector<Type>> getTypes();
@@ -66,7 +66,7 @@ const std::optional<std::vector<Type>> Objects::getTypes() {
 //implicitamente convertibile in falso se non contiene un valore; altrimenti inizializza un'istanza
  Objects createObject(const std::optional<std::vector<Type>>& noun) { 
     assert(hasNOUN_TYPE(noun) && "createObject not given a NOUN_TYPE");
-    if(hasNOUN_TYPE(noun)) return Objects(noun);
+    if(hasNOUN_TYPE(noun)) return Objects{noun};
     return {};
 };  
 /*
