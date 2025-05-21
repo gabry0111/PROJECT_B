@@ -17,14 +17,14 @@
 
 namespace Baba_Is_Us{
     
-class TileMap: public sf::Drawable, public sf::Transformable{
+class TileMap: public sf::Transformable{
     public:
         
 
         bool load(const std::string&, sf::Vector2u, const int*, unsigned int, unsigned int);
 
     private:
-        virtual void draw(sf::RenderTarget&, sf::RenderStates&) const;
+        void draw(sf::RenderTarget&, sf::RenderStates&) const;
 
         sf::VertexArray m_vertices;
         sf::Texture m_tileset;
