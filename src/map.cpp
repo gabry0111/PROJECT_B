@@ -5,8 +5,8 @@ namespace Baba_Is_Us {
 
 using position = std::pair<int,int>;
 using grid = std::array<std::array<int, 16>, 16>;
-/*
-constexpr Map Map::getMap(const std::array<int, 16*16>& arr1D) {
+
+constexpr void Map::load(const std::array<int, 16*16>& arr1D) {
     for(auto iter : arr1D) {
         for(std::size_t column{}; iter!='\0'; ++iter, ++column){
             m_level[column/16][column] = {iter};
@@ -14,7 +14,7 @@ constexpr Map Map::getMap(const std::array<int, 16*16>& arr1D) {
         }      
     }
 }
-*/
+
 int main() {
     std::array level = {
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

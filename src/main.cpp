@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-
 #include "game.hpp"
 using namespace Baba_Is_Us;
 //ciao
@@ -46,7 +45,7 @@ public:
                 triangles[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
                 triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
                 triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
-            }
+        }
 
         return true;
     }

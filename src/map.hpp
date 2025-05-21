@@ -27,7 +27,7 @@ class Map: sf::Drawable,  sf::Transformable{
     public : 
     Map() = default;
     Map(grid& level) : m_level{level} {};
-    Map getMap(const std::array<int, 16*16>&) ;
+    void load(const std::array<int, 16*16>&) ;
 
 }
 ;
