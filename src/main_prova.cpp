@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 
+/*
 namespace MapSize {
     constexpr std::size_t width = 16;  // Number of tiles in the X direction
     constexpr std::size_t height = 16; // Number of tiles in the Y direction
@@ -68,8 +69,9 @@ private:
     sf::VertexArray m_vertices{};
     sf::Texture m_tileset{};
 };
+*/
 
-/*
+/* PARTE 2
 // Map the textures based on the integer values
 const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& getTextureArray(){
     std::array<sf::Texture*, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)> texarr {};
@@ -78,10 +80,56 @@ const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& getText
     }
 
 }
-*/
+FINE PARTE 2*/
+void createGridFromImage(const std::string& imageFilePath) { 
+    //importa l'immagine dal file
+    sf::Texture texture; 
+    if (!texture.loadFromFile(imageFilePath)) { 
+        std::cerr << "Error loading image: " << imageFilePath << '\n'; 
+        return; 
+    } 
+    
+    const size_t TILE_SIZE = 16; 
+    
+    // l'immagine può essere divisa in 16*16?
+    sf::Vector2u imageSize = texture.getSize(); 
+    if (imageSize.x < TILE_SIZE * 16 || imageSize.y < TILE_SIZE * 16) { 
+        std::cerr << "Image is too small to fit a 16x16 grid of " << TILE_SIZE << "x" << TILE_SIZE << " tiles." << '\n'; 
+        return; 
+    } 
+
+    sf::RenderWindow window(sf::VideoMode(512, 512), "16x16 Image Grid"); 
+    
+
+    sf::Sprite sprite(texture); 
+
+    // Main Loop 
+    while (window.isOpen()) { 
+        sf::Event event; 
+        while (window.pollEvent(event)) { 
+            if (event.type == sf::Event::Closed) window.close(); 
+        } 
+        window.clear(); 
+
+        //Disegniamo
+        for (size_t row = 0; row < 16; ++row) { 
+            for (size_t col = 0; col < 16; ++col) { 
+                sprite.setTextureRect(sf::IntRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)); 
+                sprite.setPosition(col * TILE_SIZE, row * TILE_SIZE); 
+                window.draw(sprite); 
+            } 
+        } 
+        window.display(); 
+    } 
+} 
+
 
 int main() {
     try{
+        std::string baba_babaisyou_v0 = "/home/diegoarcari/labs/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png";
+        createGridFromImage(baba_babaisyou_v0);
+        return 0;
+/*
     // Set up the window
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Game Map"); //la finestra sarà quadrata, con 16*16 griglie da 32 pixel di lato per ognuna
     window.setVerticalSyncEnabled(true); // mi dà problemi "Setting vertical sync not supported" anche se lo metto
@@ -111,7 +159,7 @@ int main() {
     if (!map.load("/home/diegoarcari/labs/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png", sf::Vector2u(32, 32), level, 16, 16))
         throw std::runtime_error("Error loading map from [namelevel].png");
 
-    /*
+    /* PARTE 2
     // Load textures (tiles)
     sf::Texture texture0, texture1, texture2, texture3;
     if (!texture0.loadFromFile("grass.png") || // Replace with actual paths to your images
@@ -144,8 +192,8 @@ int main() {
         sprite.setPosition(x, y); //in ogni cella la posizione è in alto a sx
         mapSprites.push_back(sprite);
     }
-    */
-
+    FINE PARTE 2*/
+/*
     // Main game loop
     while (window.isOpen()) {
         sf::Event event;
@@ -166,6 +214,7 @@ int main() {
     }
 
     return 0;
+*/
     } 
     catch(const std::runtime_error& e) {std::cerr << e.what();}
 }
