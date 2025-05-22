@@ -1,5 +1,5 @@
-#ifndef ENUM_OBJECTS.HPP
-#define ENUM_OBJECTS.HPP
+#ifndef ENUM_OBJECTS_HPP
+#define ENUM_OBJECTS_HPP
 
 #include <type_traits> //per underlying_type
 
