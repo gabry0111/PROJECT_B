@@ -283,14 +283,9 @@ int main()
     }
 
     
-    // lambda per creare l'array di texture
-    const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& texarr{
-        [](){std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)> texarr {};
-            for (sf::Texture& iter : texarr) {
-            if (!iter.loadFromFile("")) throw std::runtime_error("Error loading textures in getTextureArray()");
-            }
-        }
-    };
+    std::vector<sf::Texture> texarr(+Baba_Is_Us::Type::ICON_NOUN_TYPE -1);
+    //for(auto i : texarr) {}
+
     
     std::vector<sf::Sprite> mapSprites{};
     mapSprites.reserve(256);
