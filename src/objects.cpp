@@ -35,11 +35,6 @@ const std::optional<std::vector<Type>> Objects::getTypes() {
 }
 
 //implicitamente convertibile in falso se non contiene un valore; altrimenti inizializza un'istanza
-Objects createObject(const std::vector<Type>& noun) { 
-    assert(std::find(noun.begin(), noun.end(), Objects::hasNOUN_TYPE(noun)) != noun.end() && "createObject not given a NOUN_TYPE");
-    if(Objects::hasNOUN_TYPE(noun)) return Objects{noun};
-    return {};
-};  
 /*
 constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& object_vect) {
     assert(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE && "CreatePrintableObject not given a NOUN_TYPE");
@@ -58,12 +53,12 @@ constexpr void Objects::addVerb() {
 
 constexpr void Objects::addVerb(const Type verb ) {
     assert(+verb <= +Type::PROPERTY_TYPE && +verb > +Type::VERB_TYPE && "addVerb not given a VERB_TYPE");
-    if(+verb <= +Type::PROPERTY_TYPE && +verb > +Type::VERB_TYPE) (*m_object).emplace_back(verb);
+    if(+verb <= +Type::PROPERTY_TYPE && +verb > +Type::VERB_TYPE) (m_object).emplace_back(verb);
 }
 
 constexpr void Objects::addProperty(const Type property) {
     assert(+property > +Type::PROPERTY_TYPE && "addProperty not given a PROPERTY_TYPE");
-    if(+property <= +Type::PROPERTY_TYPE && +property > +Type::VERB_TYPE) (*m_object).emplace_back(property);
+    if(+property <= +Type::PROPERTY_TYPE && +property > +Type::VERB_TYPE) (m_object).emplace_back(property);
 }
 } //namespace Baba_Is_Us
 /*

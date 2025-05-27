@@ -30,5 +30,5 @@ public :
     std::size_t GetNumRules() const;
     //Type FindPlayer() const;
     bool HasProperty(const std::vector<Type>& types, Type property);
-}
+};
 }

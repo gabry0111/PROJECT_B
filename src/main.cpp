@@ -50,8 +50,6 @@ int main()
     // run the main loop
     while (window.isOpen())
     {
-        window.clear();
-        window.draw(map)
         // handle events
         game.update(window);
         game.render(window, map);
