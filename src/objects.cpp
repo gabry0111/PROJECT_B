@@ -20,7 +20,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
 */
     
     constexpr Objects() = default; //per le celle vuote
-    Objects(std::optional<std::vector<Type>> object_vect) : m_object{object_vect} {};
+    Objects(std::optional<std::vector<Type>> object_vect) : m_object{object_vect} {}
 
     public :
     const std::optional<std::vector<Type>> getTypes();
@@ -68,7 +68,7 @@ const std::optional<std::vector<Type>> Objects::getTypes() {
     assert(hasNOUN_TYPE(noun) && "createObject not given a NOUN_TYPE");
     if(hasNOUN_TYPE(noun)) return Objects{noun};
     return {};
-};  
+}
 /*
 constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& object_vect) {
     assert(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE && "CreatePrintableObject not given a NOUN_TYPE");
@@ -97,6 +97,7 @@ constexpr void Objects::addProperty(const Type property) {
 } //namespace Baba_Is_Us
 
 using namespace Baba_Is_Us;
+/*
 int main() {
     std::vector<Type> words{Type::Baba, Type::Is, Type::You};
     Objects baba {createObject(words)};
@@ -105,3 +106,4 @@ int main() {
     assert(type == Type::Baba && "Sbagliato");
     return 0;
 }
+    */

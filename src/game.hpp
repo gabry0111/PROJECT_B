@@ -3,8 +3,6 @@
 
 namespace Baba_Is_Us{
     class Game {
-        private :
-           int a{0.};
         public:
             Game() = default;
             void update(sf::RenderWindow &);

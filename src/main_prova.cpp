@@ -126,7 +126,7 @@ void createGridFromImage(const std::string& imageFilePath) {
 
 int main() {
     try{
-        std::string baba_babaisyou_v0 = "/home/diegoarcari/labs/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png";
+        std::string baba_babaisyou_v0 = "~/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png";
         createGridFromImage(baba_babaisyou_v0);
         return 0;
 /*
@@ -159,7 +159,7 @@ int main() {
     if (!map.load("/home/diegoarcari/labs/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png", sf::Vector2u(32, 32), level, 16, 16))
         throw std::runtime_error("Error loading map from [namelevel].png");
 
-    /* PARTE 2
+    // PARTE 2
     // Load textures (tiles)
     sf::Texture texture0, texture1, texture2, texture3;
     if (!texture0.loadFromFile("grass.png") || // Replace with actual paths to your images

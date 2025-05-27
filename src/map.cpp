@@ -49,7 +49,7 @@ namespace Baba_Is_Us {
     }
 
 
-    void TileMap::draw(sf::RenderTarget& target, sf::RenderStates& states) const{
+    void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const{
         // apply the transform
         states.transform *= getTransform();
 
