@@ -1,4 +1,5 @@
 #include "enum_objects.hpp"
+#include "objects.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <array>
@@ -75,11 +76,11 @@ private:
 */
 
 /* PARTE 2
-// Map the textures based on the integer values
+// Map the m_textures based on the integer values
 const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& getTextureArray(){
     std::array<sf::Texture*, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)> texarr {};
     for (sf::Texture* iter : texarr) {
-        if (! iter.loadFromFile("")) throw std::runtime_error("Error loading textures in getTextureArray()");
+        if (! iter.loadFromFile("")) throw std::runtime_error("Error loading m_textures in getTextureArray()");
     }
 
 }
@@ -168,13 +169,13 @@ int main() {
         throw std::runtime_error("Error loading map from [namelevel].png");
 
     // PARTE 2
-    // Load textures (tiles)
+    // Load m_textures (tiles)
     sf::Texture texture0, texture1, texture2, texture3;
     if (!texture0.loadFromFile("grass.png") || // Replace with actual paths to your images
         !texture1.loadFromFile("water.png") || 
         !texture2.loadFromFile("sand.png") || 
         !texture3.loadFromFile("rock.png")) {
-        std::cerr << "Error loading textures!" << std::endl;
+        std::cerr << "Error loading m_textures!" << std::endl;
         return -1;
     }
 
@@ -183,7 +184,7 @@ int main() {
     const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& texarr{
         [](){std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)> texarr {};
             for (sf::Texture& iter : texarr) {
-            if (!iter.loadFromFile("")) throw std::runtime_error("Error loading textures in getTextureArray()");
+            if (!iter.loadFromFile("")) throw std::runtime_error("Error loading m_textures in getTextureArray()");
             }
         }
     };
@@ -229,14 +230,179 @@ int main() {
  
                                 ////////////////////////
                                 /* ------ main -------*/
+/*
+class Map : public sf::Drawable, public sf::Transformable {
+    private: 
+    std::size_t m_width{MapSize::width};
+    std::size_t m_height{MapSize::height};
+    // std::vector<Objects> m_initial_objects {}; // se resetti il livello
+    std::vector<Objects> m_current_objects {}; // cambio di livello: verificare quali oggetti cambiano invece di distruggere e ricreare tutto
 
+    protected :
+    void draw(sf::RenderTarget&, sf::RenderStates) const;
+
+    sf::VertexArray m_vertices;
+    sf::Texture m_tileset;
+
+    public :
+    Map() = default;
+    Map(std::size_t width, std::size_t height);
+    bool load(const std::array<int,256>& level);
+};
+
+
+Map::Map(std::size_t width, std::size_t height)
+    : m_width(width), m_height(height)
+{
+    //m_initial_objects.reserve(m_width * m_height);
+    m_current_objects.reserve(m_width * m_height);
+
+    for (std::size_t i = 0; i < m_width * m_height; ++i)
+    {
+        //m_initial_objects.emplace_back(
+            //std::vector<Type>{ Type::Void });
+        m_current_objects.emplace_back(
+            std::vector<Type>{Type::Void});
+    }
+}
+bool Map::load(const std::array<int, 256>& level) {
+    std::size_t iter {};
+    for(std::size_t iter : level) {
+        //m_initial_objects.emplace_back(static_cast<Type>(iter))
+        m_current_objects.emplace_back(static_cast<Type>(iter));
+    }
+}
+void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+        // apply the transform
+        states.transform *= getTransform();
+
+        // apply the tileset texture
+        states.texture = &m_tileset;
+
+        // draw the vertex array
+        target.draw(m_vertices, states);
+    }
+*/
+/* ALTRO METODO
+class TextureManager {
+private :
+    std::vector<sf::Texture&> m_textures; // conserva tutte le texturesheet (animazioni) e singole texture (statiche) qui
+    std::vector<int> m_frame_count_per_anim;    // =1 se statica; >1 se animazione
+    
+public:
+    TextureManager() = default;
+    TextureManager(std::vector<sf::Texture&> text_arr, std::vector<int> count) : m_textures{text_arr}, m_frame_count_per_anim{count} {};
+
+// da un const std::string& (array?) aggiorna se la texture è una spritesheet (cioè sarà un'animazione) e 
+    int loadTile(const std::string& level1D) {
+        sf::Texture texture;
+        if(!texture.loadFromFile(level1D)) {
+            std::cerr << "Failed to load texture: " << level1D << "\n";
+            return -1;
+        }
+        constexpr std::size_t frameSize = 32; // assumiamo ogni sprite sia 32 pixels
+        const int frames {texture.getSize().x / frameSize};
+        m_textures.emplace_back(texture);
+        m_frame_count_per_anim.emplace_back(frames > 1 ? frames : 1);
+        return static_cast<int>(m_textures.size() - 1);
+    }
+
+    std::optional<sf::Texture> getTexture(int ID) {
+        if (ID < 0 || ID >= static_cast<int>(m_textures.size())) return ;
+        return m_textures[ID];
+    }
+};
+
+    void loadMapFrom1DArray(
+    const std::array<int, (MapSize::height * MapSize::width)>& level,
+    TextureManager& textureManager,
+    std::vector<sf::Sprite>& outSprites
+    )
+{
+    outSprites.clear();
+    for (size_t i = 0; i < level.size(); ++i) {
+        int textID = level[i];
+        std::optional<sf::Texture> texture = textureManager.getTexture(textID);
+        if (!texture) {
+            std::cerr << "Texture ID " << textID << " not found.\n";
+            continue;
+        }
+        sf::Sprite sprite;
+        sprite.setTexture(*texture);
+
+        int x = (i % MapSize::height) * MapSize::width;
+        int y = (i / MapSize::height) * MapSize::width;
+        sprite.setPosition(static_cast<float>(x), static_cast<float>(y));
+        outSprites.push_back(sprite);
+    }
+}
+
+
+int main() {
+    sf::RenderWindow window(sf::VideoMode(640, 480), "SFML Texture Manager");
+
+    TextureManager tm;
+
+    // Load textures in order, so their IDs correspond to indices:
+    // 0 -> grass.png
+    // 1 -> water.png
+    tm.loadTile("assets/grass.png");  // ID 0
+    tm.loadTile("assets/water.png");  // ID 1
+
+    // Example fire animation loading (not used in map here)
+    tm.loadTile({
+        "/home/diegoarcari/labs/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
+    });
+
+    // Now use 0s and 1s directly in the mapLayout
+    std::array<int, 256> mapLayout{
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    std::vector<sf::Sprite> sprites;
+    loadMapFrom1DArray(mapLayout, tm, sprites);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event))
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+        window.clear();
+        for (const auto& sprite : sprites) {
+            window.draw(sprite);
+        }
+        window.display();
+    }
+
+    return 0;
+
+}
+ FINE ALTRO METODO */
+
+/* METODO CONCRETE_TILE_MAP
 int main()
 {
     // create the window
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Tilemap");
 
     // define the level with an array of tile indices
-    std::array level = {
+    std::array<int, 256> level = {
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -266,32 +432,31 @@ int main()
     };
     ConcreteTileMap map;
 
-    if (!map.load("/Users/lele/progetto/PROJECT_B/ToBeMoved/Images/Levels/tileset.png", {32, 32}, level.data(), 16, 16))
+    
+
+    if (!map.load(level))
         return -1;
     Game game;
 
-
-    // PARTE 2
-    // Load textures (tiles)
-    sf::Texture texture0, texture1, texture2, texture3;
-    if (!texture0.loadFromFile("grass.png") || // Replace with actual paths to your images
-        !texture1.loadFromFile("water.png") || 
-        !texture2.loadFromFile("sand.png") || 
-        !texture3.loadFromFile("rock.png")) {
-        std::cerr << "Error loading textures!" << std::endl;
-        return -1;
-    }
-
     
-    std::vector<sf::Texture> texarr(+Baba_Is_Us::Type::ICON_NOUN_TYPE -1);
-    //for(auto i : texarr) {}
+    std::vector<sf::Texture> texarr(9);
+    //loadTexture();
+    for(auto iii : level) {switch(iii) {
+        case 1 : {texarr[iii].loadFromFile("/home/diegoarcari/labs/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"); break;}
+        case 2 : {texarr[iii].loadFromFile("png_PROGETTO/FLAG_spritesheet.png"); break;}
+        case 3 : {texarr[iii].loadFromFile("png_PROGETTO/LAVA_spritesheet.png"); break;}
+        case 4 : {texarr[iii].loadFromFile("png_PROGETTO/ROCK_spritesheet.png"); break;}
+        case 5 : {texarr[iii].loadFromFile("png_PROGETTO/WALL_spritesheet.png"); break;}
+        default : {break;}
+    }
+    }
 
     
     std::vector<sf::Sprite> mapSprites{};
     mapSprites.reserve(256);
     for (int i = 0; i < (MapSize::width * MapSize::height); ++i) {
         sf::Sprite sprite;
-        sprite.setTexture(texarr[i]); // per ogni indice dell'array mappa assegna una sprite
+        sprite.setTexture(texarr[level[i]]); // per ogni indice dell'array mappa assegna una sprite
 
         int x = (i % MapSize::width) * 32; // se ogni tile quadrata è 32 pixel di lato
         int y = (i / MapSize::width) * 32;
@@ -313,5 +478,101 @@ int main()
         game.render(window, map);
 
     }
+    return 0;
+}
+    */
+
+int main() {
+    constexpr int TILE_SIZE = 32;
+    constexpr int FRAME_TIME_MS = 50;
+
+    std::array<int, 256> level = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+    std::vector<std::string> tilePaths {
+    "/home/diegoarcari/labs/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
+    };
+
+    sf::RenderWindow window(sf::VideoMode({320, 240}), "Oui");
+
+    std::vector<sf::Texture> textures{};
+    std::vector<int> frameCounts{};
+    std::vector<int> current_frame_per_tile_ID{}; // tengo traccia di un unico frame per ogni object, quindi ogni istanza di ciascun oggetto si aggiornerà insieme
+
+    
+    // load textures e tieni conto, per ogni indice, della quantità di frame
+    for (std::size_t i{}; i < tilePaths.size(); ++i) {
+        sf::Texture texture;
+        if (!texture.loadFromFile(tilePaths[i])) {
+            std::cerr << "Failed to load " << tilePaths[i] << "\n";
+            return -1;
+        }
+
+        int width = texture.getSize().x;
+        int frames = std::max(1, width / TILE_SIZE);
+        textures.emplace_back(texture);
+        frameCounts.emplace_back(frames);
+        current_frame_per_tile_ID.push_back(0); // ogni tile ID partirà dal frame n° 0
+    }
+    // converti le tileID in sprite
+    std::vector<sf::Sprite> tileSprites;
+
+    for (std::size_t i = 0; i < level.size(); ++i) {
+        int tileID {level[i]}; //ID = elemento di level
+        if (tileID < 0 || tileID >= static_cast<int>(textures.size())) continue;
+
+        sf::Sprite sprite;
+        sprite.setTexture(textures[tileID]);
+        sprite.setTextureRect({0, 0, TILE_SIZE, TILE_SIZE});
+        int x = (i % MapSize::width) * TILE_SIZE;
+        int y = (i / MapSize::width) * TILE_SIZE;
+        sprite.setPosition(static_cast<float>(x), static_cast<float>(y));
+
+        tileSprites.emplace_back(sprite); // alla fine avrà level.size() elementi, ognuno con una sprite
+    }
+
+    // Animation loop
+    sf::Clock clock;
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event))
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+        if (clock.getElapsedTime().asMilliseconds() >= FRAME_TIME_MS) {
+            for (std::size_t i{}; i < frameCounts.size(); ++i) {
+                if (frameCounts[i] > 1) { // se in i c'è un'animazione
+                    current_frame_per_tile_ID[i] = (current_frame_per_tile_ID[i] + 1) % frameCounts[i]; //frameCounts[i] sarà sempre 3 se è animazione, quindi prova a calcolare
+                }
+            }
+            clock.restart();
+        }
+        for (std::size_t i{}; i < tileSprites.size(); ++i) {
+            int tileID = level[i];
+            int frame = current_frame_per_tile_ID[tileID];
+            tileSprites[i].setTextureRect({frame * TILE_SIZE, 0,TILE_SIZE, TILE_SIZE});
+        }
+
+        window.clear();
+        for (const auto& sprite : tileSprites)
+            window.draw(sprite);
+        window.display();
+    }
+
     return 0;
 }

@@ -26,12 +26,12 @@ bool Objects::hasPROPERTY_TYPE(Type word) {
     return (+word > +Type::PROPERTY_TYPE);
 }
 const std::optional<std::vector<Type>> Objects::getTypes() {
-    std::vector<Type> ret{};
+    std::vector<Type> types{};
     for (const auto& type : m_object)
     {
-        ret.emplace_back(type);
+        types.emplace_back(type);
     }
-    return ret;
+    return types;
 }
 
 //implicitamente convertibile in falso se non contiene un valore; altrimenti inizializza un'istanza

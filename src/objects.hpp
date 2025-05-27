@@ -2,6 +2,8 @@
 Ogni m_object sarà inizializzato e disegnato in 
 
 */
+#ifndef OBJECTS_HPP
+#define OBJECTS_HPP
 
 #include "enum_objects.hpp"
 #include <vector>
@@ -39,3 +41,5 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     bool hasPROPERTY_TYPE(Type type);
 };
 } //namespace Baba_Is_Us
+
+#endif

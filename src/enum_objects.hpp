@@ -11,18 +11,20 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Void, // possiamo creare un vector o array così: std::array<std::array<int,colonne>,righe> e inizializzare tutto a void; 
         //poi aggiungere ciascun elemento
   Baba, // aspetto del Player di default
-  Block, // per scriverci le parole (Baba, Is, Hot...) sopra
-  Door,  // apribile automaticamente azionando ingranaggio/leva
   Flag, 
-  Gear,  // fisso
   Lava,
-  Lever,  // ?trasportabile?
   Rock,  // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per 
          // poterla lanciare(con tasto space premuto e direzione)
   Wall,  
+  Block, // per scriverci le parole (Baba, Is, Hot...) sopra
+  Door,  // apribile automaticamente azionando ingranaggio/leva
+  Gear,  // fisso
+  Lever,  // ?trasportabile?
+  
 
   ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante sarà calcolabile facilmente)
                   // abbinerà ciascun oggetto Objects alla sua sprite
+  Icon_Void,
   Icon_Baba, 
   Icon_Door, 
   Icon_Flag,
@@ -78,7 +80,7 @@ enum class PlayState {
   Reset, // se si vuole resettare il livello (da togliere?)
 };
 
-enum class Dircetion {
+enum class Direction {
   Up,  
   Down, 
   Right,

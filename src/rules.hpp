@@ -14,7 +14,7 @@ namespace Baba_Is_Us {
 
 class Rule{
 public : 
-    std::tuple<Objects, Objects, Objects> rule;
+    std::tuple<Objects, Objects, Objects> rule; // vedere differenza tra tuple e array
     Rule(Objects obj1, Objects obj2, Objects obj3);
 };
 
