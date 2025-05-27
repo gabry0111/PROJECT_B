@@ -44,14 +44,10 @@ int main()
     if (!map.load("/ToBeMoved/Images/Levels/tileset.png", {32, 32}, level.data(), 16, 16))
         return -1;
 
-    sf::Texture texture;
-    if (!texture.load)
-
+    Game game;
     // run the main loop
     while (window.isOpen())
     {
-        window.clear();
-        window.draw(map)
         // handle events
         game.update(window);
         game.render(window, map);
