@@ -2,7 +2,7 @@
 #include "map.hpp"
 
 namespace Baba_Is_Us{
-    class Game : public sf::Drawable{
+    class Game {
         public:
             Game() = default;
             void update(sf::RenderWindow &);

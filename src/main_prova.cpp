@@ -4,13 +4,16 @@
 #include <array>
 #include <iostream>
 #include <stdexcept>
+#include "map.hpp"
+#include "game.hpp"
+using namespace Baba_Is_Us;
 
-/*
+
 namespace MapSize {
-    constexpr std::size_t width = 16;  // Number of tiles in the X direction
-    constexpr std::size_t height = 16; // Number of tiles in the Y direction
+    constexpr int width = 16;  // Number of tiles in the X direction
+    constexpr int height = 16; // Number of tiles in the Y direction
 }
-
+/*
 class TileMap : public sf::Drawable, public sf::Transformable {
 public:
     bool load(const std::string& tileset, sf::Vector2u tileSize, const int* tiles,
@@ -81,6 +84,9 @@ const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& getText
 
 }
 FINE PARTE 2*/
+
+/* ------------------------------ createGrid metodo texture ---------------------------------- */
+/*
 void createGridFromImage(const std::string& imageFilePath) { 
     //importa l'immagine dal file
     sf::Texture texture; 
@@ -89,7 +95,7 @@ void createGridFromImage(const std::string& imageFilePath) {
         return; 
     } 
     
-    const size_t TILE_SIZE = 16; 
+    const int TILE_SIZE = 16; 
     
     // l'immagine può essere divisa in 16*16?
     sf::Vector2u imageSize = texture.getSize(); 
@@ -112,8 +118,8 @@ void createGridFromImage(const std::string& imageFilePath) {
         window.clear(); 
 
         //Disegniamo
-        for (size_t row = 0; row < 16; ++row) { 
-            for (size_t col = 0; col < 16; ++col) { 
+        for (int row = 0; row < 16; ++row) { 
+            for (int col = 0; col < 16; ++col) { 
                 sprite.setTextureRect(sf::IntRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)); 
                 sprite.setPosition(col * TILE_SIZE, row * TILE_SIZE); 
                 window.draw(sprite); 
@@ -126,10 +132,12 @@ void createGridFromImage(const std::string& imageFilePath) {
 
 int main() {
     try{
-        std::string baba_babaisyou_v0 = "/home/diegoarcari/labs/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png";
+        std::string baba_babaisyou_v0 = "~/progetto/PROJECT_B/ToBeMoved/Images/Levels/tileset.png";
         createGridFromImage(baba_babaisyou_v0);
         return 0;
-/*
+    } 
+    catch(const std::runtime_error& e) {std::cerr << e.what();}
+}
     // Set up the window
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Game Map"); //la finestra sarà quadrata, con 16*16 griglie da 32 pixel di lato per ognuna
     window.setVerticalSyncEnabled(true); // mi dà problemi "Setting vertical sync not supported" anche se lo metto
@@ -159,7 +167,7 @@ int main() {
     if (!map.load("/home/diegoarcari/labs/progetto/PROJECT_B/ToBeMoved/Images/Levels/baba-babaisyou-v0.png", sf::Vector2u(32, 32), level, 16, 16))
         throw std::runtime_error("Error loading map from [namelevel].png");
 
-     PARTE 2
+    // PARTE 2
     // Load textures (tiles)
     sf::Texture texture0, texture1, texture2, texture3;
     if (!texture0.loadFromFile("grass.png") || // Replace with actual paths to your images
@@ -192,8 +200,11 @@ int main() {
         sprite.setPosition(x, y); //in ogni cella la posizione è in alto a sx
         mapSprites.push_back(sprite);
     }
-    FINE PARTE 2*/
-/*
+    FINE PARTE 2
+
+
+
+
     // Main game loop
     while (window.isOpen()) {
         sf::Event event;
@@ -215,6 +226,97 @@ int main() {
 
     return 0;
 */
-    } 
-    catch(const std::runtime_error& e) {std::cerr << e.what();}
+ 
+                                ////////////////////////
+                                /* ------ main -------*/
+
+int main()
+{
+    // create the window
+    sf::RenderWindow window(sf::VideoMode({512, 512}), "Tilemap");
+
+    // define the level with an array of tile indices
+    std::array level = {
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+    // create the tilemap from the level definition
+
+    class ConcreteTileMap : public TileMap {
+    public:
+        using TileMap::TileMap;
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+            // Implement the draw method or call the base implementation if available
+            TileMap::draw(target, states);
+        }
+    };
+    ConcreteTileMap map;
+
+    if (!map.load("/Users/lele/progetto/PROJECT_B/ToBeMoved/Images/Levels/tileset.png", {32, 32}, level.data(), 16, 16))
+        return -1;
+    Game game;
+
+
+    // PARTE 2
+    // Load textures (tiles)
+    sf::Texture texture0, texture1, texture2, texture3;
+    if (!texture0.loadFromFile("grass.png") || // Replace with actual paths to your images
+        !texture1.loadFromFile("water.png") || 
+        !texture2.loadFromFile("sand.png") || 
+        !texture3.loadFromFile("rock.png")) {
+        std::cerr << "Error loading textures!" << std::endl;
+        return -1;
+    }
+
+    
+    // lambda per creare l'array di texture
+    const std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)>& texarr{
+        [](){std::array<sf::Texture&, (+Baba_Is_Us::Type::ICON_NOUN_TYPE - 1)> texarr {};
+            for (sf::Texture& iter : texarr) {
+            if (!iter.loadFromFile("")) throw std::runtime_error("Error loading textures in getTextureArray()");
+            }
+        }
+    };
+    
+    std::vector<sf::Sprite> mapSprites{};
+    mapSprites.reserve(256);
+    for (int i = 0; i < (MapSize::width * MapSize::height); ++i) {
+        sf::Sprite sprite;
+        sprite.setTexture(texarr[i]); // per ogni indice dell'array mappa assegna una sprite
+
+        int x = (i % MapSize::width) * 32; // se ogni tile quadrata è 32 pixel di lato
+        int y = (i / MapSize::width) * 32;
+
+        sprite.setPosition(x, y); //in ogni cella la posizione è in alto a sx
+        mapSprites.push_back(sprite);
+    }
+    //FINE PARTE 2
+
+
+
+
+
+    // run the main loop
+    while (window.isOpen())
+    {
+        // handle events
+        game.update(window);
+        game.render(window, map);
+
+    }
+    return 0;
 }

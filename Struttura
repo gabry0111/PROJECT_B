@@ -78,3 +78,27 @@ Grafica:
 
 Oggetti:
 Blocchi con sopra parole: struct a parte con membri: std::vector<Type> e ICON_TYPE (per poi stamparle a schermo).
+
+
+
+
+• First pass
+• Find potential first words of sentences and check how long potential sentences they'd form
+• For simplicity & design reasons: only left-to-right and top-to-bottom is accepted & rules
+must be in straight lines
+• Since the shortest possible rule is 3 words, any 1- or 2-word lines can be discarded right away
+
+• Second pass
+• Go through the potential sentences and see if their word types are in an order that's seemingly
+valid
+• (e.g. "Baba Is You Rock" → "You Rock" doesn't parse, disregard "Rock")
+• If a word is discarded, it's checked again later to see if it could form a valid sentence otherwise
+• (e.g. "Baba Is You Rock Is Push" → "You Rock" doesn't parse, but "Rock Is Push" does)
+• Later, more complex word types make this pass extremely complicated
+• Third pass
+• Go through the sentences left and see if the syntax makes sense; if not, discard
+• (e.g. "Flag Has Win" follows the correct word order (Object-Verb-Quality), but
+"Has" doesn't accept "Win" as a following word in the sentence ("Flag Has Baba"*
+would be valid))
+• If the syntax works, transform the sentence to a format the game logic can understand
+and add it to various rule lists (e.g. a global list, an object-specific list, etc.)

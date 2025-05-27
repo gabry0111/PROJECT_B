@@ -20,10 +20,28 @@ int main()
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     // create the tilemap from the level definition
-    TileMap map;
-    if (!map.load("/ToBeMoved/Images/Levels/baba-babisyou-v0.png", {32, 32}, level.data(), 16, 16))
+
+    class ConcreteTileMap : public TileMap {
+    public:
+        using TileMap::TileMap;
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+            // Implement the draw method or call the base implementation if available
+            TileMap::draw(target, states);
+        }
+    };
+    ConcreteTileMap map;
+
+    if (!map.load("/ToBeMoved/Images/Levels/tileset.png", {32, 32}, level.data(), 16, 16))
         return -1;
 
     sf::Texture texture;
