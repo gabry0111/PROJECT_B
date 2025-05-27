@@ -1,3 +1,5 @@
+#ifndef GAME_HPP
+#define GAME_HPP
 #include "enum_objects.hpp"
 #include "map.hpp"
 
@@ -10,3 +12,4 @@ namespace Baba_Is_Us{
         };
 }
 
+#endif
