@@ -22,8 +22,8 @@ namespace Baba_Is_Us {
                 int tileNumber = tiles[i + j * width];
 
                 // find its position in the tileset texture
-                int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
-                int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
+                int tu = tileNumber % static_cast<int> (m_tileset.getSize().x / tileSize.x)  ;
+                int tv = tileNumber / static_cast<int> (m_tileset.getSize().x / tileSize.x)  ;
 
                 // get a pointer to the triangles' vertices of the current tile
                 sf::Vertex* triangles = &m_vertices[(i + j * width) * 6];
