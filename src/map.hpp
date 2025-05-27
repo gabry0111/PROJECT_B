@@ -1,5 +1,5 @@
-#ifndef MAP.HPP
-#define MAP.HPP
+#ifndef MAP_HPP
+#define MAP_HPP
 
 #include "enum_objects.hpp"
 //#include "objects.hpp"
@@ -17,7 +17,7 @@
 
 namespace Baba_Is_Us{
     
-class TileMap: public sf::Transformable{
+class TileMap: public sf::Drawable , public sf::Transformable{
     public:
         
 
