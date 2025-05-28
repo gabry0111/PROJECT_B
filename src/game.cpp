@@ -20,40 +20,45 @@ namespace Baba_Is_Us{
 
             while (window.pollEvent(event))
             {
-                switch (event.type){
-                    case sf::Event::Closed: window.close();
-                        break;
-                    case sf::Event::KeyPressed:
+                /*if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)) window.close();
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) window.close();
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) window.close();
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) window.close();
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space)) window.close();
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Escape)) window.close();
+                */
+                if (event.type == sf::Event::Closed) window.close();
 
-                        switch(event.key.code){
-                            case sf::Keyboard::Key::Escape:
-                                std::cout<< "Esc\n";
-                                window.close();
-                                break;
-                            case sf::Keyboard::Key::W:
-                                std::cout<<"W\n";
-                                //chiama la funzione che controlla tutto rigurado al movimento
-                                //movement_check(player.getPosition(), 'W);
-                                //movement(player.getPosition(), 'W');
-                                window.close();
-                                break;
-                            case sf::Keyboard::Key::A:
-                                break;
-                            case sf::Keyboard::Key::S:
-                                break;
-                            case sf::Keyboard::Key::D:
-                                break;
-                            case sf::Keyboard::Key::Space: 
-                                //check se ha un oggetto in mano
-                                //lancia oggetto
-                                break;
-                            default: break;
-                        }
-                        break; 
+                if (event.type == sf::Event::KeyPressed){
                     
-                    default:
-                        break;
+                    switch(event.key.code){
+                        case sf::Keyboard::Escape:
+                            //std::cout<< "Esc\n";
+                            window.close();
+                            break;
+                        case sf::Keyboard::W:
+                            std::cout<<"W\n";
+                            //chiama la funzione che controlla tutto rigurado al movimento
+                            //movement_check(player.getPosition(), 'W);
+                            //movement(player.getPosition(), 'W');
+                            window.close();
+                            break;
+                        case sf::Keyboard::A:
+                            break;
+                        case sf::Keyboard::S:
+                            break;
+                        case sf::Keyboard::D:
+                            break;
+                        case sf::Keyboard::Space: 
+                            //check se ha un oggetto in mano
+                            //lancia oggetto
+                            break;
+                        default: break;
+                    }
+
                 }
+            
+                
             }
             
     }
