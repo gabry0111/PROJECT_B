@@ -7,17 +7,28 @@ Saranno oggetti vettori di tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY
 - un metodo per controllare se un vettore regola è uguale a un vetttore m_object
 
 */
+#ifndef RULES_HPP
+#define RULES_HPP
+
 #include "objects.hpp"
 #include <tuple>
+#include <cassert>
 
 namespace Baba_Is_Us {
 
+// idea: creare una singola istanza di una regola
 class Rule{
-public : 
+private : 
     std::tuple<Objects, Objects, Objects> rule; // vedere differenza tra tuple e array
-    Rule(Objects obj1, Objects obj2, Objects obj3);
+public : 
+    Rule(Objects obj1, Objects obj2, Objects obj3) : rule{obj1, obj2, obj3} { // ogni regola deve avere un noun, verb e property 
+        static_assert(+obj1 > +Type::NOUN_TYPE && +obj1 < +Type::ICON_NOUN_TYPE &&
+               +obj2 > +Type::VERB_TYPE && +obj2 < +Type::PROPERTY_TYPE &&
+               +obj3 > +Type::PROPERTY_TYPE);
+    };
 };
 
+// idea: un singolo oggetto che gestisce tutte le regole
 class RuleManager{
 private :
     std::vector<Rule> m_rules;
@@ -28,7 +39,9 @@ public :
     void clearRules();
     std::vector<Rule> GetRules(Type type) const;
     std::size_t GetNumRules() const;
-    //Type FindPlayer() const;
+    Type FindPlayer() const; // determina quale oggetto si può muovere
     bool HasProperty(const std::vector<Type>& types, Type property);
 };
 }
+
+#endif
