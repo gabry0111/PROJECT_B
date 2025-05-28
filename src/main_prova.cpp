@@ -482,9 +482,11 @@ int main()
 }
     */
 
+                        ///////////////////////
+                        // ----- METODO SPRITES ----- //
 int main() {
     constexpr int TILE_SIZE = 32;
-    constexpr int FRAME_TIME_MS = 50;
+    constexpr int FRAME_TIME_MS = 150;
 
     std::array<int, 256> level = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -505,10 +507,10 @@ int main() {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     std::vector<std::string> tilePaths {
-    "/home/diegoarcari/labs/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
+    "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
     };
 
-    sf::RenderWindow window(sf::VideoMode({320, 240}), "Oui");
+    sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
 
     std::vector<sf::Texture> textures{};
     std::vector<int> frameCounts{};
@@ -523,7 +525,7 @@ int main() {
             return -1;
         }
 
-        int width = texture.getSize().x;
+        int width = static_cast<int>(texture.getSize().x);
         int frames = std::max(1, width / TILE_SIZE);
         textures.emplace_back(texture);
         frameCounts.emplace_back(frames);
@@ -537,10 +539,12 @@ int main() {
         if (tileID < 0 || tileID >= static_cast<int>(textures.size())) continue;
 
         sf::Sprite sprite;
-        sprite.setTexture(textures[tileID]);
+        sprite.setTexture(textures[static_cast<std::size_t>(tileID)]);
         sprite.setTextureRect({0, 0, TILE_SIZE, TILE_SIZE});
-        int x = (i % MapSize::width) * TILE_SIZE;
-        int y = (i / MapSize::width) * TILE_SIZE;
+
+        int x = (static_cast<int> (i) % MapSize::width) * TILE_SIZE;
+        int y = (static_cast<int> (i) / MapSize::height) * TILE_SIZE;
+        
         sprite.setPosition(static_cast<float>(x), static_cast<float>(y));
 
         tileSprites.emplace_back(sprite); // alla fine avrà level.size() elementi, ognuno con una sprite
@@ -565,7 +569,7 @@ int main() {
         }
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
             int tileID = level[i];
-            int frame = current_frame_per_tile_ID[tileID];
+            int frame = current_frame_per_tile_ID[static_cast<size_t>(tileID)];
             tileSprites[i].setTextureRect({frame * TILE_SIZE, 0,TILE_SIZE, TILE_SIZE});
             // se vogliamo ruotare l'oggetto, aggiungere funzioni qui. (con switch per comandi WASD?)
         }
