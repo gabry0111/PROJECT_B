@@ -550,13 +550,12 @@ int main() {
         tileSprites.emplace_back(sprite); // alla fine avrà level.size() elementi, ognuno con una sprite
     }
 
+    Game game;
     // Animation loop
     sf::Clock clock;
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event))
-            if (event.type == sf::Event::Closed)
-                window.close();
+       
+        game.update(window);
 
         if (clock.getElapsedTime().asMilliseconds() >= FRAME_TIME_MS) {
             for (std::size_t i{}; i < frameCounts.size(); ++i) {

@@ -20,28 +20,19 @@ namespace Baba_Is_Us{
 
             while (window.pollEvent(event))
             {
-                /*if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)) window.close();
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) window.close();
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) window.close();
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) window.close();
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space)) window.close();
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Escape)) window.close();
-                */
                 if (event.type == sf::Event::Closed) window.close();
 
                 if (event.type == sf::Event::KeyPressed){
-                    
                     switch(event.key.code){
                         case sf::Keyboard::Escape:
                             //std::cout<< "Esc\n";
                             window.close();
                             break;
                         case sf::Keyboard::W:
-                            std::cout<<"W\n";
                             //chiama la funzione che controlla tutto rigurado al movimento
                             //movement_check(player.getPosition(), 'W);
                             //movement(player.getPosition(), 'W');
-                            window.close();
+                            
                             break;
                         case sf::Keyboard::A:
                             break;
