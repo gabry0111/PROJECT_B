@@ -486,7 +486,7 @@ int main()
                         // ----- METODO SPRITES ----- //
 int main() {
     constexpr int TILE_SIZE = 32;
-    constexpr int FRAME_TIME_MS = 50;
+    constexpr int FRAME_TIME_MS = 150;
 
     std::array<int, 256> level = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

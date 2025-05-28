@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "game.hpp"
 #include "map.hpp"
+#include <iostream>
 /* Avuta la mappa del livello corrente, verifica quali azioni sono possibili:
 - verifica le proprietà di ciascun oggetto (sarà fatto nel Main Loop)
 - resetta il livello se PlayState è Invalid
@@ -23,26 +24,32 @@ namespace Baba_Is_Us{
                     case sf::Event::Closed: window.close();
                         break;
                     case sf::Event::KeyPressed:
+
                         switch(event.key.code){
-                            case 'W':
+                            case sf::Keyboard::Key::Escape:
+                                std::cout<< "Esc\n";
+                                window.close();
+                                break;
+                            case sf::Keyboard::Key::W:
+                                std::cout<<"W\n";
                                 //chiama la funzione che controlla tutto rigurado al movimento
                                 //movement_check(player.getPosition(), 'W);
                                 //movement(player.getPosition(), 'W');
                                 window.close();
                                 break;
-                            case 'A':
+                            case sf::Keyboard::Key::A:
                                 break;
-                            case 'S':
+                            case sf::Keyboard::Key::S:
                                 break;
-                            case 'D':
+                            case sf::Keyboard::Key::D:
                                 break;
-                            case ' ': 
+                            case sf::Keyboard::Key::Space: 
                                 //check se ha un oggetto in mano
                                 //lancia oggetto
                                 break;
                             default: break;
                         }
-                        break;
+                        break; 
                     
                     default:
                         break;
