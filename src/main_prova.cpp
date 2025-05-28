@@ -558,6 +558,7 @@ int main() {
             for (std::size_t i{}; i < frameCounts.size(); ++i) {
                 if (frameCounts[i] > 1) { // se in i c'è un'animazione
                     current_frame_per_tile_ID[i] = (current_frame_per_tile_ID[i] + 1) % frameCounts[i]; //frameCounts[i] sarà sempre 3 se è animazione, quindi prova a calcolare
+                
                 }
             }
             clock.restart();
@@ -566,6 +567,7 @@ int main() {
             int tileID = level[i];
             int frame = current_frame_per_tile_ID[tileID];
             tileSprites[i].setTextureRect({frame * TILE_SIZE, 0,TILE_SIZE, TILE_SIZE});
+            // se vogliamo ruotare l'oggetto, aggiungere funzioni qui. (con switch per comandi WASD?)
         }
 
         window.clear();
