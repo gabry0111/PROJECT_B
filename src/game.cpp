@@ -36,7 +36,7 @@ namespace Baba_Is_Us{
                                 break;
                             case 'D':
                                 break;
-                            case 'Space': 
+                            case ' ': 
                                 //check se ha un oggetto in mano
                                 //lancia oggetto
                                 break;
