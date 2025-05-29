@@ -507,7 +507,7 @@ int main() {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     std::vector<std::string> tilePaths {
-    "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
+    "/home/Dprogetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
     };
 
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
