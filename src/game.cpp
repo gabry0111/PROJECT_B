@@ -30,8 +30,8 @@ namespace Baba_Is_Us{
                             break;
                         case sf::Keyboard::W:
                             //chiama la funzione che controlla tutto rigurado al movimento
-                            //movement_check(player.getPosition(), 'W);
-                            //movement(player.getPosition(), 'W');
+                            //movement_check(player.getPosition(), Up);
+                            //movement(player.getPosition(), Up);
                             
                             break;
                         case sf::Keyboard::A:

@@ -3,11 +3,11 @@
 #include <SFML/Graphics.hpp>
 #include "map.hpp"
 #include "game.hpp"
-
+using namespace Baba_Is_Us;
 // Functions reguarding Baba's movement
                     ///
-                    ///     ATTENZIONE : in alcuni casi il cpp usa size_t invece di int !!!!! 
-bool movement_check(std::pair<int, int>);
-bool move(std::pair<int, int>);
+                    ///     ATTENZIONE : in alcuni casi c++ uses size_t instead of int !!!!! 
+bool movement_check(std::pair<int, int> &, Direction);
+bool move(std::pair<int, int> &, Direction);
 
 #endif
