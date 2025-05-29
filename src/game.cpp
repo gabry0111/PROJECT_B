@@ -1,7 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include "game.hpp"
-#include "map.hpp"
 #include <iostream>
+#include "movement.hpp"
+#include "game.hpp"
+
 /* Avuta la mappa del livello corrente, verifica quali azioni sono possibili:
 - verifica le proprietà di ciascun oggetto (sarà fatto nel Main Loop)
 - resetta il livello se PlayState è Invalid
@@ -10,10 +11,10 @@
 - 
 */
 namespace Baba_Is_Us{
+    std::pair<int, int> getPosition(){
 
+    };
     void Game::update(sf::RenderWindow &window){
-
-        //change png of every gif
 
         //event handling
         sf::Event event;
@@ -29,10 +30,10 @@ namespace Baba_Is_Us{
                             window.close();
                             break;
                         case sf::Keyboard::W:
-                            //chiama la funzione che controlla tutto rigurado al movimento
-                            //movement_check(player.getPosition(), Up);
-                            //movement(player.getPosition(), Up);
-                            
+                            //movement_check(player.getPosition(), Direction::Up)
+                            //movement(player.getPosition())
+                            //checkRules 
+
                             break;
                         case sf::Keyboard::A:
                             break;
@@ -53,10 +54,11 @@ namespace Baba_Is_Us{
             }
             
     }
-    void Game::render(sf::RenderWindow &window, TileMap &map){
+    void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
         // draw the map
         window.clear();
-        window.draw(map);
+        for (const auto& sprite : sprites)
+            window.draw(sprite);
         window.display();
     }
 }

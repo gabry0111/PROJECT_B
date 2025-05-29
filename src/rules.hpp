@@ -26,7 +26,7 @@ public :
                +obj2 > +Type::VERB_TYPE && +obj2 < +Type::PROPERTY_TYPE &&
                +obj3 > +Type::PROPERTY_TYPE ||  +obj3 > +Type::NOUN_TYPE && +obj3 < +Type::ICON_NOUN_TYPE && "Rule constructor condition not satisfied");
     };
-    std::tuple<Objects, Objects, Objects> get_tuple(Rule& rule) const;
+    std::tuple<Objects, Objects, Objects> get_tuple(Rule rule) const;
 };
 
 // idea: un singolo oggetto che gestisce tutte le regole
