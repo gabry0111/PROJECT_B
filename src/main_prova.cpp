@@ -573,7 +573,8 @@ int main() {
             //it could be different across textures if we add more detailed spritesheets or more frames per animation
             for (std::size_t i{}; i < frameCounts.size(); ++i) {
                 if (frameCounts[i] > 1) { // se in i c'è un'animazione
-                    current_frame_per_tile_ID [i] = (current_frame_per_tile_ID[i] + 1) % frameCounts[i]; //frameCounts[i] sarà sempre 3 se è animazione, quindi prova a calcolare
+                    current_frame_per_tile_ID[i] = (current_frame_per_tile_ID[i] + 1) % frameCounts[i]; //frameCounts[i] sarà sempre 3 se è animazione, quindi prova a calcolare
+                
                 }
             }
             std::cout<<"~ ~ ~ dancin ~ ~ ~\n";
@@ -584,6 +585,7 @@ int main() {
             int tileID {map_grid[i/MapSize::height][i%MapSize::width]};
             int frame = current_frame_per_tile_ID[static_cast<size_t> (tileID)];
             tileSprites[i].setTextureRect({frame * TILE_SIZE, 0,TILE_SIZE, TILE_SIZE});
+            // se vogliamo ruotare l'oggetto, aggiungere funzioni qui. (con switch per comandi WASD?)
         }
         window.clear();
         for (const auto& sprite : tileSprites)
