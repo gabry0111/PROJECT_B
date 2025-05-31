@@ -18,7 +18,7 @@ namespace Baba_Is_Us { //sarà il namespace di ogni file di questo progetto
     
 class Objects {
     private :
-    std::vector<Type> m_object {}; //o std::tuple of heterogeneus types
+    std::vector<Type> m_object {}; //sarà del tipo: NOUN_TYPE e tanti PROPERTY_TYPE
         
 /* 
 Problema: assicurarsi che "noun" (parametro del costruttore) sia valida per stampare l'oggetto a schermo 
@@ -30,8 +30,12 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
 
     public :
     constexpr Objects() = default; //per le celle vuote
-    Objects(std::vector<Type> object_vect) : m_object{object_vect} {}
-    const std::optional<std::vector<Type>> getTypes(); //se il vettore m_object è vuoto, std::optional è convertibile in false
+    constexpr Objects(std::vector<Type> object_vect) : m_object{object_vect} {};
+
+    // se il vettore m_object è vuoto, std::optional è convertibile in false.
+    // potrà essere usato, una volta identificato quale oggetto ha un certo tipo con un'altra funzione,
+    // per ottenere il NOUN_TYPE di chi ha quel tipo
+    const std::vector<Type> getTypes() const; 
     constexpr void addVerb(const Type verb);
     constexpr void addProperty(const Type property);
     bool operator==(const Objects& m_object) const;
@@ -39,6 +43,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     bool hasICON_NOUN_TYPE(Type type);
     bool hasVERB_TYPE(Type type);
     bool hasPROPERTY_TYPE(Type type);
+    bool objectHasType(Type type) const; 
 };
 } //namespace Baba_Is_Us
 

@@ -8,8 +8,8 @@ namespace Baba_Is_Us {
 
 enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.com)
   NOUN_TYPE=-1,
-  Void, // possiamo creare un vector o array così: std::array<std::array<int,colonne>,righe> e inizializzare tutto a void; 
-        //poi aggiungere ciascun elemento
+  Void, // possiamo creare un vector o array così: std::array<std::array<int,colonne>,righe> e inizializzare tutto a void; poi aggiungere ciascun elemento
+        // oppure serve per vettore di alcune informazioni (findPlayer() fallisce => PlayState::Invalid) (N.B: void negli if = false)
   Baba, // aspetto del Player di default
   Flag, 
   Lava,
@@ -69,7 +69,7 @@ constexpr auto operator-(T a) noexcept
 }
 */
 
-constexpr Type toType(int value) {
+constexpr Type intToType(int value) {
   return static_cast<Type>(value);
 }
 

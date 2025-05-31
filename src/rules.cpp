@@ -1,10 +1,16 @@
 #include "rules.hpp"
 #include "objects.hpp"
 #include <algorithm>
+#include <functional>
 
 namespace Baba_Is_Us{
-    std::tuple<Objects, Objects, Objects> Rule::get_tuple(Tuple& rule) const{
-        return rule;
+
+    bool Rule::hasType(Type type) const{
+        if (std::get<0>(m_rule).objectHasType(type) ||
+            std::get<1>(m_rule).objectHasType(type) ||
+            std::get<2>(m_rule).objectHasType(type))
+            return true;
+        return false;
     }
 
     void RuleManager::addRule(const Rule& rule){
@@ -21,32 +27,35 @@ namespace Baba_Is_Us{
     void RuleManager::clearRules(){
         m_rules.clear();
     }
-    //servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile
-    std::vector<Rule> RuleManager::getWhichRuleHasType(Type type) const{
-        std::vector<Rule> rules_with_rule;
 
-        for (auto& rule : m_rules)
-        {
-            if (std::get<0>(rule.rule).HasType(type) ||
-                std::get<1>(rule).HasType(type) ||
-                std::get<2>(rule).HasType(type))
+    constexpr std::vector<std::reference_wrapper<const Rule>> RuleManager::getWhichRuleHasType(Type type) const{
+        std::vector<std::reference_wrapper<const Rule>> rules_with_rule;
+
+        for (const auto& rule : m_rules) {
+            if (rule.hasType(type))
             {
                 rules_with_rule.emplace_back(rule);
             }
         }
-
-        return ret;
+        return rules_with_rule;
     }
     
-    std::size_t RuleManager::GetNumRules() const{
+    Type RuleManager::findPlayer() const{
+        for (const auto& each_rule : m_rules) {
+            if (std::get<2>(each_rule.m_rule).objectHasType(Type::You)) {
 
+                Objects obj {std::cref(std::get<0>(each_rule.m_rule))};
+                if (std::size(obj.getTypes()) != 0) 
+                    return (obj.getTypes())[0];
+            }
+        }
+        return Type::Void;
     }
     
-    Type RuleManager::FindPlayer() const{
-
+    bool RuleManager::objectHasProperty(const Objects& object, Type property){
+        if (std::find(object.getTypes().begin(), object.getTypes().end(), object.objectHasType(property)) != object.getTypes().end()) 
+            return true;
+        return false;
     }
-    
-    bool RuleManager::HasProperty(const std::vector<Type>& types, Type property){
 
-    }
-}
+}// namespace Baba_Is_Us

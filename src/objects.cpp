@@ -25,7 +25,11 @@ bool Objects::hasVERB_TYPE(Type word) {
 bool Objects::hasPROPERTY_TYPE(Type word) {
     return (+word > +Type::PROPERTY_TYPE);
 }
-const std::optional<std::vector<Type>> Objects::getTypes() {
+bool Objects::objectHasType(Type type) const{
+    return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
+}
+
+const std::vector<Type> Objects::getTypes() const{
     std::vector<Type> types{};
     for (const auto& type : m_object)
     {
