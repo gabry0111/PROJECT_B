@@ -18,7 +18,7 @@ namespace Baba_Is_Us{
     }
 
     void RuleManager::removeRule(const Rule& rule){
-        const auto iter = std::find(m_rules.begin(), m_rules.end(), rule);
+        const auto iter {std::find(m_rules.begin(), m_rules.end(), rule)};
         if (iter != m_rules.end()){
             m_rules.erase(iter);
         }
@@ -28,7 +28,7 @@ namespace Baba_Is_Us{
         m_rules.clear();
     }
 
-    constexpr std::vector<std::reference_wrapper<const Rule>> RuleManager::getWhichRuleHasType(Type type) const{
+    const std::vector<std::reference_wrapper<const Rule>> RuleManager::getWhichRuleHasType(Type type) const{
         std::vector<std::reference_wrapper<const Rule>> rules_with_rule;
 
         for (const auto& rule : m_rules) {

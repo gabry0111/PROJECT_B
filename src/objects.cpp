@@ -9,20 +9,20 @@
 
 namespace Baba_Is_Us { //sarà il namespace di ogni file di questo progetto 
 
-bool Objects::operator==(const Objects& obj) const {
+constexpr bool Objects::operator==(const Objects& obj) const {
     return (m_object == obj.m_object);
 }
 
-bool Objects::hasNOUN_TYPE(Type word) {
+constexpr bool Objects::hasNOUN_TYPE(Type word) {
     return (+word > +Type::NOUN_TYPE && +word < +Type::ICON_NOUN_TYPE);
 }
-bool Objects::hasICON_NOUN_TYPE(Type word) {
+constexpr bool Objects::hasICON_NOUN_TYPE(Type word) {
     return (+word > +Type::ICON_NOUN_TYPE && +word < +Type::VERB_TYPE);
 }
-bool Objects::hasVERB_TYPE(Type word) {
+constexpr bool Objects::hasVERB_TYPE(Type word) {
     return (+word > +Type::VERB_TYPE && +word < +Type::PROPERTY_TYPE);
 }
-bool Objects::hasPROPERTY_TYPE(Type word) {
+constexpr bool Objects::hasPROPERTY_TYPE(Type word) {
     return (+word > +Type::PROPERTY_TYPE);
 }
 bool Objects::objectHasType(Type type) const{

@@ -29,8 +29,8 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
 
 
     public :
-    constexpr Objects() = default; //per le celle vuote
-    constexpr Objects(std::vector<Type> object_vect) : m_object{object_vect} {};
+    Objects() = default; //per le celle vuote
+    Objects(std::vector<Type> object_vect) : m_object{object_vect} {};
 
     // se il vettore m_object è vuoto, std::optional è convertibile in false.
     // potrà essere usato, una volta identificato quale oggetto ha un certo tipo con un'altra funzione,
@@ -38,11 +38,11 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     const std::vector<Type> getTypes() const; 
     constexpr void addVerb(const Type verb);
     constexpr void addProperty(const Type property);
-    bool operator==(const Objects& m_object) const;
-    bool hasNOUN_TYPE(Type type);
-    bool hasICON_NOUN_TYPE(Type type);
-    bool hasVERB_TYPE(Type type);
-    bool hasPROPERTY_TYPE(Type type);
+    constexpr bool operator==(const Objects& m_object) const;
+    constexpr bool hasNOUN_TYPE(Type type);
+    constexpr bool hasICON_NOUN_TYPE(Type type);
+    constexpr bool hasVERB_TYPE(Type type);
+    constexpr bool hasPROPERTY_TYPE(Type type);
     bool objectHasType(Type type) const; 
 };
 } //namespace Baba_Is_Us

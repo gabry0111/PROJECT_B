@@ -43,7 +43,7 @@ public :
     void clearRules();
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
     //N.B: se m_rules cambia, diventano dangling references
-    constexpr std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
+    const std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
     // std::size_t GetNumRules() const; è inutile. guarda dove viene usato...
     Type findPlayer() const; // determina quale oggetto si può muovere
     bool objectHasProperty(const Objects& object, Type property); // controlla se un oggetto ha una proprietà
