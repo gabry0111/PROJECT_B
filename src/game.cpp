@@ -95,7 +95,7 @@ namespace Baba_Is_Us{
 
     };
     void rotate(std::pair<int, int> &player_position, Direction direction){
-
+        
     };
     bool movement(std::pair<int, int> &position, Direction direction){
 
