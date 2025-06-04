@@ -10,6 +10,9 @@ namespace Baba_Is_Us{
             Game() = default;
             void update(sf::RenderWindow &);
             void render(sf::RenderWindow &, std::vector<sf::Sprite>);
+            bool movement_check(std::pair<int, int>, Direction);
+            void rotate(std::pair<int, int>, Direction);
+            void movement(std::pair<int, int>, Direction);
         };
 }
 
