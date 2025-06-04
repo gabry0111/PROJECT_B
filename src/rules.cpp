@@ -41,7 +41,7 @@ namespace Baba_Is_Us{
         return rules_with_rule;
     }
     
-    const Type RuleManager::findPlayer() const{
+    Type RuleManager::findPlayer() const{
         for (const auto& each_rule : m_rules) {
             if (std::get<2>(each_rule.m_rule).objectHasType(Type::You)) {
 
@@ -59,10 +59,10 @@ namespace Baba_Is_Us{
         return false;
     }
 
-    const bool RuleManager::conditions(Objects object, const Type second) const{
+    bool RuleManager::conditions(Objects& object, const Type second) const{
 
         if(+Type::NOUN_TYPE < +second < +Type::ICON_NOUN_TYPE) { // deve essere valido Baba is you, Baba is wall
-            object.addNoun(second);
+            object.add(second);
             return true;
         }
 
@@ -96,10 +96,11 @@ namespace Baba_Is_Us{
             break;
         case Type::Move : // che differenza c'è tra Move e Push?
             break;
-        case Type::Open :
+        case Type::Open : // ???
             
             break;
-        case Type::Push :
+        case Type::Push : // ???
+            
             break;
         case Type::Quantum :
             break;

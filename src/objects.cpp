@@ -13,14 +13,12 @@ constexpr bool Objects::operator==(const Objects& obj) const {
     return (m_object == obj.m_object);
 }
 
-constexpr bool Objects::hasTYPE(Type word) {
-    return (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE && word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
-}
-bool Objects::objectHasType(Type type) const{
+bool Objects::objectHasType(Type type) const{ //DA RENDERE PIù BELLA
+    assert(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && "Objects::objectHasType()");
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
 
-const std::vector<Type> Objects::getTypes() const{
+std::vector<Type> Objects::getTypes() const{
     std::vector<Type> types{};
     for (const auto& type : m_object)
     {
@@ -47,16 +45,23 @@ constexpr void Objects::addVerb() {
 */
 
 constexpr void Objects::add(const Type word) {
-    // se word non valida o già presente
-    bool bbb{word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE && word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE && 
-        std::find_if(m_object.begin(), m_object.end(), word) != m_object.end()};
 
-    assert(bbb && "add() not given a valid type or type already present");
-    if(bbb) (m_object).emplace_back(word);
+    // Check if the word is valid and not already present
+    bool is_valid_type = (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
+                          word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
+
+    // Assert if word is invalid or already present
+    assert(is_valid_type && "add() not given a valid type");
+
+    // Only add if valid and not already present
+    if (is_valid_type && std::find(m_object.begin(), m_object.end(), word) == m_object.end()) {
+        m_object.emplace_back(word);  // Add to the vector if not already present
+    }
 }
 
-constexpr void Objects::remove(const Type type) {
-    auto iter {std::find_if(m_object.begin(), m_object.end(), type)};
+
+void Objects::remove(const Type type) {
+    auto iter {std::find(m_object.begin(), m_object.end(), type)};
     bool bbb{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && 
         iter == m_object.end()};
 

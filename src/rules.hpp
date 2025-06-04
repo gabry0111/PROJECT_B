@@ -23,9 +23,9 @@ private :
 public : 
     Rule() = delete; // non si può creare una regola vuota
     Rule(Objects obj1, Objects obj2, Objects obj3) : m_rule{obj1, obj2, obj3} { // ogni regola deve avere un noun, verb e property/noun 
-        assert(+obj1 > +Type::NOUN_TYPE && +obj1 < +Type::ICON_NOUN_TYPE &&
-               +obj2 > +Type::VERB_TYPE && +obj2 < +Type::PROPERTY_TYPE &&
-               +obj3 > +Type::PROPERTY_TYPE ||  +obj3 > +Type::NOUN_TYPE && +obj3 < +Type::ICON_NOUN_TYPE && "Rule constructor condition not satisfied");
+        assert((+obj1.getTypes()[0] > +Type::NOUN_TYPE && +obj1.getTypes()[0] < +Type::ICON_NOUN_TYPE &&
+               +obj2.getTypes()[0] > +Type::VERB_TYPE && +obj2.getTypes()[0] < +Type::PROPERTY_TYPE &&
+               +obj3.getTypes()[0] > +Type::PROPERTY_TYPE) ||  (+obj3.getTypes()[0] > +Type::NOUN_TYPE && +obj3.getTypes()[0] < +Type::ICON_NOUN_TYPE) && "Rule constructor condition not satisfied");
     };
     std::tuple<Objects, Objects, Objects> get_tuple(Rule& rule) const;
     friend class RuleManager;
@@ -45,7 +45,7 @@ public :
     //N.B: se m_rules cambia, diventano dangling references
     const std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
     // std::size_t GetNumRules() const; è inutile. guarda dove viene usato...
-    const Type findPlayer() const; // determina quale oggetto si può muovere
+    Type findPlayer() const; // determina quale oggetto si può muovere
     bool objectHasProperty(const Objects& object, Type property); // controlla se un oggetto ha una proprietà
     // controlla le interazioni possibili tra un object e un altro object e dice se un'azione può essere fatta.
     // Per certe azioni che cambiano qualcosa dell'oggetto, si può vedere cosa è cambiato nell'ultimo Type del vector<Type> dell'oggetto
@@ -54,7 +54,7 @@ public :
     //la chiamata a questa funzione sarà del tipo: 
     /* for()
     */
-    const bool conditions(const Objects object, const Type second) const; // restituisce vero se è andata a buon fine
+    bool conditions( Objects& object, const Type second) const; // restituisce vero se è andata a buon fine
 };
 }
 
