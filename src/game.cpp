@@ -1,7 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "movement.hpp"
+#include "map.hpp"
 #include "game.hpp"
+#include "objects.hpp"
 
 /* Avuta la mappa del livello corrente, verifica quali azioni sono possibili:
 - verifica le proprietà di ciascun oggetto (sarà fatto nel Main Loop)
@@ -11,9 +12,7 @@
 - 
 */
 namespace Baba_Is_Us{
-    std::pair<int, int> getPosition(){
-
-    };
+    
     void Game::update(sf::RenderWindow &window){
 
         //event handling
@@ -63,12 +62,7 @@ namespace Baba_Is_Us{
         window.display();
     }
 
-
     std::pair<int, int> target; //tile that the player wants to move into
-
-    //CREARE UNA FUNZIONE "(const e non const?) Objects& At(std::pair<int,int> position) (const e non const?)" CHE RESTITUISCE CHE OBJECT C'è IN QUEL PUNTO
-    //CREARE UNA FUNZIONE "void removeObject(std::pair<int,int>, ObjectType type)" CHE CANCELLA QUELLA ICON GRAFICA DELL'OGGETTO SULLA MAPPA
-    
 
     bool movement_check(std::pair<int, int> &player_position, Direction direction){
         switch(direction){
@@ -90,13 +84,27 @@ namespace Baba_Is_Us{
                 break;
             default: break;
         }
-       
+
         return true; // check the type of the object in that position
 
-    };
+    }
     void rotate(std::pair<int, int> &player_position, Direction direction){
-        
-    };
+        player_position.first = player_position.first;
+        player_position.second = player_position.second;
+        switch(direction){
+            //due opzioni
+            //1. chiamiamo loadFromFile() in base alla direzione
+            //2. creiamo il parametro Direction nella classe player e qui lo modifichiamo
+            //      ma quando si chiama loadFromFile() bisogna inviare il path corrispondente al file 
+            //      orientato in quel modo
+            case Baba_Is_Us::Direction::Up:
+            case Baba_Is_Us::Direction::Down:
+            case Baba_Is_Us::Direction::Left:
+            case Baba_Is_Us::Direction::Right:
+                break;
+            default: break;
+        }
+    }
     bool movement(std::pair<int, int> &position, Direction direction){
 
         /*  
@@ -115,6 +123,8 @@ namespace Baba_Is_Us{
 
         position.first = target.first;
         position.second = target.second;
+        direction = Direction::Up; // dopo che avremo implementato il player, qui settiamo la sua direzione
+        if (direction==Direction::Down) return false;
         return true;
-    };
+    }
 }
