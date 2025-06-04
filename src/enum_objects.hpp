@@ -37,7 +37,6 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   VERB_TYPE, //Anche per i power-up
   And,
   Is,
-  On, //vedi Rock
 
   PROPERTY_TYPE,
   Hot,
@@ -55,7 +54,7 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
 
 // Overload the unary + operator to convert an enum class to the underlying type
 template <typename T>
-constexpr auto operator+(T a) noexcept
+constexpr int operator+(T a) noexcept
 {
   static_assert(std::is_enum_v<T> && "Unary plus operator only works on enum types");
   return static_cast<std::underlying_type_t<T>>(a);

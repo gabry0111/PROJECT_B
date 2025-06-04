@@ -13,17 +13,8 @@ constexpr bool Objects::operator==(const Objects& obj) const {
     return (m_object == obj.m_object);
 }
 
-constexpr bool Objects::hasNOUN_TYPE(Type word) {
-    return (+word > +Type::NOUN_TYPE && +word < +Type::ICON_NOUN_TYPE);
-}
-constexpr bool Objects::hasICON_NOUN_TYPE(Type word) {
-    return (+word > +Type::ICON_NOUN_TYPE && +word < +Type::VERB_TYPE);
-}
-constexpr bool Objects::hasVERB_TYPE(Type word) {
-    return (+word > +Type::VERB_TYPE && +word < +Type::PROPERTY_TYPE);
-}
-constexpr bool Objects::hasPROPERTY_TYPE(Type word) {
-    return (+word > +Type::PROPERTY_TYPE);
+constexpr bool Objects::hasTYPE(Type word) {
+    return (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE && word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
 }
 bool Objects::objectHasType(Type type) const{
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
@@ -55,15 +46,25 @@ constexpr void Objects::addVerb() {
 }
 */
 
-constexpr void Objects::addVerb(const Type verb ) {
-    assert(+verb <= +Type::PROPERTY_TYPE && +verb > +Type::VERB_TYPE && "addVerb not given a VERB_TYPE");
-    if(+verb <= +Type::PROPERTY_TYPE && +verb > +Type::VERB_TYPE) (m_object).emplace_back(verb);
+constexpr void Objects::add(const Type word) {
+    // se word non valida o già presente
+    bool bbb{word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE && word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE && 
+        std::find_if(m_object.begin(), m_object.end(), word) != m_object.end()};
+
+    assert(bbb && "add() not given a valid type or type already present");
+    if(bbb) (m_object).emplace_back(word);
 }
 
-constexpr void Objects::addProperty(const Type property) {
-    assert(+property > +Type::PROPERTY_TYPE && "addProperty not given a PROPERTY_TYPE");
-    if(+property <= +Type::PROPERTY_TYPE && +property > +Type::VERB_TYPE) (m_object).emplace_back(property);
+constexpr void Objects::remove(const Type type) {
+    auto iter {std::find_if(m_object.begin(), m_object.end(), type)};
+    bool bbb{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && 
+        iter == m_object.end()};
+
+    assert(bbb && "remove() not given a valid type or type not present");
+    if(bbb) m_object.erase(iter);
 }
+
+
 } //namespace Baba_Is_Us
 /*
 using namespace Baba_Is_Us;
