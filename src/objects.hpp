@@ -39,7 +39,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     constexpr bool hasTYPE(const Type type);
     bool objectHasType(Type type) const; 
     constexpr void add(const Type word);
-    void remove(Type type);
+    constexpr void remove(Type type);
 };
 } //namespace Baba_Is_Us
 

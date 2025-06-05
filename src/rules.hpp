@@ -27,7 +27,6 @@ public :
                +obj2.getTypes()[0] > +Type::VERB_TYPE && +obj2.getTypes()[0] < +Type::PROPERTY_TYPE &&
                +obj3.getTypes()[0] > +Type::PROPERTY_TYPE) ||  (+obj3.getTypes()[0] > +Type::NOUN_TYPE && +obj3.getTypes()[0] < +Type::ICON_NOUN_TYPE) && "Rule constructor condition not satisfied");
     };
-    std::tuple<Objects, Objects, Objects> get_tuple(Rule& rule) const;
     friend class RuleManager;
     bool hasType(Type type) const;
 };

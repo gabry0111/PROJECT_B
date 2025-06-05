@@ -60,7 +60,7 @@ constexpr void Objects::add(const Type word) {
 }
 
 
-void Objects::remove(const Type type) {
+constexpr void Objects::remove(const Type type) {
     auto iter {std::find(m_object.begin(), m_object.end(), type)};
     bool bbb{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && 
         iter == m_object.end()};
