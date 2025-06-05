@@ -4,13 +4,9 @@
 #include <iostream>
 #include <stdexcept>
 #include "game.hpp"
+#include "map.hpp"
 using namespace Baba_Is_Us;
 
-namespace MapSize {
-    constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
-    constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
-    constexpr int n_tiles = width*height; // Total number of tiles
-}
                         ///////////////////////
                         // ----- METODO SPRITES ----- //
 namespace Baba_Is_Us{
@@ -23,8 +19,11 @@ int main() {
     // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
     std::vector<std::string> tilePaths { //20
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/LAVA_spritesheet.png", 
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet.png"
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_right.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/FLAG_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/LAVA_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/ROCK_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/WALL_spritesheet.png" 
     };
 
     std::vector<sf::Texture> textures{};    // tutte le textures da caricare nel livello 

@@ -30,7 +30,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
 
     public :
     Objects() = default; //per le celle vuote
-    Objects(std::vector<Type> object_vect) : m_object{object_vect} {};
+    Objects(std::vector<Type> object_vect) : m_object{object_vect} {}
 
     // potrà essere usato, una volta identificato quale oggetto ha un certo tipo con un'altra funzione,
     // per ottenere il NOUN_TYPE di chi ha quel tipo

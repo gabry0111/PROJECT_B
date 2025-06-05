@@ -5,8 +5,9 @@
 #include "objects.hpp"
 
 namespace MapSize {
-    constexpr std::size_t width = 16;  // Number of tiles in the X direction = n° of columns
-    constexpr std::size_t height = 16; // Number of tiles in the Y direction = n° of rows
+    constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
+    constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
+    constexpr int n_tiles = width*height; // Total number of tiles
 }
 
 namespace Baba_Is_Us {
@@ -22,6 +23,7 @@ private :
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
     Map();
+
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grida
     // da chiamare appena creata un'istanza di Map
     constexpr void load(const std::vector<std::vector<int>>& new_map_grid);
@@ -41,8 +43,24 @@ public:
     Objects& At(Position position);
     const Objects& At(Position position) const;
 
+
+    // resetta la mappa (se PlayState::Invalid)
+    constexpr void loadAndReset(std::vector<std::vector<int>>& );
+
+    // aggiungi un oggetto
+    void addObject(Position, Type);
+
+    // rimuovi un oggetto
+    void removeObject(Position, Type);
+
+    //Quale oggetto c'è in quella posizione?
+    Objects& At(Position);
+    const Objects& At(Position) const;
+
+
     //restituisce le posizioni di uno specifico tipo
-    std::vector<Position> GetPositions(Type type) const;
+    std::vector<Position> getPositions(Type) const;
+
 };
 
 
