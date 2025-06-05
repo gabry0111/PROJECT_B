@@ -38,14 +38,6 @@ constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& obj
 }
 */
 
-
-/*
-template<Type verb>
-constexpr void Objects::addVerb() {
-    static_assert((+verb) <= +Type::PROPERTY_TYPE && +verb > +Type::VERB_TYPE && "addVerb not given a VERB_TYPE");
-}
-*/
-
 constexpr void Objects::add(const Type word) {
 
     // Check if the word is valid and not already present

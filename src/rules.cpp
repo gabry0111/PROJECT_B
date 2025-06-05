@@ -109,6 +109,7 @@ namespace Baba_Is_Us{
         case Type::Stop :
             break;
         case Type::Win :
+            
             break;
         case Type::You :
             break;
