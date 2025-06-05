@@ -43,23 +43,8 @@ public:
     Objects& At(Position position);
     const Objects& At(Position position) const;
 
-
-    // resetta la mappa (se PlayState::Invalid)
-    constexpr void loadAndReset(std::vector<std::vector<int>>& );
-
-    // aggiungi un oggetto
-    void addObject(Position, Type);
-
-    // rimuovi un oggetto
-    void removeObject(Position, Type);
-
-    //Quale oggetto c'è in quella posizione?
-    Objects& At(Position);
-    const Objects& At(Position) const;
-
-
     //restituisce le posizioni di uno specifico tipo
-    std::vector<Position> getPositions(Type) const;
+    std::vector<std::reference_wrapper<Position>> getPositions(Type) const;
 
 };
 

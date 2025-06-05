@@ -36,8 +36,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     // per ottenere il NOUN_TYPE di chi ha quel tipo
     std::vector<Type> getTypes() const; 
     constexpr bool operator==(const Objects& m_object) const;
-    constexpr bool hasTYPE(const Type type);
-    bool objectHasType(Type type) const; 
+    constexpr bool objectHasType(const Type type) const; 
     constexpr void add(const Type word);
     constexpr void remove(Type type);
 };
