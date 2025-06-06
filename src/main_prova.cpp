@@ -9,22 +9,12 @@ using namespace Baba_Is_Us;
 
                         ///////////////////////
                         // ----- METODO SPRITES ----- //
-namespace Baba_Is_Us{
-    std::vector<std::vector<int>> map_grid{};
-};
+
 int main() {
     constexpr int TILE_SIZE = 32;
     constexpr int FRAME_TIME_MS = 150;
 
-    // va implementato un modo per cui il compilatore prenda il file dalla BUILD
-    // così da semplificare l'azione che prende il percorso (di tipo std::string)
-    std::vector<std::string> tilePaths { //20
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_right.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/FLAG_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/LAVA_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/ROCK_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/WALL_spritesheet.png" 
-    };
+    //spostato tilePaths in map.hpp
 
     std::vector<sf::Texture> textures{};    // tutte le textures da caricare nel livello 
     std::vector<int> frameCounts{};         // grandezze /16 delle textures = numero di frame per ogni gif
@@ -47,7 +37,7 @@ int main() {
     }
     
     //map_grid ha i valori (enum type) di ogni oggetto caricato nella rispettiva cella
-    map_grid = {
+    std::vector<std::vector<int>> map_grid = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -97,6 +87,7 @@ int main() {
     std::cout<<"~ ~ ~ dancin ~ ~ ~\n";
 
     while (window.isOpen()) {
+        game.update(window);
 
         if (clock.getElapsedTime().asMilliseconds() >= FRAME_TIME_MS) {
 
@@ -118,7 +109,6 @@ int main() {
             // se vogliamo ruotare l'oggetto, aggiungere funzioni qui. (con switch per comandi WASD?)
         }
         
-        game.update(window);
         game.render(window, tileSprites);
     }
 

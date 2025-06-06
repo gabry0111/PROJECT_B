@@ -14,8 +14,13 @@ constexpr bool Objects::operator==(const Objects& obj) const {
 }
 
 constexpr bool Objects::objectHasType(const Type type) const{ //DA AGGIUNGERE IF(E QUI ASSERT)
-    assert(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && "Objects::objectHasType() not given a valid type");
-    if(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE) throw std::runtime_error("objectHasType() not given a valid type");
+    assert(type != Type::NOUN_TYPE 
+        && type != Type::ICON_NOUN_TYPE 
+        && type != Type::VERB_TYPE 
+        && type != Type::PROPERTY_TYPE 
+        && "Objects::objectHasType() not given a valid type");
+    if(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE)
+        throw std::runtime_error("objectHasType() not given a valid type");
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
     
 }
@@ -33,7 +38,8 @@ std::vector<Type> Objects::getTypes() const{
 /*
 constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& object_vect) {
     assert(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE && "CreatePrintableObject not given a NOUN_TYPE");
-    if(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE) return noun;
+    if(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE)
+        return noun;
     return nullptr;
 }
 */
@@ -56,9 +62,11 @@ constexpr void Objects::add(const Type word) {
 
 constexpr void Objects::remove(const Type type) {
     auto iter {std::find(m_object.begin(), m_object.end(), type)};
-    bool bbb{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && 
-        iter == m_object.end()};
-
+    bool bbb{type != Type::NOUN_TYPE 
+        && type != Type::ICON_NOUN_TYPE 
+        && type != Type::VERB_TYPE 
+        && type != Type::PROPERTY_TYPE 
+        && iter == m_object.end()};
     assert(bbb && "remove() not given a valid type or type not present");
     if(bbb) m_object.erase(iter);
 }

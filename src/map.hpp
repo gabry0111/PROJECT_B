@@ -11,20 +11,36 @@ namespace MapSize {
 }
 
 namespace Baba_Is_Us {
+// va implementato un modo per cui il compilatore prenda il file dalla BUILD
+    // così da semplificare l'azione che prende il percorso (di tipo std::string)
+    std::vector<std::string> tilePaths { //20
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_up_right_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_down_left_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_left_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_right_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_up.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_down.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_right.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_left.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/FLAG_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/LAVA_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/ROCK_spritesheet.png",
+        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/WALL_spritesheet.png" 
+    };
 using Position = std::pair<std::size_t, std::size_t>;
 
 class Map{
 private :
 
     std::vector<Objects> m_objects {};
-
     bool IsBoundary(std::size_t x, std::size_t y) const;
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
     Map();
+    RuleManager RM;
 
-    // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grida
+    // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
     constexpr void load(const std::vector<std::vector<int>>& new_map_grid);
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
