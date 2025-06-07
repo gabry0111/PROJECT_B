@@ -64,7 +64,7 @@ namespace Baba_Is_Us{
 
     std::pair<int, int> target; //tile that the player wants to move into
 
-    bool movement_check(std::pair<int, int> &player_position, Direction direction){
+    bool movement_check(Map map, std::pair<int, int> &player_position, Direction direction){
         switch(direction){
             case Direction::Up:
                 target.first=player_position.first-1;
@@ -84,20 +84,18 @@ namespace Baba_Is_Us{
                 break;
             default: break;
         }
-
-        return true; // check the type of the object in that position
+        if (map.RM(map.At(target)).objectHasProperty(Type::Push))   
+        // non mi piace molto che si chiami una funzione di map 2 volte nella stessa riga ma idk come altro fare
+            return true; // check the type of the object in that position
+        return false;
 
     }
     void rotate(std::pair<int, int> &player_position, Direction direction){
         player_position.first = player_position.first;
         player_position.second = player_position.second;
         switch(direction){
-            //due opzioni
-            //1. chiamiamo loadFromFile() in base alla direzione
-            //2. creiamo il parametro Direction nella classe player e qui lo modifichiamo
-            //      ma quando si chiama loadFromFile() bisogna inviare il path corrispondente al file 
-            //      orientato in quel modo
             case Baba_Is_Us::Direction::Up:
+                
             case Baba_Is_Us::Direction::Down:
             case Baba_Is_Us::Direction::Left:
             case Baba_Is_Us::Direction::Right:
@@ -105,7 +103,7 @@ namespace Baba_Is_Us{
             default: break;
         }
     }
-    bool movement(std::pair<int, int> &position, Direction direction){
+    bool movement(Map map, std::pair<int, int> &position, Direction direction){
 
         /*  
         divide movement in 3rds, for each frame of the animation:
@@ -123,7 +121,7 @@ namespace Baba_Is_Us{
 
         position.first = target.first;
         position.second = target.second;
-        direction = Direction::Up; // dopo che avremo implementato il player, qui settiamo la sua direzione
+        direction = Direction::Up;
         if (direction==Direction::Down) return false;
         return true;
     }

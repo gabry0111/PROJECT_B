@@ -23,6 +23,7 @@ private :
 public : 
     Rule() = delete; // non si può creare una regola vuota
     Rule(Objects obj1, Objects obj2, Objects obj3) : m_rule{obj1, obj2, obj3} { // ogni regola deve avere un noun, verb e property/noun 
+
         assert((
             (
                 +obj1.getTypes()[0] > +Type::NOUN_TYPE &&

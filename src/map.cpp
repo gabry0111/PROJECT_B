@@ -10,16 +10,16 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-
     Map::Map(){
     m_objects.reserve(MapSize::n_tiles);
     //std::cerr<< m_objects.size() << m_objects[50].objectHasType(Type::Void); //testato: funziona
 
-    };
+    }
     
     constexpr void Map::load(const std::vector<std::vector<int>>& new_map_grid) {
         assert(MapSize::height * MapSize::width == new_map_grid.size() && "Map::load(): sizes not equal");
-        if(MapSize::height * MapSize::width != new_map_grid.size()) throw std::runtime_error("Map::load() sizes not equal"); 
+        if(MapSize::height * MapSize::width != new_map_grid.size())
+            throw std::runtime_error("Map::load() sizes not equal"); // perché lo stesso errore due volte?
     
         for (auto& rows : new_map_grid) {
             for (auto& eee : rows) {
