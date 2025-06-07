@@ -44,7 +44,7 @@ public:
     const Objects& At(Position position) const;
 
     //restituisce le posizioni di uno specifico tipo
-    std::vector<std::reference_wrapper<Position>> getPositions(Type) const;
+    std::vector<Position> getPositions(Type) const;
 
 };
 

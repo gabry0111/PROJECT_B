@@ -1,7 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include "enum_objects.hpp"
 #include "map.hpp"
 #include "game.hpp"
 #include "rules.hpp"
+#include "objects.hpp"
+#include <array>
 #include <iostream>
 using Position = std::pair<std::size_t, std::size_t>;
 
@@ -25,8 +28,8 @@ namespace Baba_Is_Us{
         }
     }
     
-    constexpr void Map::Reset(const std::vector<std::vector<int>>& new_map_grid) { 
-        assert (MapSize::height * MapSize::width == new_map_grid.size() && "Map::Reset(): sizes not equal");
+    constexpr void Map::Reset(const std::array<std::array<int,16>,16> new_map_grid) { 
+        static_assert (MapSize::height * MapSize::width == new_map_grid.size() && "Map::Reset(): sizes not equal");
         if(MapSize::height * MapSize::width != new_map_grid.size()) throw std::runtime_error("Map::Reset(): sizes not equal");
 
         std::size_t iii{};
@@ -46,18 +49,16 @@ namespace Baba_Is_Us{
     }
 
 
-    std::vector<std::reference_wrapper<Position>> Map::getPositions(Type type) const {
-        std::vector<std::reference_wrapper<Position>> positions_with_type {};
-        for (std::size_t x = 0; x < MapSize::height; ++x)
-        {
-            for (std::size_t y = 0; y < MapSize::width; ++y)
-            {
-                if (At(Position(x, y)).objectHasType(type))
-                {
+    std::vector<Position> Map::getPositions(Type type) const {
+        std::vector<Position> positions_with_type {};
+        for (std::size_t x = 0; x < MapSize::height; ++x){
+            for (std::size_t y = 0; y < MapSize::width; ++y){
+                if (At(Position(x, y)).objectHasType(type)){
                     positions_with_type.emplace_back(Position(x, y));
                 }
             }
         }
+        return positions_with_type;
     }
 
 

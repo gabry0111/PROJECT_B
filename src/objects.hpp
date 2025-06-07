@@ -35,10 +35,10 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     // potrà essere usato, una volta identificato quale oggetto ha un certo tipo con un'altra funzione,
     // per ottenere il NOUN_TYPE di chi ha quel tipo
     std::vector<Type> getTypes() const; 
-    constexpr bool operator==(const Objects& m_object) const;
-    constexpr bool objectHasType(const Type type) const; 
-    constexpr void add(const Type word);
-    constexpr void remove(Type type);
+    bool operator==(const Objects& object) const;
+    bool objectHasType(const Type type) const; 
+    void add(const Type word);
+    void remove(Type type);
 };
 } //namespace Baba_Is_Us
 

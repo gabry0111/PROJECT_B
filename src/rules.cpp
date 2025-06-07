@@ -6,6 +6,10 @@
 
 namespace Baba_Is_Us{
 
+    bool operator==(const Rule& rhs, const Rule& lhs) {
+        return rhs.m_rule == lhs.m_rule;
+    }
+
     bool Rule::hasType(Type type) const{
         if (std::get<0>(m_rule).objectHasType(type) ||
             std::get<1>(m_rule).objectHasType(type) ||
@@ -18,8 +22,8 @@ namespace Baba_Is_Us{
         m_rules.emplace_back(rule);
     }
 
-    void RuleManager::removeRule(const Rule& rule){
-        const auto iter {std::find(m_rules.begin(), m_rules.end(), rule)};
+    void RuleManager::removeRule(const Rule& rule){ // se il parametro fosse const, "error: no match for ‘operator==’ (operand types are ‘Baba_Is_Us::Rule’ and ‘const Baba_Is_Us::Rule’)"(da std::find)
+        auto iter {std::find(m_rules.begin(), m_rules.end(), rule)};
         if (iter != m_rules.end()){
             m_rules.erase(iter);
         }
@@ -52,33 +56,38 @@ namespace Baba_Is_Us{
         }
         return Type::Void;
     }
-    
+    /* In teoria non serve: Objects ha funzione objectHasType, e objectHasProperty è usata per controllare 
+    in una cella della mappa se l'oggetto ha RuleManager.objectHasProperty(Objects, Type::SINK) (che comunque abbiamo conditions()).
+
     bool RuleManager::objectHasProperty(const Objects& object, Type property){
         if (std::find(object.getTypes().begin(), object.getTypes().end(), object.objectHasType(property)) != object.getTypes().end()) 
             return true;
         return false;
     }
+    */
 
     bool RuleManager::conditions(Objects& object, const Type second) const{
 
-        if(+Type::NOUN_TYPE < +second < +Type::ICON_NOUN_TYPE) { // deve essere valido Baba is you, Baba is wall
+        if(+Type::NOUN_TYPE < +second && (+second) < +Type::ICON_NOUN_TYPE) { // deve essere valido Baba is you, Baba is wall
             object.add(second);
             return true;
         }
 
-        switch (+Type::ICON_NOUN_TYPE < +second < +Type::VERB_TYPE) { // ???
-        case 11:
+        if(+Type::ICON_NOUN_TYPE < +second && +second < +Type::VERB_TYPE)
+        switch (second) { // ???
+        case Type::Icon_Baba :
             break;
-        case 12:
+        case Type::Icon_Door:
             break;
         default:
             break;
         }
 
-        switch (+Type::VERB_TYPE < +second < +Type::PROPERTY_TYPE) { // ???
-        case 11:
+        if(+Type::VERB_TYPE < +second && +second < +Type::PROPERTY_TYPE)
+        switch (second) { // ???
+        case Type::And:
             break;
-        case 12:
+        case Type::Is:
             break;
         default:
             break;

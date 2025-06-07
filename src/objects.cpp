@@ -1,23 +1,21 @@
 #include "enum_objects.hpp"
 #include "objects.hpp"
 #include <vector>
-#include <optional> //forse da togliere
-#include <iostream> //da togliere
 #include <cassert>
 #include <algorithm>
 
 
 namespace Baba_Is_Us { //sarà il namespace di ogni file di questo progetto 
 
-constexpr bool Objects::operator==(const Objects& obj) const {
+bool Objects::operator==(const Objects& obj) const {
     return (m_object == obj.m_object);
 }
 
-constexpr bool Objects::objectHasType(const Type type) const{ //DA AGGIUNGERE IF(E QUI ASSERT)
+bool Objects::objectHasType(const Type type) const{
     assert(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && "Objects::objectHasType() not given a valid type");
     if(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE) throw std::runtime_error("objectHasType() not given a valid type");
-    return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
     
+    return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
 
 std::vector<Type> Objects::getTypes() const{
@@ -38,23 +36,20 @@ constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& obj
 }
 */
 
-constexpr void Objects::add(const Type word) {
-
-    // Check if the word is valid and not already present
+void Objects::add(const Type word) {
     bool is_valid_type = (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
                           word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
 
-    // Assert if word is invalid or already present
     assert(is_valid_type && "add() not given a valid type");
 
-    // Only add if valid and not already present
+    // aggiungi se valido e non già presente
     if (is_valid_type && std::find(m_object.begin(), m_object.end(), word) == m_object.end()) {
         m_object.emplace_back(word);  // Add to the vector if not already present
     }
 }
 
 
-constexpr void Objects::remove(const Type type) {
+void Objects::remove(const Type type) {
     auto iter {std::find(m_object.begin(), m_object.end(), type)};
     bool bbb{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE && 
         iter == m_object.end()};
