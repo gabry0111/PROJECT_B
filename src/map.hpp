@@ -37,15 +37,14 @@ private :
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    Map();
-    RuleManager RM;
+    constexpr Map();
 
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
-    constexpr void load(const std::vector<std::vector<int>>& new_map_grid);
+    void load(const std::vector<std::vector<int>>& new_map_grid); // può diventare constexpr
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
-    constexpr void Reset(const std::vector<std::vector<int>>& new_map_grid);
+    void Reset(const std::array<std::array<int,16>,16> new_map_grid); // può diventare constexpr
     
 
     // aggiungi un oggetto
@@ -54,13 +53,13 @@ public:
     // rimuovi un oggetto
     constexpr void RemoveObject(Position position, Type type);
 
-    //Quale oggetto c'è in quella posizione?
-    //N.B: NON IN MINUSCOLO, è una funzione di vector
+    // Quale oggetto c'è in quella posizione?
+    // N.B: NON IN MINUSCOLO, è una funzione di vector
     Objects& At(Position position);
-    const Objects& At(Position position) const;
+    const Objects& At(Position position) const; // NON può diventare constexpr (m_objects è vector)
 
-    //restituisce le posizioni di uno specifico tipo
-    std::vector<Position> getPositions(Type) const;
+    // restituisce le posizioni di uno specifico tipo
+    std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 
 };
 

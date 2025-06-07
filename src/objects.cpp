@@ -7,18 +7,18 @@
 
 namespace Baba_Is_Us { //sarà il namespace di ogni file di questo progetto 
 
-bool Objects::operator==(const Objects& obj) const {
+constexpr bool Objects::operator==(const Objects& obj) const {
     return (m_object == obj.m_object);
 }
 
-constexpr bool Objects::objectHasType(const Type type) const{ //DA AGGIUNGERE IF(E QUI ASSERT)
+bool Objects::objectHasType(const Type type) const{
     assert(type != Type::NOUN_TYPE 
         && type != Type::ICON_NOUN_TYPE 
         && type != Type::VERB_TYPE 
         && type != Type::PROPERTY_TYPE 
         && "Objects::objectHasType() not given a valid type");
     if(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE)
-        throw std::runtime_error("objectHasType() not given a valid type");
+        // throw std::runtime_error("objectHasType() not given a valid type");
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
 
@@ -49,7 +49,7 @@ void Objects::add(const Type word) {
 
     // aggiungi se valido e non già presente
     if (is_valid_type && std::find(m_object.begin(), m_object.end(), word) == m_object.end()) {
-        m_object.emplace_back(word);  // Add to the vector if not already present
+        m_object.emplace_back(word);
     }
 }
 

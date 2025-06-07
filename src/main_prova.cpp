@@ -37,7 +37,7 @@ int main() {
     }
     
     //map_grid ha i valori (enum type) di ogni oggetto caricato nella rispettiva cella
-    std::vector<std::vector<int>> map_grid = {
+    std::vector<std::vector<int>> map_grid = { // può diventare constexpr
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

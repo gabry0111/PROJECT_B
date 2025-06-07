@@ -22,18 +22,19 @@ namespace Baba_Is_Us{
         m_rules.emplace_back(rule);
     }
 
-    void RuleManager::removeRule(const Rule& rule){ // se il parametro fosse const, "error: no match for ‘operator==’ (operand types are ‘Baba_Is_Us::Rule’ and ‘const Baba_Is_Us::Rule’)"(da std::find)
+    void RuleManager::removeRule(const Rule& rule){ // ??? se il parametro fosse const, "error: no match for ‘operator==’ (operand types are ‘Baba_Is_Us::Rule’ and ‘const Baba_Is_Us::Rule’)"(da std::find)
+        //assert ?
         auto iter {std::find(m_rules.begin(), m_rules.end(), rule)};
         if (iter != m_rules.end()){
             m_rules.erase(iter);
         }
     }
     
-    void RuleManager::clearRules(){
+    constexpr void RuleManager::clearRules(){
         m_rules.clear();
     }
 
-    const std::vector<std::reference_wrapper<const Rule>> RuleManager::getWhichRuleHasType(Type type) const{
+    constexpr std::vector<std::reference_wrapper<const Rule>> RuleManager::getWhichRuleHasType(Type type) const{
         std::vector<std::reference_wrapper<const Rule>> rules_with_rule;
 
         for (const auto& rule : m_rules) {

@@ -39,8 +39,8 @@ public :
         ) && "Rule constructor condition not satisfied");
     }
     friend class RuleManager;
-    friend bool operator==(const Rule& rhs, const Rule& lhs); // per algoritmi tipo find()
-    bool hasType(Type type) const;
+    friend bool operator==(const Rule& rhs, const Rule& lhs); // per algoritmi tipo find(), può forse diventare constexpr (dipende da std::tuple)
+    bool hasType(Type type) const; // può diventare constexpr (dipende da objectHasType())
 };
 
 // idea: un singolo oggetto che gestisce tutte le regole
@@ -49,23 +49,20 @@ private :
     std::vector<Rule> m_rules;
 
 public :
-    void addRule(const Rule& rule);
-    void removeRule(const Rule& rule);
-    void clearRules();
+    void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
+    void removeRule(const Rule& rule); // come addRule()
+    constexpr void clearRules();
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
     //N.B: se m_rules cambia, diventano dangling references
-    const std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
+    constexpr std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
     // std::size_t GetNumRules() const; è inutile. guarda dove viene usato...
-    Type findPlayer() const; // determina quale oggetto si può muovere
+    Type findPlayer() const; // può diventare constexpr (dipende da objectHasType())
     bool objectHasProperty(const Objects& object, Type property); // controlla se un oggetto ha una proprietà
     // controlla le interazioni possibili tra un object e un altro object e dice se un'azione può essere fatta.
     // Per certe azioni che cambiano qualcosa dell'oggetto, si può vedere cosa è cambiato nell'ultimo Type del vector<Type> dell'oggetto
     // N.B: questa funzione NON si occupa di verificare la posizione nella mappa di niente. 
     // Se un oggetto ha più tipi, allora fare un ciclo che chiama conditions() per decidere se l'azione è legale.
-    //la chiamata a questa funzione sarà del tipo: 
-    /* for()
-    */
-    bool conditions( Objects& object, const Type second) const; // restituisce vero se è andata a buon fine
+    bool conditions( Objects& object, const Type second) const; // restituisce vero se è andata a buon fine; può forse diventare constexpr (non è finita)
 };
 }
 
