@@ -61,7 +61,6 @@ namespace Baba_Is_Us{
         return positions_with_type;
     }
 
-
     constexpr void Map::AddObject(Position position, Type type) {
         m_objects.at(position.second * MapSize::width + position.first).add(type);
     }

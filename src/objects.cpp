@@ -1,5 +1,6 @@
 #include "enum_objects.hpp"
 #include "objects.hpp"
+#include "map.hpp"
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -64,6 +65,11 @@ void Objects::remove(const Type type) {
     assert(bbb && "remove() not given a valid type or type not present");
     if(bbb) m_object.erase(iter);
 }
+
+void Objects::setPositions(Position position) const {
+    
+}
+
 
 
 } //namespace Baba_Is_Us

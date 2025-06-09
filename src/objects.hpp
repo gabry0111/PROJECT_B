@@ -39,6 +39,8 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     bool objectHasType(const Type type) const; // può forse diventare constexpr (solo al runtime a meno di controllare, prima di chiamare la funzione, che il tipo sia valido) 
     void add(const Type word); // può diventare constexpr (solo al runtime)
     void remove(Type type); // come objectHasType()
+    void setPositions(Position) const;
+
 };
 } //namespace Baba_Is_Us
 
