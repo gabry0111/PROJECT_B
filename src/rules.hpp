@@ -11,6 +11,7 @@ Saranno oggetti vettori di tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY
 #define RULES_HPP
 #include "enum_objects.hpp"
 #include "objects.hpp"
+#include "map.hpp"
 #include <tuple>
 #include <cassert>
 
@@ -22,19 +23,19 @@ private :
     std::tuple<Type, Type, Type> m_rule; // vedere differenza tra tuple e array
 public : 
     Rule() = delete; // non si può creare una regola vuota
-    Rule(Objects obj1, Objects obj2, Objects obj3) : m_rule{obj1, obj2, obj3} { // ogni regola deve avere un noun, verb e property/noun 
+    Rule(Type type1, Type type2, Type type3) : m_rule{type1, type2, type3} { // ogni regola deve avere un noun, verb e property/noun 
 
         assert((
             (
-                +obj1.getTypes()[0] > +Type::NOUN_TYPE &&
-                +obj1.getTypes()[0] < +Type::ICON_NOUN_TYPE &&
-                +obj2.getTypes()[0] > +Type::VERB_TYPE &&
-                +obj2.getTypes()[0] < +Type::PROPERTY_TYPE &&
-                +obj3.getTypes()[0] > +Type::PROPERTY_TYPE
+                +type1 > +Type::NOUN_TYPE &&
+                +type1 < +Type::ICON_NOUN_TYPE &&
+                +type2 > +Type::VERB_TYPE &&
+                +type2 < +Type::PROPERTY_TYPE &&
+                +type3 > +Type::PROPERTY_TYPE
             ) || 
             (
-                +obj3.getTypes()[0] > +Type::NOUN_TYPE &&
-                +obj3.getTypes()[0] < +Type::ICON_NOUN_TYPE
+                +type3 > +Type::NOUN_TYPE &&
+                +type3 < +Type::ICON_NOUN_TYPE
             )
         ) && "Rule constructor condition not satisfied");
     }

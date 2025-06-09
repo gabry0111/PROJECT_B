@@ -31,8 +31,8 @@ namespace Baba_Is_Us{
         std::size_t iii{};
         for (auto& rows : new_map_grid) {
             for (auto& eee : rows) {
-                if(+(m_objects[iii].getTypes()[0]) != eee) //se il NOUN_TYPE dell'oggetto nella mappa != corrispondente int di new_grid_map
-                    m_objects[iii].getTypes()[0] = static_cast<Type>(eee);
+                if(+(m_objects[iii/MapSize::height][iii%MapSize::width].getTypes()[0]) != eee) //se il NOUN_TYPE dell'oggetto nella mappa != corrispondente int di new_grid_map
+                    m_objects[iii/MapSize::height][iii%MapSize::width].getTypes()[0] = static_cast<Type>(eee);
                 ++iii;
             }
         }
@@ -41,7 +41,7 @@ namespace Baba_Is_Us{
     
     const Objects& Map::At(Position position) const
     {
-        return m_objects.at(position.second * MapSize::width + position.first); // disegnatelo, è più semplice vederlo
+        return m_objects[position.second][position.first];
     }
 
 
@@ -56,14 +56,16 @@ namespace Baba_Is_Us{
         }
         return positions_with_type;
     }
-
-    constexpr void Map::AddObject(Position position, Type type) {
-        m_objects.at(position.second * MapSize::width + position.first).add(type);
+/*
+    constexpr void Map::addObject(Position position, Type type) {
+        m_objects[position.second][position.first].addType(type);
     }
-    constexpr void Map::RemoveObject(Position position, Type type) {
-        m_objects.at(position.second * MapSize::width + position.first).remove(type);
-    }
+    constexpr void Map::resetObject(Position position) {
+        m_objects[position.second][position.first] = {};
 
+        
+    }
+*/
 
 }
 

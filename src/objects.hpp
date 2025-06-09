@@ -37,8 +37,9 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     std::vector<Type> getTypes() const; // può diventare constexpr
     constexpr bool operator==(const Objects& object) const;
     bool objectHasType(const Type type) const; // può forse diventare constexpr (solo al runtime a meno di controllare, prima di chiamare la funzione, che il tipo sia valido) 
-    void add(const Type word); // può diventare constexpr (solo al runtime)
-    void remove(Type type); // come objectHasType()
+    void addType(const Type word); // può diventare constexpr (solo al runtime)
+    void removeType(Type type); // come objectHasType()
+    void resetObject(); // come objectHasType()
 
 };
 } //namespace Baba_Is_Us

@@ -11,9 +11,9 @@ namespace Baba_Is_Us{
     }
 
     bool Rule::hasType(Type type) const{
-        if (std::get<0>(m_rule).objectHasType(type) ||
-            std::get<1>(m_rule).objectHasType(type) ||
-            std::get<2>(m_rule).objectHasType(type))
+        if (std::get<0>(m_rule) == type ||
+            std::get<1>(m_rule) == type ||
+            std::get<2>(m_rule) == type)
             return true;
         return false;
     }
@@ -48,11 +48,10 @@ namespace Baba_Is_Us{
     
     Type RuleManager::findPlayer() const{
         for (const auto& each_rule : m_rules) {
-            if (std::get<2>(each_rule.m_rule).objectHasType(Type::You)) {
+            if (std::get<2>(each_rule.m_rule) == Type::You) {
 
-                Objects obj {std::cref(std::get<0>(each_rule.m_rule))};
-                if (std::size(obj.getTypes()) != 0) 
-                    return (obj.getTypes())[0];
+                Type type_Player {std::get<0>(each_rule.m_rule)};
+                return type_Player;
             }
         }
         return Type::Void;
@@ -74,7 +73,7 @@ namespace Baba_Is_Us{
             if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
                 assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
                 if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
-                    object.add(type);
+                    object.addType(type);
                     return PlayState::Playing;
                 }
             }
@@ -89,7 +88,7 @@ namespace Baba_Is_Us{
                 if (object.objectHasType(Type::Push)) {
                     return PlayState::Playing;
                 }
-                else {object.remove();}; // rimuovi l'icon grafica da quella posizione
+                else {object.resetObject();}; // rimuovi l'icon grafica da quella posizione
                 return PlayState::Playing;
             case +Type::Launch :
                 // if(posizione di player è sopra l'object che ha property launch(obj2)) allora (position di obj2 +=2 a seconda di dove guarda player) 

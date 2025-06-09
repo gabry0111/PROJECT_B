@@ -32,7 +32,7 @@ using Position = std::pair<std::size_t, std::size_t>;
 class Map{
 private :
 
-    std::vector<std::vector<Objects>> m_objects {};
+    std::vector<std::vector<Objects>> m_objects {}; //modificare tutto 
     bool IsBoundary(std::size_t x, std::size_t y) const;
 
 public:
@@ -48,10 +48,10 @@ public:
     
 
     // aggiungi un oggetto
-    constexpr void AddObject(Position position, Type type);
+    // constexpr void addObject(Position position, Type type);
 
     // rimuovi un oggetto
-    constexpr void RemoveObject(Position position, Type type);
+    // constexpr void resetObject(Position position);
 
     // Quale oggetto c'è in quella posizione?
     // N.B: NON IN MINUSCOLO, è una funzione di vector
