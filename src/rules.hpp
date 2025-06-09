@@ -68,7 +68,7 @@ public :
     // N.B: questa funzione NON si occupa di verificare che due parole logiche siano vicine
     // Se un oggetto ha più tipi, allora fare un ciclo che chiama conditions() per decidere se l'azione è legale.
     // le regole si leggono da sx a dx e da alto a basso
-    bool conditions( Objects& object, const Objects& second) const; // restituisce vero se è andata a buon fine; può forse diventare constexpr (non è finita)
+    PlayState conditions( Objects& object, const Objects& second) const; // restituisce la condizione di gioco; può forse diventare constexpr (non è finita)
 };
 }
 

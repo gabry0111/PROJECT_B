@@ -67,7 +67,7 @@ namespace Baba_Is_Us{
     }
     */
 
-    bool RuleManager::conditions(Objects& object, const Objects& second) const{
+    PlayState RuleManager::conditions(Objects& object, const Objects& second) const{
         std::vector<Type> second_types {second.getTypes()};
         for(const auto type : second_types){
             // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
@@ -75,51 +75,46 @@ namespace Baba_Is_Us{
                 assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
                 if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
                     object.add(type);
-                    return true;
+                    return PlayState::Playing;
                 }
             }
             // non ci interessa degli ICON_NOUN_TYPE
-            else if(+Type::VERB_TYPE < +type && +type < +Type::PROPERTY_TYPE)
-                switch (type) { // ???
-                case Type::And:
-                    return true;
-                case Type::Is:
-                    return true;
-                default:
-                    return false;
-                }
+            // non ci interessa gei verb type che creeranno una regola. Ci penserà un'altra funzione
+
             // Gli unici casi rimasti sono: i PropertyType e nessun caso è andato a buon fine (tra cui se second_types == Type::ICON_NOUN_TYPE e simili).
             // Quindi posso confrontare direttamente i Type e mettere come default il caso in cui niente è andato a buon fine,
             // tanto non c'è possibilità che questo switch sia saltato, ed è l'ultimo a venire controllato
-            switch (type) { // se il tipo dell'oggetto target è ... allora fai ... e ritorna ...
-            case Type::Hot:
-                if (object.objectHasType(Type::Push)) ; //use movement() per spostare l'oggetto hot (N.B: se ci sono tanti casi così, usa goto...)
-                else // rimuovi l'icon grafica da quella posizione
-                return true;
-            case Type::Launch :
+            switch (+type > +Type::PROPERTY_TYPE) { // se il tipo dell'oggetto target è ... allora fai ... e ritorna ...
+            case +Type::Hot:
+                if (object.objectHasType(Type::Push)) {
+                    return PlayState::Playing;
+                }
+                else {object.remove();}; // rimuovi l'icon grafica da quella posizione
+                return PlayState::Playing;
+            case +Type::Launch :
                 // if(posizione di player è sopra l'object che ha property launch(obj2)) allora (position di obj2 +=2 a seconda di dove guarda player) 
-                return true;
-            case Type::Move : // che differenza c'è tra Move e Push?
-                return true;
-            case Type::Open : // ???
+                return PlayState::Playing;
+            case +Type::Move : // che differenza c'è tra Move e Push?
+                return PlayState::Playing;
+            case +Type::Open : // ???
                 
-                return true;
-            case Type::Push : // ???
+                return PlayState::Playing;
+            case +Type::Push : // ???
                 
-                return true;
-            case Type::Quantum :
-                return true;
-            case Type::Shut :
-                return true;
-            case Type::Stop :
-                return true;
-            case Type::Win :
+                return PlayState::Playing;
+            case +Type::Quantum :
+                return PlayState::Playing;
+            case +Type::Shut :
+                return PlayState::Playing;
+            case +Type::Stop :
+                return PlayState::Playing;
+            case +Type::Win :
                 
-                return true;
-            case Type::You :
-                return true;
+                return PlayState::Playing;
+            case +Type::You :
+                return PlayState::Playing;
             default:
-                return false;
+                return PlayState::Invalid;
             }
         }
         throw std::runtime_error("RuleManager::conditions nessun caso è andato a buon fine");

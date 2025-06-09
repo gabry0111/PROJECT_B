@@ -32,12 +32,12 @@ using Position = std::pair<std::size_t, std::size_t>;
 class Map{
 private :
 
-    std::vector<Objects> m_objects {};
+    std::vector<std::vector<Objects>> m_objects {};
     bool IsBoundary(std::size_t x, std::size_t y) const;
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    constexpr Map();
+    Map(const std::vector<std::vector<int>>& new_map_grid);
 
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
