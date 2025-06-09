@@ -73,10 +73,10 @@ constexpr Type intToType(int value) {
 }
 
 enum class PlayState {
-  Invalid, // se niente è 'You' (=il gioco è fermo per sempre) 
+  Invalid, // se un'azione non è andata a buon fine
   Playing, // per una volta lo posso dire: è ovvio
   Won, // 'You' ha toccato 'Win'
-  Reset, // se si vuole resettare il livello (da togliere?)
+  Lose, // se niente è 'You' (=il gioco è fermo per sempre) o 'You' è morto 
 };
 
 enum class Direction {
