@@ -42,7 +42,7 @@ constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& obj
 }
 */
 
-void Objects::add(const Type word) {
+void Objects::addType(const Type word) {
     bool is_valid_type = (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
                           word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
 
@@ -55,7 +55,7 @@ void Objects::add(const Type word) {
 }
 
 
-void Objects::remove(const Type type) {
+void Objects::removeType(const Type type) {
     auto iter {std::find(m_object.begin(), m_object.end(), type)};
     bool bbb{type != Type::NOUN_TYPE 
         && type != Type::ICON_NOUN_TYPE 
@@ -66,7 +66,10 @@ void Objects::remove(const Type type) {
     if(bbb) m_object.erase(iter);
 }
 
-
+constexpr void Objects::resetObject() {
+    assert(m_object[0] == intToType(0) && "resetObject() doesn't work like intended");
+    m_object.clear();
+}
 
 } //namespace Baba_Is_Us
 /*
