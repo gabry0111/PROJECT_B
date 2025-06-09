@@ -11,6 +11,8 @@
 - gestisce il movimento degli oggetti 
 - 
 */
+
+
 namespace Baba_Is_Us{
     
     void Game::update(sf::RenderWindow &window){
@@ -29,9 +31,9 @@ namespace Baba_Is_Us{
                             window.close();
                             break;
                         case sf::Keyboard::W:
-                            //movement_check(player.getPosition(), Direction::Up)
-                            //movement(player.getPosition())
-                            //rotate(player.getPosition(), Direction::Up)
+                            //movement_check(player.getPosition(), Direction::Up);
+                            //movement(player.getPosition());
+                            //rotate(player.getPosition(), Direction::Up);
                             //checkRules 
 
                             break;
@@ -62,34 +64,66 @@ namespace Baba_Is_Us{
         window.display();
     }
 
-    std::pair<int, int> target; //tile that the player wants to move into
+    Position target;        //tile that the player wants to move into
+    Position next_target;   //tile after the target, in case something gets pushed
 
-    bool movement_check(Map map, std::pair<int, int> &player_position, Direction direction){
-        switch(direction){
+    bool movement_check(Map &map, Position &player_position, Direction direction){
+        switch(direction){     
             case Direction::Up:
+                //if(player_position.first==0) return false;
                 target.first=player_position.first-1;
                 target.second=player_position.second;
+
+                //if (target.first==0) return true; 
+                next_target.first=player_position.first-2;
+                next_target.second=player_position.second;
                 break;
             case Direction::Left:
+                //if(player_position.second==0) return false;
                 target.first=player_position.first;
                 target.second=player_position.second-1;
+
+                //if(target.second==0) return false;
+                next_target.first=player_position.first;
+                next_target.second=player_position.second-2;
                 break;
             case Direction::Down:
+                //if(player_position.first==15) return false;
                 target.first=player_position.first+1;
                 target.second=player_position.second;
+
+                //if (target.first==15) return true; 
+                next_target.first=player_position.first+2;
+                next_target.second=player_position.second;
                 break;
             case Direction::Right:
+                //if(player_position.second==15) return false;
                 target.first=player_position.first;
                 target.second=player_position.second+1;
+                
+                //if(target.second==15) return false;
+                next_target.first=player_position.first;
+                next_target.second=player_position.second+2;
                 break;
             default: break;
         }
-        if (map.At(target).objectHasType(Type::Push))   
+        Objects temp1 = map.At(target);
+        Objects temp2 = map.At(next_target);
+        if (temp1.objectHasType(Type::Push))
+            if(temp2.objectHasType(Type::Move))
+                return true;
+        else if (temp1.objectHasType(Type::Move))
             return true;
         return false;
+        /* what if
+         int a=static_cast<int> (temp.objectHasType(Type::Push) );
+         int b=static_cast<int> (temp.objectHasType(Type::Move) );
+         if (a+b==2)
+            return true;
+        */
 
     }
-    void rotate(std::pair<int, int> &player_position, Direction direction){
+    void rotate(Position &player_position, Direction direction){
         player_position.first = player_position.first;
         player_position.second = player_position.second;
         switch(direction){
@@ -102,7 +136,7 @@ namespace Baba_Is_Us{
             default: break;
         }
     }
-    bool movement(Map map, std::pair<int, int> &position, Direction direction){
+    bool movement(Map &map, Position &position, Direction direction){
 
         /*  
         divide movement in 3rds, for each frame of the animation:
@@ -111,7 +145,7 @@ namespace Baba_Is_Us{
         SI PUò FARE ANCHE PER OGGETTI CHE DEVONO ESSERE DISTRUTTI?
         COME FARE A VEDERE DOVE STA GUARDANDO PLAYER? (PER ROCK) (togliamo launch e mettiamoci gradino?)
         */ 
-
+        
         // 1/3
         
         // 2/3 
@@ -120,8 +154,10 @@ namespace Baba_Is_Us{
 
         position.first = target.first;
         position.second = target.second;
+        map.At(target).setPositions(target);
         direction = Direction::Up;
         if (direction==Direction::Down) return false;
         return true;
     }
+    // check se intorno a target delle rules sono state cambiate, in tal caso reverse the effects of that rule
 }
