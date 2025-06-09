@@ -4,6 +4,8 @@
 #include "enum_objects.hpp"
 #include "objects.hpp"
 
+using Position = std::pair<std::size_t, std::size_t>;
+
 namespace MapSize {
     constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
     constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
@@ -27,7 +29,6 @@ namespace Baba_Is_Us {
         "/Users/lele/progetto/PROJECT_B/png_PROGETTO/ROCK_spritesheet.png",
         "/Users/lele/progetto/PROJECT_B/png_PROGETTO/WALL_spritesheet.png" 
     };
-using Position = std::pair<std::size_t, std::size_t>;
 
 class Map{
 private :
@@ -37,26 +38,29 @@ private :
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    Map(const std::vector<std::vector<int>>& new_map_grid);
+    Map(const std::vector<std::vector<int>>& );
+
+    std::vector<std::vector<int>> grid;
 
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
-    void load(const std::vector<std::vector<int>>& new_map_grid); // può diventare constexpr
+    void load(const std::vector<std::vector<int>>& ); // può diventare constexpr
+
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
-    void Reset(const std::array<std::array<int,16>,16> new_map_grid); // può diventare constexpr
+    void Reset(const std::array<std::array<int,16>,16> ); // può diventare constexpr
     
 
     // aggiungi un oggetto
-    constexpr void AddObject(Position position, Type type);
+    constexpr void AddObject(Position, Type);
 
     // rimuovi un oggetto
-    constexpr void RemoveObject(Position position, Type type);
+    constexpr void RemoveObject(Position, Type);
 
     // Quale oggetto c'è in quella posizione?
     // N.B: NON IN MINUSCOLO, è una funzione di vector
-    Objects& At(Position position);
-    const Objects& At(Position position) const; // NON può diventare constexpr (m_objects è vector)
+    Objects& At(Position);
+    const Objects& At(Position) const; // NON può diventare constexpr (m_objects è vector)
 
     // restituisce le posizioni di uno specifico tipo
     std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)

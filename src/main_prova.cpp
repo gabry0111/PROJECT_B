@@ -10,6 +10,8 @@ using namespace Baba_Is_Us;
                         ///////////////////////
                         // ----- METODO SPRITES ----- //
 
+
+
 int main() {
     constexpr int TILE_SIZE = 32;
     constexpr int FRAME_TIME_MS = 150;
@@ -22,20 +24,20 @@ int main() {
 
     // load textures e tieni conto, per ogni indice, della quantità di frame
     std::cout<<"Loading textures...\n";
-    for (std::size_t i{}; i < tilePaths.size(); ++i) {
+    for (auto path : tilePaths) {
         sf::Texture texture;
-        if (!texture.loadFromFile(tilePaths[i])) {
-            std::cerr << "Failed to load " << tilePaths[i] << "\n";
+        if (!texture.loadFromFile(path)) {
+            std::cerr << "Failed to load " << path << "\n";
             continue;
         }
 
         int width = static_cast<int>(texture.getSize().x); // 72
         int frames = std::max(1, width / TILE_SIZE);       // 3
-        textures.emplace_back(texture);
+        textures.emplace_back(texture)   ;
         frameCounts.emplace_back(frames);
         current_frame_per_tile_ID.push_back(0); // ogni tile ID partirà dal frame n° 0
     }
-    
+
     //map_grid ha i valori (enum type) di ogni oggetto caricato nella rispettiva cella
     std::vector<std::vector<int>> map_grid = { // può diventare constexpr
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -55,6 +57,7 @@ int main() {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     };
+    Map map{map_grid};
     // converti le tileID in sprites
     std::vector<sf::Sprite> tileSprites{};
 
@@ -88,7 +91,7 @@ int main() {
 
     while (window.isOpen()) {
         game.update(window);
-
+        //
         if (clock.getElapsedTime().asMilliseconds() >= FRAME_TIME_MS) {
 
             //change the current frame of every individual texture
@@ -106,7 +109,7 @@ int main() {
             int tileID {map_grid[i/MapSize::height][i%MapSize::width]};
             int frame = current_frame_per_tile_ID[static_cast<size_t> (tileID)];
             tileSprites[i].setTextureRect({frame * TILE_SIZE, 0,TILE_SIZE, TILE_SIZE});
-            // se vogliamo ruotare l'oggetto, aggiungere funzioni qui. (con switch per comandi WASD?)
+            
         }
         
         game.render(window, tileSprites);
