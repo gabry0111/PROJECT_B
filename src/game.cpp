@@ -84,9 +84,8 @@ namespace Baba_Is_Us{
                 break;
             default: break;
         }
-        if (map.RM(map.At(target)).objectHasProperty(Type::Push))   
-        // non mi piace molto che si chiami una funzione di map 2 volte nella stessa riga ma idk come altro fare
-            return true; // check the type of the object in that position
+        if (map.At(target).objectHasType(Type::Push))   
+            return true;
         return false;
 
     }

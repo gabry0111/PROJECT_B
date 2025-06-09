@@ -17,7 +17,7 @@ namespace Baba_Is_Us{
     }
     
     void Map::load(const std::vector<std::vector<int>>& new_map_grid) {
-        static_assert(MapSize::height * MapSize::width == new_map_grid.size() && "Map::load(): sizes not equal");
+        // static_assert(MapSize::height * MapSize::width == new_map_grid.size() && "Map::load(): sizes not equal");
         if(MapSize::height * MapSize::width != new_map_grid.size())
             throw std::runtime_error("Map::load() sizes not equal"); // perché lo stesso errore due volte?
     
