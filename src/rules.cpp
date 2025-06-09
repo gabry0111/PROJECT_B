@@ -67,66 +67,61 @@ namespace Baba_Is_Us{
     }
     */
 
-    bool RuleManager::conditions(Objects& object, const Type second) const{
-
-        if(+Type::NOUN_TYPE < +second && (+second) < +Type::ICON_NOUN_TYPE) { // deve essere valido Baba is you, Baba is wall
-            object.add(second);
-            return true;
+    bool RuleManager::conditions(Objects& object, const Objects& second) const{
+        std::vector<Type> second_types {second.getTypes()};
+        for(const auto type : second_types){
+            // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
+            if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
+                assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
+                if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
+                    object.add(type);
+                    return true;
+                }
+            }
+            // non ci interessa degli ICON_NOUN_TYPE
+            else if(+Type::VERB_TYPE < +type && +type < +Type::PROPERTY_TYPE)
+                switch (type) { // ???
+                case Type::And:
+                    return true;
+                case Type::Is:
+                    return true;
+                default:
+                    return false;
+                }
+            // Gli unici casi rimasti sono: i PropertyType e nessun caso è andato a buon fine (tra cui se second_types == Type::ICON_NOUN_TYPE e simili).
+            // Quindi posso confrontare direttamente i Type e mettere come default il caso in cui niente è andato a buon fine,
+            // tanto non c'è possibilità che questo switch sia saltato, ed è l'ultimo a venire controllato
+            switch (type) { // se il tipo dell'oggetto target è ... allora fai ... e ritorna ...
+            case Type::Hot:
+                if (object.objectHasType(Type::Push)) ; //use movement() per spostare l'oggetto hot (N.B: se ci sono tanti casi così, usa goto...)
+                else // rimuovi l'icon grafica da quella posizione
+                return true;
+            case Type::Launch :
+                // if(posizione di player è sopra l'object che ha property launch(obj2)) allora (position di obj2 +=2 a seconda di dove guarda player) 
+                return true;
+            case Type::Move : // che differenza c'è tra Move e Push?
+                return true;
+            case Type::Open : // ???
+                
+                return true;
+            case Type::Push : // ???
+                
+                return true;
+            case Type::Quantum :
+                return true;
+            case Type::Shut :
+                return true;
+            case Type::Stop :
+                return true;
+            case Type::Win :
+                
+                return true;
+            case Type::You :
+                return true;
+            default:
+                return false;
+            }
         }
-
-        if(+Type::ICON_NOUN_TYPE < +second && +second < +Type::VERB_TYPE)
-        switch (second) { // ???
-        case Type::Icon_Baba :
-            break;
-        case Type::Icon_Door:
-            break;
-        default:
-            break;
-        }
-
-        if(+Type::VERB_TYPE < +second && +second < +Type::PROPERTY_TYPE)
-        switch (second) { // ???
-        case Type::And:
-            break;
-        case Type::Is:
-            break;
-        default:
-            break;
-        }
-        // Gli unici casi rimasti sono: i PropertyType e nessun caso è andato a buon fine (tra cui se second == Type::ICON_NOUN_TYPE e simili).
-        // Quindi posso confrontare direttamente i Type e mettere come default il caso in cui niente è andato a buon fine,
-        // tanto non c'è possibilità che questo switch sia saltato, ed è l'ultimo a venire controllato
-        switch (second) { // se il tipo dell'oggetto target è ... allora fai ... e ritorna ...
-        case Type::Hot:
-            if (object.objectHasType(Type::Push)) ; //use movement() per spostare l'oggetto hot (N.B: se ci sono tanti casi così, usa goto...)
-            else // rimuovi l'icon grafica da quella posizione
-            break;
-        case Type::Launch :
-            // if(posizione di player è sopra l'object che ha property launch(obj2)) allora (position di obj2 +=2 a seconda di dove guarda player) 
-            break;
-        case Type::Move : // che differenza c'è tra Move e Push?
-            break;
-        case Type::Open : // ???
-            
-            break;
-        case Type::Push : // ???
-            
-            break;
-        case Type::Quantum :
-            break;
-        case Type::Shut :
-            break;
-        case Type::Stop :
-            break;
-        case Type::Win :
-            
-            break;
-        case Type::You :
-            break;
-        default:
-            break;
-        }
-
         throw std::runtime_error("RuleManager::conditions nessun caso è andato a buon fine");
     }
 
