@@ -32,8 +32,8 @@ namespace Baba_Is_Us{
                             break;
                         case sf::Keyboard::W:
                             //movement_check(player.getPosition(), Direction::Up);
-                            //movement(player.getPosition());
                             //rotate(player.getPosition(), Direction::Up);
+                            //movement(player.getPosition());
                             //checkRules 
 
                             break;
@@ -54,6 +54,7 @@ namespace Baba_Is_Us{
             
                 
             }
+
             
     }
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
@@ -66,6 +67,9 @@ namespace Baba_Is_Us{
 
     Position target;        //tile that the player wants to move into
     Position next_target;   //tile after the target, in case something gets pushed
+
+    std::vector<Position> targets;
+    std::vector<Position> next_targets;
 
     bool movement_check(Map &map, Position &player_position, Direction direction){
         switch(direction){     
@@ -123,6 +127,81 @@ namespace Baba_Is_Us{
         */
 
     }
+    //overload
+    bool movement_check(Map &map, std::vector<Position> &player_positions, Direction directions){
+        switch(directions){     
+            case Direction::Up:
+                //if(player_position.first==0) return false;
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    targets[i].first=player_positions[i].first-1;
+                    targets[i].second=player_positions[i].second;
+                }
+                
+
+                //if (target.first==0) return true; 
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    next_targets[i].first=player_positions[i].first-2;
+                    next_targets[i].second=player_positions[i].second;
+                }
+                
+                break;
+            case Direction::Left:
+                //if(player_position.second==0) return false;
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    targets[i].first=player_positions[i].first;
+                    targets[i].second=player_positions[i].second-1;
+                }
+
+                //if(target.second==0) return false;
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    next_targets[i].first=player_positions[i].first;
+                    next_targets[i].second=player_positions[i].second-2;
+                }
+                break;
+            case Direction::Down:
+                //if(player_position.first==15) return false;
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    targets[i].first=player_positions[i].first+1;
+                    targets[i].second=player_positions[i].second;
+                }
+
+                //if (target.first==15) return true; 
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    next_targets[i].first=player_positions[i].first+2;
+                    next_targets[i].second=player_positions[i].second;
+                }
+                break;
+            case Direction::Right:
+                //if(player_position.second==15) return false;
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    targets[i].first=player_positions[i].first;
+                    targets[i].second=player_positions[i].second+1;
+                }
+                
+                //if(target.second==15) return false;
+                for (size_t i={0}; i<player_positions.size(); ++i){
+                    next_targets[i].first=player_positions[i].first;
+                    next_targets[i].second=player_positions[i].second+2;
+                }
+                break;
+            default: break;
+        }
+        Objects temp1 = map.At(target);
+        Objects temp2 = map.At(next_target);
+        if (temp1.objectHasType(Type::Push))
+            if(temp2.objectHasType(Type::Move))
+                return true;
+        else if (temp1.objectHasType(Type::Move))
+            return true;
+        return false;
+        /* what if
+         int a=static_cast<int> (temp.objectHasType(Type::Push) );
+         int b=static_cast<int> (temp.objectHasType(Type::Move) );
+         if (a+b==2)
+            return true;
+        */
+
+    }
     void rotate(Position &player_position, Direction direction){
         player_position.first = player_position.first;
         player_position.second = player_position.second;
@@ -136,12 +215,13 @@ namespace Baba_Is_Us{
             default: break;
         }
     }
-    bool movement(Map &map, Position &position, Direction direction){
+
+    bool movement(Map &map, Position &position){
 
         /*  
         divide movement in 3rds, for each frame of the animation:
             - change the player's sprite position by 1/3 towards the target's position
-            - if target is pushable, call movement(target, direction)
+            - if target is pushable, game::update chiamerà anche movement(target, direction)
         SI PUò FARE ANCHE PER OGGETTI CHE DEVONO ESSERE DISTRUTTI?
         COME FARE A VEDERE DOVE STA GUARDANDO PLAYER? (PER ROCK) (togliamo launch e mettiamoci gradino?)
         */ 
@@ -151,13 +231,34 @@ namespace Baba_Is_Us{
         // 2/3 
 
         // 3/3 
-
         position.first = target.first;
         position.second = target.second;
-        map.At(target).setPositions(target);
-        direction = Direction::Up;
-        if (direction==Direction::Down) return false;
+    
         return true;
     }
+    //overload
+    bool movement(Map &map, std::vector<Position> &positions){
+
+        /*  
+        divide movement in 3rds, for each frame of the animation:
+            - change the player's sprite position by 1/3 towards the target's position
+            - if target is pushable, game::update chiamerà anche movement(target, direction)
+        SI PUò FARE ANCHE PER OGGETTI CHE DEVONO ESSERE DISTRUTTI?
+        COME FARE A VEDERE DOVE STA GUARDANDO PLAYER? (PER ROCK) (togliamo launch e mettiamoci gradino?)
+        */ 
+        
+        // 1/3
+        
+        // 2/3 
+
+        // 3/3 
+        for (size_t i={0}; i<positions.size(); ++i){
+            positions[i].first = targets[i].first;
+            positions[i].second = targets[i].second;
+        }
+    
+        return true;
+    }
+
     // check se intorno a target delle rules sono state cambiate, in tal caso reverse the effects of that rule
 }

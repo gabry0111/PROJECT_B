@@ -19,7 +19,7 @@ bool Objects::objectHasType(const Type type) const{
         && type != Type::PROPERTY_TYPE 
         && "Objects::objectHasType() not given a valid type"); // kinda inutile
     if(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE)
-        // throw std::runtime_error("objectHasType() not given a valid type");
+        throw std::runtime_error("objectHasType() not given a valid type");
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
 
@@ -64,10 +64,6 @@ void Objects::remove(const Type type) {
         && iter == m_object.end()};
     assert(bbb && "remove() not given a valid type or type not present");
     if(bbb) m_object.erase(iter);
-}
-
-void Objects::setPositions(Position position) const {
-    
 }
 
 

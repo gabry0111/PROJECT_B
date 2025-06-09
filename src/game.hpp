@@ -12,9 +12,11 @@ namespace Baba_Is_Us{
             void update(sf::RenderWindow &);
             void render(sf::RenderWindow &, std::vector<sf::Sprite>);
             Objects getObject(Position);
-            bool movement_check(Map, std::pair<int, int>, Direction); // aggiunto che riceva anche la mappa per controllarne gli objects
-            void rotate(std::pair<int, int>, Direction);
-            void movement(Map, std::pair<int, int>, Direction);
+            bool movement_check(Map, Position, Direction); // aggiunto che riceva anche la mappa per controllarne gli objects
+            bool movement_check(Map, std::vector<Position>, Direction);
+            void rotate(Position, Direction);
+            void movement(Map, Position, Direction);
+            void movement(Map, std::vector<Position>);
         };
 }
 
