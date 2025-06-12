@@ -15,8 +15,10 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Lava,
   Rock,  // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per 
          // poterla lanciare(con tasto space premuto e direzione)
+  Sink,
   Wall,  
-  Block, // per scriverci le parole (Baba, Is, Hot...) sopra
+  Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica eccezione al tipico m_object vector<Type> perché sarà del tipo
+         // [0] = Block, [1] = NOUN_TYPE, [2] (da vedere se sarà così) = ICON_NOUN_TYPE
   Door,  // apribile automaticamente azionando ingranaggio/leva
   Gear,  // fisso
   Lever,  // ?trasportabile?
@@ -39,6 +41,7 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Is,
 
   PROPERTY_TYPE,
+  Float, // per Sink
   Hot,
   Launch, // launchable
   Move, // = Player può camminare sopra quel tipo

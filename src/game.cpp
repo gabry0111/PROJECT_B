@@ -111,8 +111,8 @@ namespace Baba_Is_Us{
                 break;
             default: break;
         }
-        Objects temp1 = map.At(target);
-        Objects temp2 = map.At(next_target);
+        Objects temp1 = map.At(target.second, target.first);
+        Objects temp2 = map.At(next_target.second, next_target.first);
         if (temp1.objectHasType(Type::Push))
             if(temp2.objectHasType(Type::Move))
                 return true;
@@ -186,8 +186,8 @@ namespace Baba_Is_Us{
                 break;
             default: break;
         }
-        Objects temp1 = map.At(target);
-        Objects temp2 = map.At(next_target);
+        Objects temp1 = map.At(target.second, target.first);
+        Objects temp2 = map.At(next_target.second, next_target.first);
         if (temp1.objectHasType(Type::Push))
             if(temp2.objectHasType(Type::Move))
                 return true;

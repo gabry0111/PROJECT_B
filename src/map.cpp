@@ -19,7 +19,10 @@ namespace Baba_Is_Us{
 
         for (auto& rows : grid) {
             for (auto& eee : rows) {
-                m_objects.emplace_back(std::vector<Type>{static_cast<Type>(eee)});
+                m_objects.emplace_back(std::vector<Type>{static_cast<Type>(eee)}); 
+                // aggiungere la logica per attributi di default 
+                // e.g. Block ha per elementi [0] = Block (già presente), [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE (grafica del testo "Baba") e dopo = Push
+                // e.g Flower ha [0] = Flower, [1] = Move ...
             }
         }
     }
@@ -40,9 +43,9 @@ namespace Baba_Is_Us{
     }
 
     
-    const Objects& Map::At(Position position) const
+    const Objects& Map::At(std::size_t y, std::size_t x) const
     {
-        return m_objects[position.second][position.first];
+        return m_objects[y][x];
     }
 
 
@@ -50,7 +53,7 @@ namespace Baba_Is_Us{
         std::vector<Position> positions_with_type {};
         for (std::size_t x = 0; x < MapSize::height; ++x){
             for (std::size_t y = 0; y < MapSize::width; ++y){
-                if (At(Position(x, y)).objectHasType(type)){
+                if (At(x, y).objectHasType(type)){
                     positions_with_type.emplace_back(Position(x, y));
                 }
             }
@@ -63,8 +66,6 @@ namespace Baba_Is_Us{
     }
     constexpr void Map::resetObject(Position position) {
         m_objects[position.second][position.first] = {};
-
-        
     }
 */
 

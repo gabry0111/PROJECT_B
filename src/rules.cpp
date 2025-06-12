@@ -30,6 +30,47 @@ namespace Baba_Is_Us{
         }
     }
     
+    void RuleManager::initializem_rules() {
+        m_rules.clear();
+        for (auto pos : m_map.getPositions(Type::Block)) {
+            // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] (da vedere se sarà così) = ICON_NOUN_TYPE
+            // check orizzontale
+            if (m_map.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
+            } else {
+                std::vector<Type> word1 {m_map.At(pos.second, pos.first).getTypes()};
+                std::vector<Type> word2 {m_map.At(pos.second + 1, pos.first).getTypes()};
+                std::vector<Type> word3 {m_map.At(pos.second + 2, pos.first).getTypes()};
+                if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
+                    if(+word1[1] < +Type::ICON_NOUN_TYPE && // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                        +word2[1] > +Type::VERB_TYPE &&
+                        +word2[1] < +Type::PROPERTY_TYPE &&
+                        +word3[1] > +Type::PROPERTY_TYPE) {
+                            Rule new_rule {word1[1], word2[1], word3[1]};
+                            addRule(new_rule);
+                    }
+                }
+            }
+            //check verticale
+            if (m_map.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
+            } else {
+                std::vector<Type> word1 {m_map.At(pos.second, pos.first).getTypes()};
+                std::vector<Type> word2 {m_map.At(pos.second, pos.first + 1).getTypes()};
+                std::vector<Type> word3 {m_map.At(pos.second, pos.first + 2).getTypes()};
+                if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
+                    if(+word1[1] < +Type::ICON_NOUN_TYPE && // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                        +word2[1] > +Type::VERB_TYPE &&
+                        +word2[1] < +Type::PROPERTY_TYPE &&
+                        +word3[1] > +Type::PROPERTY_TYPE) {
+                            Rule new_rule {word1[1], word2[1], word3[1]};
+                            addRule(new_rule);
+                    }
+                }
+            }
+        }
+    }
+
+    // void RuleManager::movedBlock()
+
     constexpr void RuleManager::clearRules(){
         m_rules.clear();
     }
@@ -66,7 +107,7 @@ namespace Baba_Is_Us{
     }
     */
 
-    PlayState RuleManager::conditions(Objects& object, const Objects& second) const{
+    PlayState RuleManager::conditions(Objects& object, Objects& second) const{
         std::vector<Type> second_types {second.getTypes()};
         for(const auto type : second_types){
             // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
@@ -76,6 +117,7 @@ namespace Baba_Is_Us{
                     object.addType(type);
                     return PlayState::Playing;
                 }
+                else {std::iter_swap(std::find(object.getTypes().begin(), object.getTypes().end(), type), object.getTypes().end() - 1);}
             }
             // non ci interessa degli ICON_NOUN_TYPE
             // non ci interessa gei verb type che creeranno una regola. Ci penserà un'altra funzione
@@ -84,33 +126,51 @@ namespace Baba_Is_Us{
             // Quindi posso confrontare direttamente i Type e mettere come default il caso in cui niente è andato a buon fine,
             // tanto non c'è possibilità che questo switch sia saltato, ed è l'ultimo a venire controllato
             switch (+type > +Type::PROPERTY_TYPE) { // se il tipo dell'oggetto target è ... allora fai ... e ritorna ...
-            case +Type::Hot:
-                if (object.objectHasType(Type::Push)) {
+            case +Type::Hot :
+                if (second.objectHasType(Type::Push)) {
                     return PlayState::Playing;
                 }
-                else {object.resetObject();}; // rimuovi l'icon grafica da quella posizione
+                else {object.resetObject();}; 
                 return PlayState::Playing;
-            case +Type::Launch :
+            
+            case +Type::Launch : // Lo togliamo? // cosa fare se un oggetto cammina sopra un altro:
+                // vedere se è già presente un oggetto; 
                 // if(posizione di player è sopra l'object che ha property launch(obj2)) allora (position di obj2 +=2 a seconda di dove guarda player) 
                 return PlayState::Playing;
-            case +Type::Move : // che differenza c'è tra Move e Push?
+            
+            case +Type::Move : // ???
                 return PlayState::Playing;
+            
             case +Type::Open : // ???
-                
                 return PlayState::Playing;
+            
             case +Type::Push : // ???
-                
                 return PlayState::Playing;
-            case +Type::Quantum :
+            
+            case +Type::Quantum : // Lo togliamo?
                 return PlayState::Playing;
-            case +Type::Shut :
+            
+            case +Type::Shut : // Lo togliamo?
                 return PlayState::Playing;
+
+            case +Type::Sink :
+                if (object.objectHasType(Type::Float)) {
+                    second.resetObject();
+                    // in teoria si dovrebbe vedere solo la sprite dell'oggetto, senza essere un oggetto fisico?
+                    // oppure scompaiono entrambi
+                    object.resetObject();
+                    return PlayState::Playing;
+                }
+                else {object.resetObject();}
+                return PlayState::Playing;
+
             case +Type::Stop :
-                return PlayState::Playing;
+                if(second.objectHasType(Type::Push))
+                    return PlayState::Playing;
+                return PlayState::Invalid;
             case +Type::Win :
-                
-                return PlayState::Playing;
-            case +Type::You :
+                return PlayState::Won;
+            case +Type::You : // ???
                 return PlayState::Playing;
             default:
                 return PlayState::Invalid;
