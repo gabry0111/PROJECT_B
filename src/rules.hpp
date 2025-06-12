@@ -30,15 +30,16 @@ public :
                 +type1 > +Type::NOUN_TYPE &&
                 +type1 < +Type::ICON_NOUN_TYPE &&
                 +type2 > +Type::VERB_TYPE &&
-                +type2 < +Type::PROPERTY_TYPE &&
-                +type3 > +Type::PROPERTY_TYPE
-            ) || 
+                +type2 < +Type::PROPERTY_TYPE 
+            )&& +type3 > +Type::PROPERTY_TYPE
+             || 
             (
                 +type3 > +Type::NOUN_TYPE &&
                 +type3 < +Type::ICON_NOUN_TYPE
             )
-        ) && "Rule constructor condition not satisfied");
+        ) && "Rule constructor condition not satisfied");   
     }
+
     friend class RuleManager;
     friend bool operator==(const Rule& rhs, const Rule& lhs); // per algoritmi tipo find(), può forse diventare constexpr (dipende da std::tuple)
     bool hasType(Type type) const; // può diventare constexpr (dipende da objectHasType())
@@ -47,18 +48,19 @@ public :
 // idea: un singolo oggetto che gestisce tutte le regole
 class RuleManager{
 private :
-    std::vector<Rule> m_rules;
+    Map m_map;
+    std::vector<Rule> m_rules{};
 
 public :
     void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
     void removeRule(const Rule& rule); // come addRule()
-    void initializem_rules(); // chiamata all'inizio, controlla tutte le griglie e crea le regole iniziali
+    constexpr void clearRules(); // forse non serve
     // chiamata quando una parola logica è mossa, controlla la vecchia posizione della regola e 
     // vede se era attaccata a altre parole logiche e modifica m_rules.
-    void parseRule(); 
-    constexpr void clearRules();
+    void initializem_rules(); // N.B: le regole si creeranno solo da sx a dx e da alto a basso
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
     //N.B: se m_rules cambia, diventano dangling references
+    void movedBlock(); // gestisce cosa succede alle regole se è mosso un Block; sarà chiamata in conditions
     constexpr std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
     // std::size_t GetNumRules() const; è inutile. guarda dove viene usato...
     Type findPlayer() const; // può diventare constexpr (dipende da objectHasType())
@@ -69,7 +71,7 @@ public :
     // N.B: questa funzione NON si occupa di verificare che due parole logiche siano vicine
     // Se un oggetto ha più tipi, allora fare un ciclo che chiama conditions() per decidere se l'azione è legale.
     // le regole si leggono da sx a dx e da alto a basso
-    PlayState conditions( Objects& object, const Objects& second) const; // restituisce la condizione di gioco; può forse diventare constexpr (non è finita)
+    PlayState conditions( Objects& object, Objects& second) const; // restituisce la condizione di gioco; può forse diventare constexpr (non è finita)
 };
 }
 

@@ -39,7 +39,7 @@ costruttore avviene al runtime) che l'oggetto sia valido per essere stampato a s
     bool objectHasType(const Type type) const; // può forse diventare constexpr (solo al runtime a meno di controllare, prima di chiamare la funzione, che il tipo sia valido) 
     void addType(const Type word); // può diventare constexpr (solo al runtime)
     void removeType(Type type); // come objectHasType()
-    void resetObject(); // come objectHasType()
+    void resetObject(); // resetta Object (che è vector<Type>) a size 0, ma capacity invariata; come objectHasType()
 
 };
 } //namespace Baba_Is_Us
