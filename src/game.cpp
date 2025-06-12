@@ -14,7 +14,14 @@
 
 
 namespace Baba_Is_Us{
-    
+    std::vector<Position> player {}; //player's position(s)
+
+    Position target;        //tile that the player wants to move into
+    Position next_target;   //tile after the target, in case something gets pushed
+
+    std::vector<Position> targets;
+    std::vector<Position> next_targets;
+
     void Game::update(sf::RenderWindow &window, Map &map){
 
         //event handling
@@ -25,14 +32,28 @@ namespace Baba_Is_Us{
             if (event.type == sf::Event::Closed) window.close();
 
             if (event.type == sf::Event::KeyPressed){
+                player = map.getPositions(Type::You);
+
                 switch(event.key.code){
                     case sf::Keyboard::Escape:
                         window.close();
                         break;
                     case sf::Keyboard::W:
-                        //movement_check(player.getPosition(), Direction::Up);
-                        //rotate(player.getPosition(), Direction::Up);
-                        //movement(player.getPosition());
+                        //controllo di player
+                        // 1) un solo oggetto in Position Player
+                        //      movement_check(map, player[0], Direction::Up);
+                        //      se vero, rotate e movement
+                        //      se falso, rotate
+                        // 2) più di uno
+                        //      movement_check(map, player, Direction::Up); -> vettore di pair di playState e positions
+                        /*      for(auto &i : playStates){
+                                    if(i.first == PlayState::Playing){
+                                        se è l'ultimo della fila
+                                            movement(map, i.second)
+                                    }
+                                }
+                        */      
+                        
                         //checkRules 
 
                         break;
@@ -64,11 +85,6 @@ namespace Baba_Is_Us{
         window.display();
     }
 
-    Position target;        //tile that the player wants to move into
-    Position next_target;   //tile after the target, in case something gets pushed
-
-    std::vector<Position> targets;
-    std::vector<Position> next_targets;
 
     bool movement_check(Map &map, Position &player_position, Direction direction){
         switch(direction){     
@@ -112,11 +128,14 @@ namespace Baba_Is_Us{
         }
         Objects temp1 = map.At(target.second, target.first);
         Objects temp2 = map.At(next_target.second, next_target.first);
-        if (temp1.objectHasType(Type::Push))
+        if (temp1.objectHasType(Type::Push)) {
             if(temp2.objectHasType(Type::Move))
                 return true;
-        else if (temp1.objectHasType(Type::Move))
+        }
+            
+        else if (temp1.objectHasType(Type::Move)){
             return true;
+        }
         return false;
         /* what if
          int a=static_cast<int> (temp.objectHasType(Type::Push) );
@@ -187,11 +206,14 @@ namespace Baba_Is_Us{
         }
         Objects temp1 = map.At(target.second, target.first);
         Objects temp2 = map.At(next_target.second, next_target.first);
-        if (temp1.objectHasType(Type::Push))
-            if(temp2.objectHasType(Type::Move))
+        if (temp1.objectHasType(Type::Push)){
+            if(temp2.objectHasType(Type::Move)){
                 return true;
-        else if (temp1.objectHasType(Type::Move))
-            return true;
+            }
+        }
+        else if (temp1.objectHasType(Type::Move)){
+           return true;
+        }
         return false;
         /* what if
          int a=static_cast<int> (temp.objectHasType(Type::Push) );

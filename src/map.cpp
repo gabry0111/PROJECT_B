@@ -19,7 +19,10 @@ namespace Baba_Is_Us{
         for (const auto& rows : grid3D[0]) {
             std::vector<Objects> ciao;
             for (auto& eee : rows) {
-                ciao.emplace_back(intToType(eee));
+
+                Objects a{ {intToType(eee)} };
+
+                ciao.emplace_back(a);
             }
             m_objects.emplace_back(std::move(ciao));
         }

@@ -20,7 +20,7 @@ namespace MapSize {
 namespace Baba_Is_Us {
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
-    std::vector<std::string> tilePaths { //20
+    inline std::array<std::string, 12> tilePaths { //20
         "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_up_right_spritesheet.png",
         "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_down_left_spritesheet.png",
         "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_left_spritesheet.png",
