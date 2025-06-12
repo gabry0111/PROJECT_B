@@ -14,6 +14,7 @@ Saranno oggetti vettori di tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY
 #include "map.hpp"
 #include <tuple>
 #include <cassert>
+#include <array>
 
 namespace Baba_Is_Us {
 
@@ -30,8 +31,9 @@ public :
                 +type1 > +Type::NOUN_TYPE &&
                 +type1 < +Type::ICON_NOUN_TYPE &&
                 +type2 > +Type::VERB_TYPE &&
-                +type2 < +Type::PROPERTY_TYPE 
-            )&& +type3 > +Type::PROPERTY_TYPE
+                +type2 < +Type::PROPERTY_TYPE &&
+                +type3 > +Type::PROPERTY_TYPE
+            )
              || 
             (
                 +type3 > +Type::NOUN_TYPE &&

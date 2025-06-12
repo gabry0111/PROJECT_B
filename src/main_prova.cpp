@@ -44,10 +44,10 @@ int main() {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 }};
 
-    std::array<MapGrid2D, 2> map_grid = { base_grid, base_grid };
+    std::array<MapGrid2D, 2> map_grid3D = { base_grid, base_grid };
 
         
-    Map map{map_grid}; // la mappa iniziale è quella base
+    Map map{map_grid3D}; // la mappa iniziale è quella base
 
 
 

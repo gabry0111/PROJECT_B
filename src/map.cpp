@@ -4,20 +4,19 @@
 #include "game.hpp"
 #include "rules.hpp"
 #include "objects.hpp"
-#include <array>
 #include <iostream>
 using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-    Map::Map(const std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> &grid){
+    Map::Map(const std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> &grid3D){
         // static_assert(MapSize::height * MapSize::width == grid.size() && "Map::load(): sizes not equal");
-        if(MapSize::height * MapSize::width != grid.size())
+        if(MapSize::height * MapSize::width != grid3D.size())
             throw std::runtime_error("Map::load() sizes not equal"); // perché lo stesso errore due volte?
         m_objects.reserve(MapSize::n_tiles);
         //std::cerr<< m_objects.size() << m_objects[50].objectHasType(Type::Void); //testato: funziona
 
-        for (const auto& rows : grid[0]) {
+        for (const auto& rows : grid3D[0]) {
             std::vector<Objects> ciao;
             for (auto& eee : rows) {
                 ciao.emplace_back(intToType(eee));

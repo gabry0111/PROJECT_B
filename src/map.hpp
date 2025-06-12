@@ -1,8 +1,9 @@
 #ifndef MOVEMENT_HPP
 #define MOVEMENT_HPP
-#include <SFML/Graphics.hpp>
 #include "enum_objects.hpp"
 #include "objects.hpp"
+#include <SFML/Graphics.hpp>
+#include <array>
 
 using Position = std::pair<std::size_t, std::size_t>;
 
