@@ -9,7 +9,7 @@ namespace Baba_Is_Us{
     class Game {
         public:
             Game() = default;
-            void update(sf::RenderWindow &);
+            void update(sf::RenderWindow &, Map &);
             void render(sf::RenderWindow &, std::vector<sf::Sprite>);
             Objects getObject(Position);
             bool movement_check(Map, Position, Direction); // aggiunto che riceva anche la mappa per controllarne gli objects

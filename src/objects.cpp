@@ -66,7 +66,7 @@ void Objects::removeType(const Type type) {
     if(bbb) m_object.erase(iter);
 }
 
-constexpr void Objects::resetObject() {
+void Objects::resetObject() {
     assert(m_object[0] == intToType(0) && "resetObject() doesn't work like intended");
     m_object.clear();
 }

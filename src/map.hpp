@@ -10,6 +10,10 @@ namespace MapSize {
     constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
     constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
     constexpr int n_tiles = width*height; // Total number of tiles
+
+    constexpr int TILE_SIZE = 32;
+    constexpr int FRAME_TIME_MS = 150;
+    
 }
 
 namespace Baba_Is_Us {
@@ -33,18 +37,26 @@ namespace Baba_Is_Us {
 class Map{
 private :
 
-    std::vector<std::vector<Objects>> m_objects {}; //modificare tutto 
+    std::vector<std::vector<Objects>> m_objects {} ; //modificare tutto 
     bool IsBoundary(std::size_t x, std::size_t y) const;
+
+    std::vector<sf::Texture> textures{};
+    std::vector<int> frameCounts{};
+    std::vector<int> current_frame_per_tile_ID{};
+    std::vector<sf::Sprite> tileSprites{};
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
     Map(const std::vector<std::vector<int>>& );
+    // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
+    // da chiamare appena creata un'istanza di Map
 
     std::vector<std::vector<int>> grid;
 
-    // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
-    // da chiamare appena creata un'istanza di Map
-    void load(const std::vector<std::vector<int>>& ); // può diventare constexpr
+    void setTextures();
+    void setSprites();
+    void redraw(sf::Clock &);
+    std::vector<sf::Sprite> getTileSprites();
 
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
@@ -66,7 +78,6 @@ public:
     std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 
 };
-
 
 }
 #endif

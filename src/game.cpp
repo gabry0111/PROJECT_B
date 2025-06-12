@@ -15,45 +15,44 @@
 
 namespace Baba_Is_Us{
     
-    void Game::update(sf::RenderWindow &window){
+    void Game::update(sf::RenderWindow &window, Map &map){
 
         //event handling
         sf::Event event;
 
-            while (window.pollEvent(event))
-            {
-                if (event.type == sf::Event::Closed) window.close();
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed) window.close();
 
-                if (event.type == sf::Event::KeyPressed){
-                    switch(event.key.code){
-                        case sf::Keyboard::Escape:
-                            //std::cout<< "Esc\n";
-                            window.close();
-                            break;
-                        case sf::Keyboard::W:
-                            //movement_check(player.getPosition(), Direction::Up);
-                            //rotate(player.getPosition(), Direction::Up);
-                            //movement(player.getPosition());
-                            //checkRules 
+            if (event.type == sf::Event::KeyPressed){
+                switch(event.key.code){
+                    case sf::Keyboard::Escape:
+                        window.close();
+                        break;
+                    case sf::Keyboard::W:
+                        //movement_check(player.getPosition(), Direction::Up);
+                        //rotate(player.getPosition(), Direction::Up);
+                        //movement(player.getPosition());
+                        //checkRules 
 
-                            break;
-                        case sf::Keyboard::A:
-                            break;
-                        case sf::Keyboard::S:
-                            break;
-                        case sf::Keyboard::D:
-                            break;
-                        case sf::Keyboard::Space: 
-                            //check se ha un oggetto in mano
-                            //lancia oggetto
-                            break;
-                        default: break;
-                    }
-
+                        break;
+                    case sf::Keyboard::A:
+                        break;
+                    case sf::Keyboard::S:
+                        break;
+                    case sf::Keyboard::D:
+                        break;
+                    case sf::Keyboard::Space: 
+                        //check se ha un oggetto in mano
+                        //lancia oggetto
+                        break;
+                    default: break;
                 }
-            
-                
+
             }
+        
+            
+        }
 
             
     }
