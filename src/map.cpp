@@ -25,7 +25,7 @@ namespace Baba_Is_Us{
                 // e.g Flower ha [0] = Flower, [1] = Move ...
             }
         }
-    }
+    } 
     
     void Map::Reset(const std::array<std::array<int,16>,16> grid) { 
         static_assert (MapSize::height * MapSize::width == grid.size() * grid[0].size() && "Map::Reset(): sizes not equal");
