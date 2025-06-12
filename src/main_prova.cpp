@@ -47,7 +47,7 @@ int main() {
     std::array<MapGrid2D, 2> map_grid = { base_grid, base_grid };
 
         
-    Map map{map_grid};
+    Map map{base_grid}; // la mappa iniziale è quella base
 
 
 

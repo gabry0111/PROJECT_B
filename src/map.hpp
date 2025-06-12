@@ -37,7 +37,7 @@ namespace Baba_Is_Us {
 class Map{
 private :
 
-    std::vector<std::vector<Objects>> m_objects {} ; //modificare tutto 
+    std::vector<std::vector<Objects>> m_objects {} ; 
     bool IsBoundary(std::size_t x, std::size_t y) const;
 
     std::vector<sf::Texture> textures{};
@@ -47,7 +47,7 @@ private :
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    Map(const std::vector<std::vector<int>>& );
+    Map(const std::array<std::array<int, MapSize::width>, MapSize::height>&);
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
 
@@ -71,7 +71,6 @@ public:
 
     // Quale oggetto c'è in quella posizione?
     // N.B: NON IN MINUSCOLO, è una funzione di vector
-    Objects& At(std::size_t y, std::size_t x);
     const Objects& At(Position);
     const Objects& At(std::size_t y, std::size_t x) const; // NON può diventare constexpr (m_objects è vector)
 

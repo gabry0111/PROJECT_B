@@ -10,7 +10,7 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-    Map::Map(const std::vector<std::vector<int>>& grid){
+    Map::Map(const std::array<std::array<int, MapSize::width>, MapSize::height>& grid){
         // static_assert(MapSize::height * MapSize::width == grid.size() && "Map::load(): sizes not equal");
         if(MapSize::height * MapSize::width != grid.size())
             throw std::runtime_error("Map::load() sizes not equal"); // perché lo stesso errore due volte?
@@ -105,6 +105,11 @@ namespace Baba_Is_Us{
     const Objects& Map::At(Position position)
     {
         return m_objects[position.second][position.first];
+    }
+
+    const Objects& Map::At(std::size_t y, std::size_t x) const
+    {
+        return m_objects[y][x];
     }
 
 
