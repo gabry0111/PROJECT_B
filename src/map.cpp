@@ -10,19 +10,19 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-    Map::Map(const std::array<std::array<int, MapSize::width>, MapSize::height>& grid){
+    Map::Map(const std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> &grid){
         // static_assert(MapSize::height * MapSize::width == grid.size() && "Map::load(): sizes not equal");
         if(MapSize::height * MapSize::width != grid.size())
             throw std::runtime_error("Map::load() sizes not equal"); // perché lo stesso errore due volte?
         m_objects.reserve(MapSize::n_tiles);
         //std::cerr<< m_objects.size() << m_objects[50].objectHasType(Type::Void); //testato: funziona
 
-        std::vector<Objects> ciao;
-        for (auto& rows : grid) {
-            for (auto eee : rows) {
+        for (const auto& rows : grid[0]) {
+            std::vector<Objects> ciao;
+            for (auto& eee : rows) {
                 ciao.emplace_back(intToType(eee));
             }
-            m_objects.emplace_back(ciao);
+            m_objects.emplace_back(std::move(ciao));
         }
     }
     
@@ -44,7 +44,7 @@ namespace Baba_Is_Us{
         // converti le tileID in sprites
 
         for (std::size_t i = 0; i < MapSize::n_tiles; ++i) {
-            int tileID {grid[i/MapSize::height][i%MapSize::width]}; // typing convenience
+            int tileID {grid[0][i/MapSize::height][i%MapSize::width]}; // typing convenience
             if (tileID < 0 || tileID >= static_cast<int>(textures.size())) continue;
             sf::Sprite sprite;
             //metto la texture sullo sprite
@@ -76,7 +76,7 @@ namespace Baba_Is_Us{
         }
         //resize and draw
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
-            int tileID {grid[i/MapSize::height][i%MapSize::width]};
+            int tileID {grid[0][i/MapSize::height][i%MapSize::width]};
             int frame = current_frame_per_tile_ID[static_cast<size_t> (tileID)];
             tileSprites[i].setTextureRect({frame * MapSize::TILE_SIZE, 0,MapSize::TILE_SIZE, MapSize::TILE_SIZE});
             

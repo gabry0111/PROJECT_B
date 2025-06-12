@@ -47,11 +47,11 @@ private :
 
 public:
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    Map(const std::array<std::array<int, MapSize::width>, MapSize::height>&);
+    Map(const std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> &);
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
 
-    std::vector<std::vector<int>> grid;
+    std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> grid;
 
     void setTextures();
     void setSprites();
