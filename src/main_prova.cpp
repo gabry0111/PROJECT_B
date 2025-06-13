@@ -24,7 +24,7 @@ int main() {
     // load textures e tieni conto, per ogni indice, della quantità di frame
     
 
-    using MapGrid2D = std::array<std::array<int, MapSize::width>, MapSize::height>;
+
     constexpr MapGrid2D base_grid {{
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
