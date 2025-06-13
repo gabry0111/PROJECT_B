@@ -4,12 +4,16 @@
 #include "objects.hpp"
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <string_view>
+#include <fstream>
 
 using Position = std::pair<std::size_t, std::size_t>;
+using MapGrid2D = std::array<std::array<int, MapSize::width>, MapSize::height>;
 
 namespace MapSize {
     constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
     constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
+    constexpr int depth = 2;   // Number of layers in the map
     constexpr int n_tiles = width*height; // Total number of tiles
 
     constexpr int TILE_SIZE = 32;
@@ -18,6 +22,7 @@ namespace MapSize {
 }
 
 namespace Baba_Is_Us {
+
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
     inline std::array<std::string, 12> tilePaths { //20
@@ -38,22 +43,25 @@ namespace Baba_Is_Us {
 class Map{
 private :
 
-    std::vector<std::vector<Objects>> m_objects {} ; 
+    std::array<MapGrid2D, MapSize::depth> m_grid;
+    std::vector<std::vector<Objects>> m_objects;
     bool IsBoundary(std::size_t x, std::size_t y) const;
+    
 
+public:
     std::vector<sf::Texture> textures{};
     std::vector<int> frameCounts{};
     std::vector<int> current_frame_per_tile_ID{};
     std::vector<sf::Sprite> tileSprites{};
 
-public:
+    Map();
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    Map(const std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> &);
+    Map(const std::array<MapGrid2D, MapSize::depth> &);
+    void load(std::string_view );
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
 
-    std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> grid;
-
+    const std::array<MapGrid2D, MapSize::depth>& getm_grid();
     void setTextures();
     void setSprites();
     void redraw(sf::Clock &);
@@ -61,7 +69,7 @@ public:
 
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
-    void Reset(const std::array<std::array<int,16>,16> ); // può diventare constexpr
+    void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr
     
 
     // aggiungi un oggetto
@@ -72,7 +80,9 @@ public:
 
     // Quale oggetto c'è in quella posizione?
     // N.B: NON IN MINUSCOLO, è una funzione di vector
-    const Objects& At(Position);
+    Objects& At(Position); // il non-const serve in Game::movementCheck()
+    Objects& At(std::size_t y, std::size_t x);
+    const Objects& At(Position) const;
     const Objects& At(std::size_t y, std::size_t x) const; // NON può diventare constexpr (m_objects è vector)
 
     // restituisce le posizioni di uno specifico tipo

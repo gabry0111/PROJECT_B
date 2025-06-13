@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "enum_objects.hpp"
 #include "map.hpp"
-#include "game.hpp"
 #include "rules.hpp"
 #include "objects.hpp"
 #include <iostream>
@@ -9,27 +8,39 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-    Map::Map(const std::array<std::array<std::array<int, MapSize::width>, MapSize::height>, 2> &grid3D){
-        // static_assert(MapSize::height * MapSize::width == grid.size() && "Map::load(): sizes not equal");
-        if(MapSize::height * MapSize::width != grid3D.size())
-            throw std::runtime_error("Map::load() sizes not equal"); // perché lo stesso errore due volte?
-        m_objects.reserve(MapSize::n_tiles);
-        //std::cerr<< m_objects.size() << m_objects[50].objectHasType(Type::Void); //testato: funziona
-
+    Map::Map(const std::array<MapGrid2D, MapSize::depth> &grid3D) : 
+        m_grid{grid3D}
+        {
         for (const auto& rows : grid3D[0]) {
-            std::vector<Objects> ciao;
+            //std::vector<Objects> temp;
             for (auto& eee : rows) {
-
-                Objects a{ {intToType(eee)} };
-
-                ciao.emplace_back(a);
+                std::vector<Objects> a{ {{intToType(eee)}} };
+                m_objects.emplace_back(a);
+                //temp.emplace_back(a);
             }
-            m_objects.emplace_back(std::move(ciao));
+            //m_objects.emplace_back(std::move(temp));
         }
+    }
+
+    void Map::load(std::string_view filename) {
+        std::ifstream map_file {filename.data()}; //comincia dall'inizio di file.txt bidimensionale
+        int value{};
+        for (std::size_t iii; iii < MapSize::height * MapSize::width; ++iii) {
+            map_file >> value;
+            if(value != m_grid[0][iii / MapSize::height][iii % MapSize::width]) { // solo se l'elemento è diverso
+                m_grid[0][iii / MapSize::height][iii % MapSize::width] = value;
+            }
+        }
+        m_grid[1] = m_grid[0]; // porta entrambe le profondità della mappa in stato uguale
+    }
+
+
+    const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() {
+        return m_grid;
     }
     
     void Map::setTextures(){
-        for (auto path : tilePaths) {
+        for (auto& path : tilePaths) {
             sf::Texture texture;
             if (!texture.loadFromFile(path)) {
                 std::cerr << "Failed to load " << path << "\n";
@@ -42,11 +53,12 @@ namespace Baba_Is_Us{
             current_frame_per_tile_ID.push_back(0); // ogni tile ID partirà dal frame n° 0
         }
     }
+
     void Map::setSprites(){
         // converti le tileID in sprites
 
         for (std::size_t i = 0; i < MapSize::n_tiles; ++i) {
-            int tileID {grid[0][i/MapSize::height][i%MapSize::width]}; // typing convenience
+            int tileID {m_grid[0][i / MapSize::height][i % MapSize::width]}; // typing convenience
             if (tileID < 0 || tileID >= static_cast<int>(textures.size())) continue;
             sf::Sprite sprite;
             //metto la texture sullo sprite
@@ -63,6 +75,7 @@ namespace Baba_Is_Us{
 
         }
     }
+
     void Map::redraw(sf::Clock &clock){
         //
         if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
@@ -78,19 +91,20 @@ namespace Baba_Is_Us{
         }
         //resize and draw
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
-            int tileID {grid[0][i/MapSize::height][i%MapSize::width]};
+            int tileID {m_grid[0][i/MapSize::height][i%MapSize::width]};
             int frame = current_frame_per_tile_ID[static_cast<size_t> (tileID)];
             tileSprites[i].setTextureRect({frame * MapSize::TILE_SIZE, 0,MapSize::TILE_SIZE, MapSize::TILE_SIZE});
             
         }
     }
+
     std::vector<sf::Sprite> Map::getTileSprites(){
         return tileSprites;
     }
 
-    void Map::Reset(const std::array<std::array<int,16>,16> map_grid) { 
-        static_assert (MapSize::height * MapSize::width == map_grid.size() * map_grid[0].size() && "Map::Reset(): sizes not equal");
-        if(MapSize::height * MapSize::width != grid.size())
+    void Map::Reset(const std::array<std::array<int,MapSize::height>, MapSize::width> &map_grid) { 
+        // static_assert (MapSize::height * MapSize::width == map_grid.size() * map_grid[0].size() && "Map::Reset(): sizes not equal");
+        if(MapSize::height * MapSize::width != m_grid.size())
             throw std::runtime_error("Map::Reset(): sizes not equal");
 
         std::size_t iii{};
@@ -104,7 +118,16 @@ namespace Baba_Is_Us{
     }
 
     
-    const Objects& Map::At(Position position)
+    Objects& Map::At(Position position) 
+    {
+        return m_objects[position.second][position.first];
+    }
+
+    Objects& Map::At(std::size_t y, std::size_t x) 
+    {
+        return m_objects[y][x];
+    }
+    const Objects& Map::At(Position position) const
     {
         return m_objects[position.second][position.first];
     }
@@ -113,7 +136,6 @@ namespace Baba_Is_Us{
     {
         return m_objects[y][x];
     }
-
 
     std::vector<Position> Map::getPositions(Type type) const {
         std::vector<Position> positions_with_type {};
@@ -137,5 +159,4 @@ namespace Baba_Is_Us{
     }
 */
 
-}
-
+} //anmespace Baba_Is_Us

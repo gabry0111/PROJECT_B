@@ -14,7 +14,6 @@
 
 
 namespace Baba_Is_Us{
-    std::vector<Position> player {}; //player's position(s)
 
     Position target;        //tile that the player wants to move into
     Position next_target;   //tile after the target, in case something gets pushed
@@ -22,9 +21,75 @@ namespace Baba_Is_Us{
     std::vector<Position> targets;
     std::vector<Position> next_targets;
 
+    Game::Game(std::string_view filename) : 
+        m_players{m_map3D.getPositions(Type::You)}
+        
+    {
+        m_map3D.load(filename);
+        m_RM;
+    }
+
+    std::vector<Position>& Game::getPlayerPositions() {
+        return m_players;
+    } 
+    RuleManager& Game::getRuleManager() {
+        return m_RM;
+    }
+    Map& Game::getMap() {
+        return m_map3D;
+    }
+
+    void Game::parseRules() {
+        m_RM.clearRules();
+        for (auto pos : m_map3D.getPositions(Type::Block)) {
+            // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
+            // check orizzontale
+            if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
+            } else {
+                std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
+                std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
+                std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
+                if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
+                    if(+word1[1] < +Type::ICON_NOUN_TYPE && // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                        +word2[1] > +Type::VERB_TYPE &&
+                        +word2[1] < +Type::PROPERTY_TYPE &&
+                        +word3[1] > +Type::PROPERTY_TYPE) {
+                            Rule new_rule {word1[1], word2[1], word3[1]};
+                            m_RM.addRule(new_rule);
+                    }
+                }
+            }
+            //check verticale
+            if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
+            } else {
+                std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
+                std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
+                std::vector<Type> word3 {m_map3D.At(pos.second, pos.first + 2).getTypes()};
+                if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
+                    if(+word1[1] < +Type::ICON_NOUN_TYPE && // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                        +word2[1] > +Type::VERB_TYPE &&
+                        +word2[1] < +Type::PROPERTY_TYPE &&
+                        +word3[1] > +Type::PROPERTY_TYPE) {
+                            Rule new_rule {word1[1], word2[1], word3[1]};
+                            m_RM.addRule(new_rule);
+                    }
+                }
+            }
+        }
+    }
+
+    Position getShift(Direction dir) {
+        switch (dir) {
+            case Direction::Up:    return {-1, 0};
+            case Direction::Down:  return {1, 0};
+            case Direction::Left:  return {0, -1};
+            case Direction::Right: return {0, 1};
+            default:               return {0, 0};
+        }
+    }
+
     void Game::update(sf::RenderWindow &window, Map &map){
 
-        //event handling
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -32,7 +97,7 @@ namespace Baba_Is_Us{
             if (event.type == sf::Event::Closed) window.close();
 
             if (event.type == sf::Event::KeyPressed){
-                player = map.getPositions(Type::You);
+                m_players = map.getPositions(Type::You);
 
                 switch(event.key.code){
                     case sf::Keyboard::Escape:
@@ -69,14 +134,10 @@ namespace Baba_Is_Us{
                         break;
                     default: break;
                 }
-
             }
-        
-            
-        }
-
-            
+        }    
     }
+
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
         // draw the map
         window.clear();
@@ -86,144 +147,43 @@ namespace Baba_Is_Us{
     }
 
 
-    bool movement_check(Map &map, Position &player_position, Direction direction){
-        switch(direction){     
-            case Direction::Up:
-                //if(player_position.first==0) return false;
-                target.first=player_position.first-1;
-                target.second=player_position.second;
-
-                //if (target.first==0) return true; 
-                next_target.first=player_position.first-2;
-                next_target.second=player_position.second;
-                break;
-            case Direction::Left:
-                //if(player_position.second==0) return false;
-                target.first=player_position.first;
-                target.second=player_position.second-1;
-
-                //if(target.second==0) return false;
-                next_target.first=player_position.first;
-                next_target.second=player_position.second-2;
-                break;
-            case Direction::Down:
-                //if(player_position.first==15) return false;
-                target.first=player_position.first+1;
-                target.second=player_position.second;
-
-                //if (target.first==15) return true; 
-                next_target.first=player_position.first+2;
-                next_target.second=player_position.second;
-                break;
-            case Direction::Right:
-                //if(player_position.second==15) return false;
-                target.first=player_position.first;
-                target.second=player_position.second+1;
-                
-                //if(target.second==15) return false;
-                next_target.first=player_position.first;
-                next_target.second=player_position.second+2;
-                break;
-            default: break;
+    // fallisce solo se è boundary
+    std::optional<Position> getFirstMismatchOfObjects(const MapGrid2D& grid, Direction dir, const Position& start) {
+        Position shift{getShift(dir)};
+        int x{start.first};
+        int y{start.second};
+        int value{grid[y][x]};
+        while(x >= 0 && x < MapSize::width && 
+              y >= 0 && y < MapSize::height) {
+            if(grid[y][x] != value)
+                return Position {x,y};
+            x += shift.first;
+            y += shift.second;
         }
-        Objects temp1 = map.At(target.second, target.first);
-        Objects temp2 = map.At(next_target.second, next_target.first);
-        if (temp1.objectHasType(Type::Push)) {
-            if(temp2.objectHasType(Type::Move))
-                return true;
-        }
-            
-        else if (temp1.objectHasType(Type::Move)){
-            return true;
-        }
-        return false;
-        /* what if
-         int a=static_cast<int> (temp.objectHasType(Type::Push) );
-         int b=static_cast<int> (temp.objectHasType(Type::Move) );
-         if (a+b==2)
-            return true;
-        */
-
+        return std::nullopt;
     }
-    //overload
-    bool movement_check(Map &map, std::vector<Position> &player_positions, Direction directions){
-        switch(directions){     
-            case Direction::Up:
-                //if(player_position.first==0) return false;
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    targets[i].first=player_positions[i].first-1;
-                    targets[i].second=player_positions[i].second;
-                }
-                
 
-                //if (target.first==0) return true; 
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    next_targets[i].first=player_positions[i].first-2;
-                    next_targets[i].second=player_positions[i].second;
-                }
-                
-                break;
-            case Direction::Left:
-                //if(player_position.second==0) return false;
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    targets[i].first=player_positions[i].first;
-                    targets[i].second=player_positions[i].second-1;
-                }
+    // se non si può fare (non si può muovere e gli oggetti sono già distrutti), allora vedere se movementCheck è "vuoto"
+    // ASSICURATI CHE conditions() NON SIA MAI PIù CHIAMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    std::optional<std::vector<PlayState>> Game::movementCheck(Direction direction){
+        Position shift{getShift(direction)};
+        std::vector<PlayState> results {};
+        
+        for(const auto& pos : getPlayerPositions()){
+            if(! getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)) 
+                return std::optional<std::vector<PlayState>>{ {PlayState::Invalid, } };
 
-                //if(target.second==0) return false;
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    next_targets[i].first=player_positions[i].first;
-                    next_targets[i].second=player_positions[i].second-2;
-                }
-                break;
-            case Direction::Down:
-                //if(player_position.first==15) return false;
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    targets[i].first=player_positions[i].first+1;
-                    targets[i].second=player_positions[i].second;
-                }
+            Position first_mismatch {* getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)};
+            Position last_before_mismatch {first_mismatch.first - shift.first, first_mismatch.second - shift.second};
 
-                //if (target.first==15) return true; 
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    next_targets[i].first=player_positions[i].first+2;
-                    next_targets[i].second=player_positions[i].second;
-                }
-                break;
-            case Direction::Right:
-                //if(player_position.second==15) return false;
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    targets[i].first=player_positions[i].first;
-                    targets[i].second=player_positions[i].second+1;
-                }
-                
-                //if(target.second==15) return false;
-                for (size_t i={0}; i<player_positions.size(); ++i){
-                    next_targets[i].first=player_positions[i].first;
-                    next_targets[i].second=player_positions[i].second+2;
-                }
-                break;
-            default: break;
+            // while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
+            results.emplace_back(conditions(m_map3D.At(last_before_mismatch), m_map3D.At(first_mismatch)));
         }
-        Objects temp1 = map.At(target.second, target.first);
-        Objects temp2 = map.At(next_target.second, next_target.first);
-        if (temp1.objectHasType(Type::Push)){
-            if(temp2.objectHasType(Type::Move)){
-                return true;
-            }
-        }
-        else if (temp1.objectHasType(Type::Move)){
-           return true;
-        }
-        return false;
-        /* what if
-         int a=static_cast<int> (temp.objectHasType(Type::Push) );
-         int b=static_cast<int> (temp.objectHasType(Type::Move) );
-         if (a+b==2)
-            return true;
-        */
-
+        return results.empty() ? std::nullopt : std::optional<std::vector<PlayState>>(results);
     }
-    void rotate(Position &player_position, Direction direction){
+
+
+    void Game::rotate(Position &player_position, Direction direction){
         player_position.first = player_position.first;
         player_position.second = player_position.second;
         switch(direction){
@@ -237,8 +197,7 @@ namespace Baba_Is_Us{
         }
     }
 
-    bool movement(Map &map, Position &position){
-
+    void Game::movement(Direction direction, PlayState playstate){
         /*  
         divide movement in 3rds, for each frame of the animation:
             - change the player's sprite position by 1/3 towards the target's position
@@ -257,8 +216,10 @@ namespace Baba_Is_Us{
     
         return true;
     }
+
     //overload
-    bool movement(Map &map, std::vector<Position> &positions){
+    void Game::movement(Direction direction){ 
+        std::vector<Position> player_positions {getPlayerPositions()};
 
         /*  
         divide movement in 3rds, for each frame of the animation:
@@ -279,6 +240,72 @@ namespace Baba_Is_Us{
         }
     
         return true;
+    }
+
+    PlayState handleHot(Objects& object, Objects& second) {
+        if (!second.objectHasType(Type::Push)) {
+            object.resetObject();
+        }
+        return PlayState::Playing;
+    }
+
+    PlayState handleShut(Objects& object, Objects& second) {
+        if (object.objectHasType(Type::Open)) {
+            second.resetObject();
+            object.resetObject();
+            return PlayState::Playing;
+        }
+        return PlayState::Invalid;
+    }
+
+    PlayState handleSink(Objects& object, Objects& second) {
+        if (object.objectHasType(Type::Float)) {
+            second.resetObject();
+            object.resetObject();
+        } else {
+            object.resetObject();
+        }
+        return PlayState::Playing;
+    }
+
+    PlayState handleStop(Objects&, Objects& second) {
+        if (second.objectHasType(Type::Push)) return PlayState::Playing;
+        return PlayState::Invalid;
+    }
+
+    PlayState Game::conditions(Objects& object, Objects& second) {
+        std::vector<Type> second_types {second.getTypes()};
+        PlayState action {PlayState::Invalid};
+        
+        for(const auto type : second_types){ // per ogni Type di Objects second
+            /*
+            // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
+            if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
+                assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
+                if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
+                    object.addType(type);
+                    action = PlayState::Playing;
+                }
+                else{} //{std::iter_swap(std::find(object.getTypes().begin(), object.getTypes().end(), type), object.getTypes().end() - 1);}
+            }
+            */
+            // non ci interessa degli ICON_NOUN_TYPE
+            // non ci interessa dei verb type che creeranno una regola. Ci penserà un'altra funzione
+            switch (type) {
+            case Type::Hot:    action = handleHot(object, second); break;
+            case Type::Launch: action = PlayState::Playing; break;
+            case Type::Move:   action = PlayState::Playing; break;
+            case Type::Open:   action = PlayState::Playing; break;
+            case Type::Push:   action = PlayState::Playing; break;
+            case Type::Shut:   action = handleShut(object, second); break;
+            case Type::Sink:   action = handleSink(object, second); break;
+            case Type::Stop:   action = handleStop(object, second); break;
+            case Type::Win:    action = PlayState::Won; break;
+            case Type::You:    action = PlayState::Playing; break;
+            default:           break;
+            }
+            if (action == PlayState::Invalid) return PlayState::Invalid;
+        }
     }
 
     // check se intorno a target delle rules sono state cambiate, in tal caso reverse the effects of that rule

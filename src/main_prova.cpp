@@ -44,18 +44,15 @@ int main() {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 }};
 
-    std::array<MapGrid2D, 2> map_grid3D = { base_grid, base_grid };
-
-        
-    Map map{map_grid3D}; // la mappa iniziale è quella base
-
-
+    constexpr std::array<MapGrid2D, 2> map_grid3D = { base_grid, base_grid };
+    
 
     std::cout<<"Initializing game engine... (please please work)\n";
     // game engine: handles window and game state every frame
-    Game game;
+    std::fstream filename {"/home/diegoarcari/labs/progetto/PROJECT_B/src/level1.txt"};
+    Game game("src/level1.txt"); // ??? non so se funziona
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
-
+    Map map {game.getMap().getm_grid()};
     //setting the sprites
     std::cout<<"Loading textures...\n";
     map.setTextures();

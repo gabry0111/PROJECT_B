@@ -47,7 +47,6 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Move, // = Player può camminare sopra quel tipo
   Open, //door
   Push,
-  Quantum, //se Player passa attraverso una porta, Player si sdoppia
   Shut, //door
   Stop,
   Win,
