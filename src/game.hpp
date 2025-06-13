@@ -31,6 +31,7 @@ namespace Baba_Is_Us{
         std::optional<std::vector<PlayState>> movementCheck(Direction);
         void rotate(Position&, Direction);
         void movement(Map, Position, Direction);
+        void movement(Direction, PlayState);
         void movement(Direction);
         PlayState conditions(Objects&, Objects&);
     };

@@ -150,12 +150,12 @@ namespace Baba_Is_Us{
     // fallisce solo se è boundary
     std::optional<Position> getFirstMismatchOfObjects(const MapGrid2D& grid, Direction dir, const Position& start) {
         Position shift{getShift(dir)};
-        int x{start.first};
-        int y{start.second};
-        int value{grid[y][x]};
+        std::size_t x=start.first;
+        std::size_t y=start.second;
+        int value=static_cast<int> (grid[y][x]);
         while(x >= 0 && x < MapSize::width && 
               y >= 0 && y < MapSize::height) {
-            if(grid[y][x] != value)
+            if(grid[y][x] != static_cast<int> (value))
                 return Position {x,y};
             x += shift.first;
             y += shift.second;
@@ -165,6 +165,7 @@ namespace Baba_Is_Us{
 
     // se non si può fare (non si può muovere e gli oggetti sono già distrutti), allora vedere se movementCheck è "vuoto"
     // ASSICURATI CHE conditions() NON SIA MAI PIù CHIAMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // VA BENE OK DIEGO
     std::optional<std::vector<PlayState>> Game::movementCheck(Direction direction){
         Position shift{getShift(direction)};
         std::vector<PlayState> results {};
@@ -198,6 +199,11 @@ namespace Baba_Is_Us{
     }
 
     void Game::movement(Direction direction, PlayState playstate){
+        if(direction!=Direction::Up)        //
+            direction=Direction::Up;        //TEMPORANEI, per far compilare
+        if (playstate!=PlayState::Playing)  //
+            playstate=PlayState::Playing;   //
+
         /*  
         divide movement in 3rds, for each frame of the animation:
             - change the player's sprite position by 1/3 towards the target's position
@@ -211,10 +217,10 @@ namespace Baba_Is_Us{
         // 2/3 
 
         // 3/3 
-        position.first = target.first;
-        position.second = target.second;
+        //position.first = target.first;
+        //position.second = target.second;
     
-        return true;
+        //return true;
     }
 
     //overload
@@ -234,12 +240,14 @@ namespace Baba_Is_Us{
         // 2/3 
 
         // 3/3 
-        for (size_t i={0}; i<positions.size(); ++i){
-            positions[i].first = targets[i].first;
-            positions[i].second = targets[i].second;
+        for (size_t i={0}; i<player_positions.size(); ++i){
+            player_positions[i].first = targets[i].first;
+            player_positions[i].second = targets[i].second;
+            if(direction!=Direction::Up)
+                direction=Direction::Up; //TEMPORANEO, per far compilare
         }
-    
-        return true;
+        
+        //return true;
     }
 
     PlayState handleHot(Objects& object, Objects& second) {

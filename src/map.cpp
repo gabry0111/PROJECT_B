@@ -25,7 +25,7 @@ namespace Baba_Is_Us{
     void Map::load(std::string_view filename) {
         std::ifstream map_file {filename.data()}; //comincia dall'inizio di file.txt bidimensionale
         int value{};
-        for (std::size_t iii; iii < MapSize::height * MapSize::width; ++iii) {
+        for (std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
             map_file >> value;
             if(value != m_grid[0][iii / MapSize::height][iii % MapSize::width]) { // solo se l'elemento è diverso
                 m_grid[0][iii / MapSize::height][iii % MapSize::width] = value;

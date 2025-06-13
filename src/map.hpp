@@ -8,7 +8,6 @@
 #include <fstream>
 
 using Position = std::pair<std::size_t, std::size_t>;
-using MapGrid2D = std::array<std::array<int, MapSize::width>, MapSize::height>;
 
 namespace MapSize {
     constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
@@ -20,6 +19,7 @@ namespace MapSize {
     constexpr int FRAME_TIME_MS = 150;
     
 }
+using MapGrid2D = std::array<std::array<int, MapSize::width>, MapSize::height>;
 
 namespace Baba_Is_Us {
 
