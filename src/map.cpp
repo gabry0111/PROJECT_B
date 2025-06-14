@@ -107,6 +107,13 @@ namespace Baba_Is_Us{
     std::vector<sf::Sprite> Map::getTileSprites(){
         return tileSprites;
     }
+    
+    sf::Sprite& Map::getWhichSpriteIsInPosition(Position& position){
+        std::size_t index {position.second * MapSize::width + position.first};
+        sf::Sprite sprite {tileSprites[index]};
+        return sprite;
+    }
+
 
     void Map::Reset(const std::array<std::array<int,MapSize::height>, MapSize::width> &map_grid) { 
         // static_assert (MapSize::height * MapSize::width == map_grid.size() * map_grid[0].size() && "Map::Reset(): sizes not equal");

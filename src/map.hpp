@@ -13,7 +13,7 @@ namespace MapSize {
     constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
     constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
     constexpr int depth = 2;   // Number of layers in the map
-    constexpr int n_tiles = width*height; // Total number of tiles
+    constexpr int n_tiles = width * height; // Total number of tiles
 
     constexpr int TILE_SIZE = 32;
     constexpr int FRAME_TIME_MS = 150;
@@ -66,7 +66,7 @@ public:
     void setSprites();
     void redraw(sf::Clock &);
     std::vector<sf::Sprite> getTileSprites();
-
+    sf::Sprite& getWhichSpriteIsInPosition(Position&);
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
     void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr

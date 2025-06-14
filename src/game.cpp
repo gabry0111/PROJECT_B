@@ -194,14 +194,17 @@ namespace Baba_Is_Us{
         player_position.second = player_position.second;
         switch(direction){
             case Baba_Is_Us::Direction::Up:
-                
+                break;
             case Baba_Is_Us::Direction::Down:
+                break;
             case Baba_Is_Us::Direction::Left:
+                break;
             case Baba_Is_Us::Direction::Right:
                 break;
             default: break;
         }
     }
+
 
     void Game::movement(Direction direction, PlayState playstate){
         if(direction!=Direction::Up)        //
@@ -230,11 +233,15 @@ namespace Baba_Is_Us{
 
     //overload
     void Game::movement(Direction direction){ 
-        std::vector<Position> player_positions {getPlayerPositions()};
-
+        std::vector<Position>& player_positions {getPlayerPositions()};
+        for (auto& each : player_positions) {
+            rotate(each, direction);
+            
+        }
         /*  
         divide movement in 3rds, for each frame of the animation:
-            - change the player's sprite position by 1/3 towards the target's position
+            - determine which sprite is in that position
+            - shift the player's sprite position by 1/3 towards the target's position (32 px per sprite, 16 cells in total => shift by 32/3)
             - if target is pushable, game::update chiamerà anche movement(target, direction)
         SI PUò FARE ANCHE PER OGGETTI CHE DEVONO ESSERE DISTRUTTI?
         COME FARE A VEDERE DOVE STA GUARDANDO PLAYER? (PER ROCK) (togliamo launch e mettiamoci gradino?)
