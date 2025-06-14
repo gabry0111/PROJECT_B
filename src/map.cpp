@@ -84,13 +84,17 @@ namespace Baba_Is_Us{
     }
 
     void Map::redraw(sf::Clock &clock){
+        std::cerr<<"redraw\n";
+
         //
         if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
 
             //change the current frame of every individual texture
             //it could be different across textures if we add more detailed spritesheets or more frames per animation
-            for (std::size_t i{}; i < frameCounts.size(); ++i) {
+            for (std::size_t i{0}; i < frameCounts.size(); ++i) {
+                std::cerr<<"siamo qua\n";
                 if (frameCounts[i] > 1) { // se in i c'è un'animazione
+                    std::cerr<<"siamo qui\n";
                     current_frame_per_tile_ID[i] = (current_frame_per_tile_ID[i] + 1) % frameCounts[i]; //frameCounts[i] sarà sempre 3 se è animazione, quindi prova a calcolare
                 }
             }
@@ -98,8 +102,14 @@ namespace Baba_Is_Us{
         }
         //resize and draw
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
+
+            for (std::size_t iii{}; iii<frameCounts.size(); ++iii)
+                std::cout<<frameCounts[iii];
+            std::cerr<<"sotto la stessa luce\n";
             int tileID {m_grid[0][i/MapSize::height][i%MapSize::width]};
             int frame = current_frame_per_tile_ID[static_cast<size_t> (tileID)];
+            std::cerr<<"sotto la tua croce\n";
+
             tileSprites[i].setTextureRect({frame * MapSize::TILE_SIZE, 0,MapSize::TILE_SIZE, MapSize::TILE_SIZE});
             
         }
