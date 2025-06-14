@@ -21,15 +21,24 @@ namespace Baba_Is_Us{
     std::vector<Position> targets;
     std::vector<Position> next_targets;
 
+<<<<<<< HEAD
     Game::Game(std::string_view filename) :
         m_map3D{},
         m_players{},
         m_RM{}
+=======
+    Game::Game(std::string_view filename) : m_map3D{filename}, m_RM{}, m_players{}
+>>>>>>> 6ec62ae7a5f4756cba36d03e1f4e137aadc42637
     {
-        m_map3D.load(filename);
-        m_players = m_map3D.getPositions(Type::You);
-        m_RM.clearRules();
+        std::cout<<"aaaaaaaaa\n";
         parseRules();
+        std::cout<<"parsed rules\n";
+
+        // checkRulesForProperty
+        // aggiungi le proprietà giuste ad ogni oggetto
+        m_players = m_map3D.getPositions(Type::You);
+        std::cout<<"QUA\n";
+        m_RM.clearRules();
     }
 
     std::vector<Position>& Game::getPlayerPositions() {
@@ -45,14 +54,15 @@ namespace Baba_Is_Us{
     void Game::parseRules() {
         for (auto pos : m_map3D.getPositions(Type::Block)) {
             // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
-            // check orizzontale
+            // check verticale
             if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
             } else {
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
                 std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
-                    if(+word1[1] < +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                    if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                    && +word1[1] < +Type::VERB_TYPE
                     && +word2[1] > +Type::VERB_TYPE 
                     && +word2[1] < +Type::PROPERTY_TYPE 
                     && +word3[1] > +Type::PROPERTY_TYPE) {
@@ -61,19 +71,20 @@ namespace Baba_Is_Us{
                     }
                 }
             }
-            //check verticale
+            //check orizzontale
             if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica, non fare nulla
             } else {
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
                 std::vector<Type> word3 {m_map3D.At(pos.second, pos.first + 2).getTypes()};
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
-                    if(+word1[1] < +Type::ICON_NOUN_TYPE && // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
-                        +word2[1] > +Type::VERB_TYPE &&
-                        +word2[1] < +Type::PROPERTY_TYPE &&
-                        +word3[1] > +Type::PROPERTY_TYPE) {
-                            Rule new_rule {word1[1], word2[1], word3[1]};
-                            m_RM.addRule(new_rule);
+                    if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                    && +word1[1] < +Type::VERB_TYPE
+                    && +word2[1] > +Type::VERB_TYPE 
+                    && +word2[1] < +Type::PROPERTY_TYPE 
+                    && +word3[1] > +Type::PROPERTY_TYPE) {
+                        Rule new_rule {word1[1], word2[1], word3[1]};
+                        m_RM.addRule(new_rule);
                     }
                 }
             }
@@ -179,7 +190,7 @@ namespace Baba_Is_Us{
             Position last_before_mismatch {first_mismatch.first - shift.first, first_mismatch.second - shift.second};
 
             // while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
-            results.emplace_back(conditions(m_map3D.At(last_before_mismatch), m_map3D.At(first_mismatch)));
+            results.emplace_back(conditions(m_map3D.At(last_before_mismatch.first, last_before_mismatch.second), m_map3D.At(first_mismatch.first, first_mismatch.second)));
         }
         return results.empty() ? std::nullopt : std::optional<std::vector<PlayState>>(results);
     }
@@ -307,6 +318,10 @@ namespace Baba_Is_Us{
             */
             // non ci interessa degli ICON_NOUN_TYPE
             // non ci interessa dei verb type che creeranno una regola. Ci penserà un'altra funzione
+
+            //
+            // controllare che object[0] NON sia Type::Block -----------------------
+            //
             switch (type) {
             case Type::Hot:    action = handleHot(object, second); break;
             case Type::Launch: action = PlayState::Playing; break;

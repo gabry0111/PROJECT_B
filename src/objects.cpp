@@ -18,8 +18,8 @@ bool Objects::objectHasType(const Type type) const{
         && type != Type::VERB_TYPE 
         && type != Type::PROPERTY_TYPE 
         && "Objects::objectHasType() not given a valid type"); // kinda inutile
-    if(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE && type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE)
-        throw std::runtime_error("objectHasType() not given a valid type");
+    if(type == Type::NOUN_TYPE || type == Type::ICON_NOUN_TYPE || type == Type::VERB_TYPE || type == Type::PROPERTY_TYPE)
+        {throw std::runtime_error("objectHasType() not given a valid type");}
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
 
