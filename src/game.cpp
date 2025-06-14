@@ -109,6 +109,7 @@ namespace Baba_Is_Us{
     }
 
     void Game::update(sf::RenderWindow &window, Map &map){
+        std::cerr<<"update\n";
 
         sf::Event event;
 
@@ -159,10 +160,49 @@ namespace Baba_Is_Us{
     }
 
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
+        std::cerr<<"render\n";
+
         // draw the map
         window.clear();
-        for (const auto& sprite : sprites)
-            window.draw(sprite);
+        for (const auto& row : m_map3D.getm_grid()[0]){
+            for (const auto& i : row){
+                switch (i){
+                case 1:
+                    window.draw(sprites[6]);    //baba
+                    break;
+                case 3:
+                    window.draw(sprites[8]);    //flag
+                    break;
+                case 4:
+                    window.draw(sprites[9]);    //lava
+                    break;
+                case 5:
+                    window.draw(sprites[10]);   //rock
+                    break;
+                case 6 :
+                    window.draw(sprites[11]);   //wall
+                    break;     
+                case 1+ +Type::Icon_Void:       //word baba
+                case 2+ +Type::Icon_Void:       //word defeat
+                case 3+ +Type::Icon_Void:       //word flag
+                case 4+ +Type::Icon_Void:       //word hot
+                case 5+ +Type::Icon_Void:       //word is
+                case 6+ +Type::Icon_Void:       //word lava
+                case 7+ +Type::Icon_Void:       //word melt
+                case 8+ +Type::Icon_Void:       //word push
+                case 9+ +Type::Icon_Void:       //word rock
+                case 10+ +Type::Icon_Void:      //word stop
+                case 11+ +Type::Icon_Void:      //word wall
+                case 12+ +Type::Icon_Void:      //word win
+                case 13+ +Type::Icon_Void:      //word you
+                    window.draw(sprites[static_cast<std::size_t>(i+3)]);
+                    break;
+                default: break;
+                }
+            }
+
+        }
+
         window.display();
     }
 
@@ -292,16 +332,6 @@ namespace Baba_Is_Us{
         return PlayState::Invalid;
     }
 
-    PlayState handleSink(Objects& object, Objects& second) {
-        if (object.objectHasType(Type::Float)) {
-            second.resetObject();
-            object.resetObject();
-        } else {
-            object.resetObject();
-        }
-        return PlayState::Playing;
-    }
-
     PlayState handleStop(Objects&, Objects& second) {
         if (second.objectHasType(Type::Push)) return PlayState::Playing;
         return PlayState::Invalid;
@@ -336,7 +366,6 @@ namespace Baba_Is_Us{
             case Type::Open:   action = PlayState::Playing; break;
             case Type::Push:   action = PlayState::Playing; break;
             case Type::Shut:   action = handleShut(object, second); break;
-            case Type::Sink:   action = handleSink(object, second); break;
             case Type::Stop:   action = handleStop(object, second); break;
             case Type::Win:    action = PlayState::Won; break;
             case Type::You:    action = PlayState::Playing; break;

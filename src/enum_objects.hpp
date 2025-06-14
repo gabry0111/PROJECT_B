@@ -11,33 +11,37 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Void, // possiamo creare un vector o array così: std::array<std::array<int,colonne>,righe> e inizializzare tutto a void; poi aggiungere ciascun elemento
         // oppure serve per vettore di alcune informazioni (findPlayer() fallisce => PlayState::Invalid) (N.B: void negli if = false)
   Baba, // aspetto del Player di default
+  Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica eccezione al tipico m_object vector<Type> perché sarà del tipo
+         // [0] = Block, [1] (da vedere se sarà così) = ICON_NOUN_TYPE
   Flag, 
   Lava,
   Rock,  // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per 
          // poterla lanciare(con tasto space premuto e direzione)
-  Sink,
   Wall,  
-  Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica eccezione al tipico m_object vector<Type> perché sarà del tipo
-         // [0] = Block, [1] (da vedere se sarà così) = ICON_NOUN_TYPE
-  Door,  // apribile automaticamente azionando ingranaggio/leva
-  Gear,  // fisso
-  Lever,  // ?trasportabile?
+  
+  //Door,  // apribile automaticamente azionando ingranaggio/leva
+  //Gear,  // fisso
+  //Lever,  // ?trasportabile?
   
 
   ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante sarà calcolabile facilmente)
                   // abbinerà ciascun oggetto Objects alla sua sprite
-  Icon_Void,
+  Icon_Void,  
   Icon_Baba, 
-  Icon_Door, 
+  Icon_Defeat,
   Icon_Flag,
-  Icon_Gear, 
+  Icon_Hot,
+  Icon_Is,
   Icon_Lava,
-  Icon_Lever,
+  Icon_Melt,
+  Icon_Push,
   Icon_Rock, 
-  Icon_Wall, 
+  Icon_Stop,
+  Icon_Wall,
+  Icon_Win,
+  Icon_You, 
   
   VERB_TYPE, //Anche per i power-up
-  And,
   Is,
 
   PROPERTY_TYPE,
