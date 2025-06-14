@@ -14,27 +14,35 @@ namespace Baba_Is_Us{
         std::cout<<"gay\n";
         for (std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
             map_file >> value;
+            std::cerr << "ciao\n";
             
             
-            if(value > +Type::ICON_NOUN_TYPE && value < +Type::VERB_TYPE){
+            if(value > +Type::ICON_NOUN_TYPE && value != +Type::VERB_TYPE && value != +Type::PROPERTY_TYPE){
+                std::cerr << "if e solo if -1-1-1-1\n";
                 std::vector<Type> current{};
+                std::cerr << "if e solo if 00000\n";
                 m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
+                std::cerr << "if e solo if 050505\n";
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+                std::cerr << "if e solo if\n";
                 current.emplace_back(Type::Block);
+                std::cerr << "if e solo if 22222\n";
                 current.emplace_back(intToType(value));
+                std::cerr << "if e solo if 33333 \n";
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
             else{
+                std::cerr << "else \n";
                 std::vector<Type> current{};
                 m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
                 current.emplace_back(intToType(value));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+                std::cerr << "else e solo else\n";
             }
             
             
         }
-        m_grid[1] = m_grid[0]; // porta entrambe le profondità della mappa in stato uguale
         std::cout<<"no gay\n";
        
     }

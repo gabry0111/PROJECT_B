@@ -21,14 +21,7 @@ namespace Baba_Is_Us{
     std::vector<Position> targets;
     std::vector<Position> next_targets;
 
-<<<<<<< HEAD
-    Game::Game(std::string_view filename) :
-        m_map3D{},
-        m_players{},
-        m_RM{}
-=======
     Game::Game(std::string_view filename) : m_map3D{filename}, m_RM{}, m_players{}
->>>>>>> 6ec62ae7a5f4756cba36d03e1f4e137aadc42637
     {
         std::cout<<"aaaaaaaaa\n";
         parseRules();
@@ -243,7 +236,7 @@ namespace Baba_Is_Us{
         std::vector<Position>& player_positions {getPlayerPositions()};
         for (auto& each : player_positions) {
             rotate(each, direction);
-
+            sf::Sprite sprite {};
         }
         /*  
         divide movement in 3rds, for each frame of the animation:
