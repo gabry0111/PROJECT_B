@@ -54,7 +54,7 @@ public:
     std::vector<int> current_frame_per_tile_ID{};
     std::vector<sf::Sprite> tileSprites{};
 
-    Map();
+    Map() = default;
     // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
     Map(const std::array<MapGrid2D, MapSize::depth> &);
     void load(std::string_view );

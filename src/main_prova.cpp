@@ -24,7 +24,7 @@ int main() {
     // load textures e tieni conto, per ogni indice, della quantità di frame
     
 
-
+/*
     constexpr MapGrid2D base_grid {{
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -44,8 +44,9 @@ int main() {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 }};
 
+
     constexpr std::array<MapGrid2D, 2> map_grid3D = { base_grid, base_grid };
-    
+*/
 
     std::cout<<"Initializing game engine... (please please work)\n";
     // game engine: handles window and game state every frame

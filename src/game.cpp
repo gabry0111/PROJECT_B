@@ -21,12 +21,12 @@ namespace Baba_Is_Us{
     std::vector<Position> targets;
     std::vector<Position> next_targets;
 
-    Game::Game(std::string_view filename) : 
-        m_players{m_map3D.getPositions(Type::You)}
-        
+    Game::Game(std::string_view filename)
     {
         m_map3D.load(filename);
-        m_RM;
+        m_players = m_map3D.getPositions(Type::You);
+        m_RM.clearRules();
+        parseRules();
     }
 
     std::vector<Position>& Game::getPlayerPositions() {
@@ -40,7 +40,6 @@ namespace Baba_Is_Us{
     }
 
     void Game::parseRules() {
-        m_RM.clearRules();
         for (auto pos : m_map3D.getPositions(Type::Block)) {
             // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
             // check orizzontale
@@ -60,7 +59,7 @@ namespace Baba_Is_Us{
                 }
             }
             //check verticale
-            if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
+            if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica, non fare nulla
             } else {
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
@@ -147,15 +146,14 @@ namespace Baba_Is_Us{
     }
 
 
-    // fallisce solo se è boundary
+    // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimento
     std::optional<Position> getFirstMismatchOfObjects(const MapGrid2D& grid, Direction dir, const Position& start) {
         Position shift{getShift(dir)};
         std::size_t x=start.first;
         std::size_t y=start.second;
-        int value=static_cast<int> (grid[y][x]);
-        while(x >= 0 && x < MapSize::width && 
-              y >= 0 && y < MapSize::height) {
-            if(grid[y][x] != static_cast<int> (value))
+        int value = grid[y][x];
+        while(x < MapSize::width && y < MapSize::height) {
+            if(grid[y][x] != value)
                 return Position {x,y};
             x += shift.first;
             y += shift.second;
@@ -314,6 +312,7 @@ namespace Baba_Is_Us{
             }
             if (action == PlayState::Invalid) return PlayState::Invalid;
         }
+        return action;
     }
 
     // check se intorno a target delle rules sono state cambiate, in tal caso reverse the effects of that rule

@@ -50,12 +50,11 @@ public :
 // idea: un singolo oggetto che gestisce tutte le regole
 class RuleManager{
 private :
-    Map m_map;
     std::vector<Rule> m_rules;
 
 public :
     RuleManager() = default;
-    void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
+    constexpr void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
     void removeRule(const Rule& rule); // come addRule()
     constexpr void clearRules(); // forse non serve
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
