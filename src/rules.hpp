@@ -56,6 +56,7 @@ public :
     RuleManager() = default;
     void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
     void removeRule(const Rule& rule); // come addRule()
+    std::vector<Type> checkObjectForProperty(const Objects&);
     void clearRules(); // forse non serve
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
     //N.B: se m_rules cambia, diventano dangling references

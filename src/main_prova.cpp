@@ -54,23 +54,23 @@ int main() {
     std::cout<<"Oui\n";
 
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
-    Map map {game.getMap().getm_grid()};
+   
     //setting the sprites
     std::cout<<"Loading textures...\n";
-    map.setTextures();
+    game.getMap().setTextures();
     std::cout<<"Converting into sprites...\n";
-    map.setSprites();
+    game.getMap().setSprites();
 
     // Animation loop
     sf::Clock clock;
     std::cout<<"~ ~ ~ dancin ~ ~ ~\n";
 
     while (window.isOpen()) {
-        game.update(window, map);
+        game.update(window, game.getMap());
 
-        map.redraw(clock);
+        game.getMap().redraw(clock);
 
-        game.render(window, map.getTileSprites());
+        game.render(window, game.getMap().getTileSprites());
     }
 
     return 0;

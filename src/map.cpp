@@ -8,32 +8,38 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-    Map::Map(const std::array<MapGrid2D, MapSize::depth> &grid3D) : 
-        m_grid{grid3D}
-        {
-        for (const auto& rows : grid3D[0]) {
-            //std::vector<Objects> temp;
-            for (auto& eee : rows) {
-                std::vector<Objects> a{ {{intToType(eee)}} };
-                m_objects.emplace_back(a);
-                //temp.emplace_back(a);
-            }
-            //m_objects.emplace_back(std::move(temp));
-        }
-    }
-
-    void Map::load(std::string_view filename) {
+    Map::Map(std::string_view filename)  {
         std::ifstream map_file {filename.data()}; //comincia dall'inizio di file.txt bidimensionale
         int value{};
+        std::cout<<"gay\n";
         for (std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
             map_file >> value;
-            if(value != m_grid[0][iii / MapSize::height][iii % MapSize::width]) { // solo se l'elemento è diverso
-                m_grid[0][iii / MapSize::height][iii % MapSize::width] = value;
+            
+            
+            if(value > +Type::ICON_NOUN_TYPE && value < +Type::VERB_TYPE){
+                std::vector<Type> current{};
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
+                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+                current.emplace_back(Type::Block);
+                current.emplace_back(intToType(value));
+                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
+            else{
+                std::vector<Type> current{};
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
+                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+                current.emplace_back(intToType(value));
+                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+            }
+            
+            
         }
         m_grid[1] = m_grid[0]; // porta entrambe le profondità della mappa in stato uguale
+        std::cout<<"no gay\n";
+       
     }
 
+    
 
     const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() {
         return m_grid;
@@ -118,20 +124,12 @@ namespace Baba_Is_Us{
     }
 
     
-    Objects& Map::At(Position position) 
-    {
-        return m_objects[position.second][position.first];
-    }
+
 
     Objects& Map::At(std::size_t y, std::size_t x) 
     {
         return m_objects[y][x];
     }
-    const Objects& Map::At(Position position) const
-    {
-        return m_objects[position.second][position.first];
-    }
-
     const Objects& Map::At(std::size_t y, std::size_t x) const
     {
         return m_objects[y][x];
@@ -141,8 +139,11 @@ namespace Baba_Is_Us{
         std::vector<Position> positions_with_type {};
         for (std::size_t x = 0; x < MapSize::height; ++x){
             for (std::size_t y = 0; y < MapSize::width; ++y){
+                std::cout<<"boh\n";
                 if (m_objects[y][x].objectHasType(type)){
+                    std::cout<<"daje ";
                     positions_with_type.emplace_back(Position(x, y));
+                    std::cout<<"roma\n";
                 }
             }
         }
