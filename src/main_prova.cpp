@@ -50,8 +50,7 @@ int main() {
 
     std::cout<<"Initializing game engine... (please please work)\n";
     // game engine: handles window and game state every frame
-    std::fstream filename {"/home/diegoarcari/labs/progetto/PROJECT_B/src/level1.txt"};
-    Game game("src/level1.txt"); // ??? non so se funziona
+    Game game("assets/levels/level1.txt"); // ??? non so se funziona
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
     Map map {game.getMap().getm_grid()};
     //setting the sprites

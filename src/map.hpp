@@ -26,18 +26,18 @@ namespace Baba_Is_Us {
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
     inline std::array<std::string, 12> tilePaths { //20
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_up_right_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_down_left_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_left_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_move_right_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_up.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_down.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_right.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/BABA_spritesheet_left.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/FLAG_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/LAVA_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/ROCK_spritesheet.png",
-        "/Users/lele/progetto/PROJECT_B/png_PROGETTO/WALL_spritesheet.png" 
+        "assets/png_PROGETTO/BABA_move_up_right_spritesheet.png",
+        "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",
+        "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",
+        "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",
+        "assets/png_PROGETTO/BABA_spritesheet_up.png",
+        "assets/png_PROGETTO/BABA_spritesheet_down.png",
+        "assets/png_PROGETTO/BABA_spritesheet_right.png",
+        "assets/png_PROGETTO/BABA_spritesheet_left.png",
+        "assets/png_PROGETTO/FLAG_spritesheet.png",
+        "assets/png_PROGETTO/LAVA_spritesheet.png",
+        "assets/png_PROGETTO/ROCK_spritesheet.png",
+        "assets/png_PROGETTO/WALL_spritesheet.png" 
     };
 
 class Map{
