@@ -21,7 +21,10 @@ namespace Baba_Is_Us{
     std::vector<Position> targets;
     std::vector<Position> next_targets;
 
-    Game::Game(std::string_view filename)
+    Game::Game(std::string_view filename) :
+        m_map3D{},
+        m_players{},
+        m_RM{}
     {
         m_map3D.load(filename);
         m_players = m_map3D.getPositions(Type::You);
@@ -229,7 +232,7 @@ namespace Baba_Is_Us{
         std::vector<Position>& player_positions {getPlayerPositions()};
         for (auto& each : player_positions) {
             rotate(each, direction);
-            
+
         }
         /*  
         divide movement in 3rds, for each frame of the animation:

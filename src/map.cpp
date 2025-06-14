@@ -102,7 +102,7 @@ namespace Baba_Is_Us{
         return tileSprites;
     }
     
-    sf::Sprite& Map::getWhichSpriteIsInPosition(Position& position){
+    sf::Sprite Map::getWhichSpriteIsInPosition(Position& position){
         std::size_t index {position.second * MapSize::width + position.first};
         sf::Sprite sprite {tileSprites[index]};
         return sprite;

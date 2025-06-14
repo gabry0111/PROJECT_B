@@ -11,8 +11,8 @@ namespace Baba_Is_Us{
     class Game {
     private : 
         Map m_map3D;
-        RuleManager m_RM;
         std::vector<Position> m_players; //player's position(s)
+        RuleManager m_RM;
 
     public :
         Game(std::string_view);
