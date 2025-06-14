@@ -44,11 +44,11 @@ class Map{
 private :
 
     std::array<MapGrid2D, MapSize::depth> m_grid;
-    std::vector<std::vector<Objects>> m_objects;
-    bool IsBoundary(std::size_t x, std::size_t y) const;
-    
+    std::array<std::array<Objects, MapSize::height>, MapSize::width> m_objects;
 
 public:
+    bool isBoundary(std::size_t x, std::size_t y) const;
+
     std::vector<sf::Texture> textures{};
     std::vector<int> frameCounts{};
     std::vector<int> current_frame_per_tile_ID{};

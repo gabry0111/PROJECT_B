@@ -46,13 +46,20 @@ namespace Baba_Is_Us{
 
     void Game::parseRules() {
         for (auto pos : m_map3D.getPositions(Type::Block)) {
+            std::cerr << pos.first << ' ' << pos.second << '\n';
             // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
             // check verticale
-            if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica
+            if(m_map3D.isBoundary(pos.second, pos.first)) continue;
+            if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {
+                std::cerr << "no prima\n";
+                continue; // se non sei la prima parola logica
             } else {
+                std::cerr << "Prima";
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
-                std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
-                std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
+                std::vector<Type> word2 {};
+                std::vector<Type> word3 {};
+                if(m_map3D.isBoundary(pos.second, pos.first)) word2 = m_map3D.At(pos.second + 1, pos.first).getTypes();
+                if(m_map3D.isBoundary(pos.second + 1, pos.first)) word3 = m_map3D.At(pos.second + 2, pos.first).getTypes();
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
                     if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
                     && +word1[1] < +Type::VERB_TYPE
@@ -65,11 +72,17 @@ namespace Baba_Is_Us{
                 }
             }
             //check orizzontale
-            if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {continue; // se non sei la prima parola logica, non fare nulla
+            if(m_map3D.isBoundary(pos.second, pos.first)) continue;
+            if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {
+                std::cerr << "no prima\n";
+                continue; // se non sei la prima parola logica
             } else {
+                std::cerr << "Prima";
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
-                std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
-                std::vector<Type> word3 {m_map3D.At(pos.second, pos.first + 2).getTypes()};
+                std::vector<Type> word2 {};
+                std::vector<Type> word3 {};
+                if(m_map3D.isBoundary(pos.second, pos.first)) word2 = m_map3D.At(pos.second, pos.first + 1).getTypes();
+                if(m_map3D.isBoundary(pos.second, pos.first + 1)) word3 = m_map3D.At(pos.second, pos.first + 2).getTypes();
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
                     if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
                     && +word1[1] < +Type::VERB_TYPE
@@ -82,6 +95,7 @@ namespace Baba_Is_Us{
                 }
             }
         }
+        std::cerr << "ParseRules()";
     }
 
     Position getShift(Direction dir) {
