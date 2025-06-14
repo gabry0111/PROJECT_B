@@ -42,7 +42,7 @@ add_executable(progetto src/main_prova.cpp src/objects.cpp src/map.cpp src/game.
 target_link_libraries(progetto PRIVATE sfml-graphics)
 
 # aggiungere eventuali altri eseguibili
-file(COPY ${CMAKE_SOURCE_DIR}/assets/ DESTINATION ${CMAKE_BINARY_DIR}/assets )
+file(COPY ${CMAKE_SOURCE_DIR}/assets/ DESTINATION ${CMAKE_BINARY_DIR}/assets/ )
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 if (BUILD_TESTING)

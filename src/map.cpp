@@ -18,7 +18,6 @@ namespace Baba_Is_Us{
             map_file >> value;
             std::cerr << value;
             
-            
             if(value > +Type::ICON_NOUN_TYPE && value != +Type::VERB_TYPE && value != +Type::PROPERTY_TYPE){
                 std::vector<Type> current{};
                 m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;

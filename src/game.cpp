@@ -10,7 +10,7 @@
 - gestisce il movimento del Player
 - gestisce il movimento degli oggetti 
 - 
-*/
+*/ 
 
 
 namespace Baba_Is_Us{
@@ -250,7 +250,7 @@ namespace Baba_Is_Us{
         std::vector<Position>& player_positions {getPlayerPositions()};
         for (auto& each : player_positions) {
             rotate(each, direction);
-            sf::Sprite sprite {};
+            sf::Sprite& sprite {m_map3D.tileSprites[each.second]};
         }
         /*  
         divide movement in 3rds, for each frame of the animation:

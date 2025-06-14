@@ -25,19 +25,33 @@ namespace Baba_Is_Us {
 
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
-    inline std::array<std::string, 12> tilePaths { //20
-        "assets/png_PROGETTO/BABA_move_up_right_spritesheet.png",
-        "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",
-        "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",
-        "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",
-        "assets/png_PROGETTO/BABA_spritesheet_up.png",
-        "assets/png_PROGETTO/BABA_spritesheet_down.png",
-        "assets/png_PROGETTO/BABA_spritesheet_right.png",
-        "assets/png_PROGETTO/BABA_spritesheet_left.png",
-        "assets/png_PROGETTO/FLAG_spritesheet.png",
-        "assets/png_PROGETTO/LAVA_spritesheet.png",
-        "assets/png_PROGETTO/ROCK_spritesheet.png",
-        "assets/png_PROGETTO/WALL_spritesheet.png" 
+    inline std::array<std::string, 25> tilePaths { //20
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/FLAG_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/LAVA_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/ROCK_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/gifs/WALL_spritesheet.png",
+
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/BABA_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/DEFEAT_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/FLAG_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/HOT_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/IS_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/LAVA_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/MELT_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/PUSH_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/ROCK_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/STOP_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/WALL_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/WIN_text_spritesheet.png",
+        "/home/diegoarcari/labs/progetto/PROJECT_B/build/assets/png_PROGETTO/text/YOU_text_spritesheet.png",
     };
 
 class Map{
