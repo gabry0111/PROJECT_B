@@ -18,7 +18,7 @@ namespace Baba_Is_Us{
         return false;
     }
 
-    constexpr void RuleManager::addRule(const Rule& rule){
+    void RuleManager::addRule(const Rule& rule){
         m_rules.emplace_back(rule);
     }
 
@@ -33,7 +33,7 @@ namespace Baba_Is_Us{
     
     // void RuleManager::movedBlock()
 
-    constexpr void RuleManager::clearRules(){
+    void RuleManager::clearRules(){
         m_rules.clear();
     }
 

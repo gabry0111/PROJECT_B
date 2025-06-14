@@ -54,9 +54,9 @@ private :
 
 public :
     RuleManager() = default;
-    constexpr void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
+    void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
     void removeRule(const Rule& rule); // come addRule()
-    constexpr void clearRules(); // forse non serve
+    void clearRules(); // forse non serve
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
     //N.B: se m_rules cambia, diventano dangling references
     void movedBlock(); // gestisce cosa succede alle regole se è mosso un Block; sarà chiamata in conditions

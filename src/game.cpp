@@ -49,12 +49,12 @@ namespace Baba_Is_Us{
                 std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
                 std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
-                    if(+word1[1] < +Type::ICON_NOUN_TYPE && // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
-                        +word2[1] > +Type::VERB_TYPE &&
-                        +word2[1] < +Type::PROPERTY_TYPE &&
-                        +word3[1] > +Type::PROPERTY_TYPE) {
-                            Rule new_rule {word1[1], word2[1], word3[1]};
-                            m_RM.addRule(new_rule);
+                    if(+word1[1] < +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+                    && +word2[1] > +Type::VERB_TYPE 
+                    && +word2[1] < +Type::PROPERTY_TYPE 
+                    && +word3[1] > +Type::PROPERTY_TYPE) {
+                        Rule new_rule {word1[1], word2[1], word3[1]};
+                        m_RM.addRule(new_rule);
                     }
                 }
             }
