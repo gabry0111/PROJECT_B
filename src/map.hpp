@@ -16,6 +16,7 @@ namespace MapSize {
     constexpr int n_tiles = width * height; // Total number of tiles
 
     constexpr int TILE_SIZE = 32;
+    constexpr int FRAMES_PER_ANIMATION = 3;
     constexpr int FRAME_TIME_MS = 150;
     
 }

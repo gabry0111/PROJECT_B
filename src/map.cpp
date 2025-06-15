@@ -4,6 +4,7 @@
 #include "rules.hpp"
 #include "objects.hpp"
 #include <iostream>
+#include <algorithm>
 using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
@@ -37,6 +38,26 @@ namespace Baba_Is_Us{
             
         }
         std::cout<<"\nno gay\n";
+        for (auto& col : m_objects) {
+            for (auto& row : col) {
+                std::cerr << +row.getTypes()[0] << ' ';
+            }
+            std::cerr << '\n';
+        }
+        std::cerr << "----------------------------\n";
+        for (auto& col : m_grid[0]) {
+            for (auto& row : col) {
+                std::cerr << row << ' ';
+            }
+            std::cerr << '\n';
+        }
+        std::cerr << "----------------------------\n";
+        for (auto& col : m_grid[1]) {
+            for (auto& row : col) {
+                std::cerr << row << ' ';
+            }
+            std::cerr << '\n';
+        }
     }
 
     const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() {
@@ -56,24 +77,57 @@ namespace Baba_Is_Us{
                 std::cerr << "Failed to load " << path << "\n";
                 continue;
             }
-            int width = static_cast<int>(texture.getSize().x); // 72
-            int frames = std::max(1, width / MapSize::TILE_SIZE);       // 3
             textures.emplace_back(texture);
-            frameCounts.emplace_back(frames);
             }
-        std::cerr << textures.size() << " loaded textures\n";
-        std::cerr << nth_frame << ' ' << textures.size() << ' ' << frameCounts.size() << '\n'; // tutte 25, testato
+        std::cerr << nth_frame << ' ' << textures.size() << ' ' << '\n'; // tutte 25, testato
+    }
+
+    int parseEnums(int tileID) {
+        int result {};
+        switch(tileID) {
+        case 0: break;
+        case 1: result = 6;
+            break;
+        case 3: result = 8;
+            break;
+        case 4: result = 9;
+            break;
+        case 5: result = 10;
+            break;
+        case 6: result = 11;
+            break;
+        case 8: break;
+        case 9: 
+        case 10: 
+        case 11: 
+        case 12: 
+        case 13: 
+        case 14: 
+        case 15: 
+        case 16: 
+        case 17: 
+        case 18: 
+        case 19: 
+        case 20: 
+        case 21: result = tileID + 3;
+        break;
+        default: 
+            std::cerr << tileID << '\n';
+            throw (std::runtime_error("in level.txt not given a valid int"));
+            break;
+        }
+        return result;
     }
 
     void Map::setSprites(){
-        // converti le tileID in sprites
+        // converti le path in sprites
 
         for (std::size_t i = 0; i < MapSize::n_tiles; ++i) {
-            int tileID {m_grid[0][i / MapSize::height][i % MapSize::width]}; // typing convenience
-            if (tileID < 0 || tileID >= static_cast<int>(textures.size())) continue;
+            int path = parseEnums(m_grid[0][i / MapSize::height][i % MapSize::width]);
+            if( path == 0 ) continue;
             sf::Sprite sprite;
             //metto la texture sullo sprite
-            sprite.setTexture(textures[static_cast<std::size_t>(tileID)]);
+            sprite.setTexture(textures[static_cast<std::size_t>(path)]);
 
             sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE}); //snip snip 32x32
 
@@ -94,7 +148,7 @@ namespace Baba_Is_Us{
 
             //change the current frame of every individual texture
             //it could be different across textures if we add more detailed spritesheets or more frames per animation
-            nth_frame = (nth_frame + 1) % 3; //le animazioni sono sempre composte da 3 frame
+            nth_frame = (nth_frame + 1) % MapSize::FRAMES_PER_ANIMATION; //le animazioni sono sempre composte da 3 frame
 
             clock.restart();
         }
