@@ -81,8 +81,7 @@ namespace Baba_Is_Us{
             }
         std::cerr << nth_frame << ' ' << textures.size() << ' ' << '\n'; // tutte 25, testato
     }
-
-    int parseEnums(int tileID) {
+    /*int parseEnums(int tileID) {
         int result {};
         switch(tileID) {
         case 0: result = 0;
@@ -115,6 +114,8 @@ namespace Baba_Is_Us{
         }
         return result;
     }
+    */
+    
 
     void Map::setSprites(){
         // converti le path in sprites
@@ -145,7 +146,7 @@ namespace Baba_Is_Us{
         }
         //resize and draw
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
-            tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
+            tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, nth_frame, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
         }
     }
 

@@ -198,6 +198,7 @@ namespace Baba_Is_Us{
         // draw the map
         window.clear();
         int x, y;
+        int count{};
         for (const auto& row : m_map3D.getm_grid()[0]){
             for (auto &i : row){
                 switch (i){
@@ -220,13 +221,14 @@ namespace Baba_Is_Us{
                     case 19:       //word wall
                     case 20:       //word win
                     case 21:       //word you
-                        x = (static_cast<int> (i) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
-                        y = (static_cast<int> (i) / MapSize::height) * MapSize::TILE_SIZE;
+                        x = (static_cast<int> (count) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
+                        y = (static_cast<int> (count) / MapSize::height) * MapSize::TILE_SIZE;
                         sprites[static_cast<std::size_t> (i)].setPosition(static_cast<float>(x), static_cast<float>(y));
                         window.draw(sprites[static_cast<std::size_t>(i)]);
                         break;
                     default: break;
                 }
+                ++count;
             }
 
         }
