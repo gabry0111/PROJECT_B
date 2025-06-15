@@ -26,31 +26,31 @@ namespace Baba_Is_Us {
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
     inline std::array<std::string, 25> tilePaths { //20
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",         //0
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",       //1
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",       //2
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",      //3
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",              //4
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",            //5
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",           //6
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",            //7
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/FLAG_spritesheet.png",                 //8
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/LAVA_spritesheet.png",                 //9
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/ROCK_spritesheet.png",                 //10
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/gifs/WALL_spritesheet.png",                 //11
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/BABA_text_spritesheet.png",            //12
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/DEFEAT_text_spritesheet.png",          //13
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/FLAG_text_spritesheet.png",            //14
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/HOT_text_spritesheet.png",             //15
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/IS_text_spritesheet.png",              //16
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/LAVA_text_spritesheet.png",            //17
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/MELT_text_spritesheet.png",            //18
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/PUSH_text_spritesheet.png",            //19
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/ROCK_text_spritesheet.png",            //20
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/STOP_text_spritesheet.png",            //21
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/WALL_text_spritesheet.png",            //22
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/WIN_text_spritesheet.png",             //23
-        "/home/diegoarcari/labs/progetto/PROJECT_B/assets/png_PROGETTO/text/YOU_text_spritesheet.png"              //24
+        "../../assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",         //0
+        "../../assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",       //1
+        "../../assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",       //2
+        "../../assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",      //3
+        "../../assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",              //4
+        "../../assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",            //5
+        "../../assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",           //6
+        "../../assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",            //7
+        "../../assets/png_PROGETTO/gifs/FLAG_spritesheet.png",                 //8
+        "../../assets/png_PROGETTO/gifs/LAVA_spritesheet.png",                 //9
+        "../../assets/png_PROGETTO/gifs/ROCK_spritesheet.png",                 //10
+        "../../assets/png_PROGETTO/gifs/WALL_spritesheet.png",                 //11
+        "../../assets/png_PROGETTO/text/BABA_text_spritesheet.png",            //12
+        "../../assets/png_PROGETTO/text/DEFEAT_text_spritesheet.png",          //13
+        "../../assets/png_PROGETTO/text/FLAG_text_spritesheet.png",            //14
+        "../../assets/png_PROGETTO/text/HOT_text_spritesheet.png",             //15
+        "../../assets/png_PROGETTO/text/IS_text_spritesheet.png",              //16
+        "../../assets/png_PROGETTO/text/LAVA_text_spritesheet.png",            //17
+        "../../assets/png_PROGETTO/text/MELT_text_spritesheet.png",            //18
+        "../../assets/png_PROGETTO/text/PUSH_text_spritesheet.png",            //19
+        "../../assets/png_PROGETTO/text/ROCK_text_spritesheet.png",            //20
+        "../../assets/png_PROGETTO/text/STOP_text_spritesheet.png",            //21
+        "../../assets/png_PROGETTO/text/WALL_text_spritesheet.png",            //22
+        "../../assets/png_PROGETTO/text/WIN_text_spritesheet.png",             //23
+        "../../assets/png_PROGETTO/text/YOU_text_spritesheet.png"              //24
     };//0
 //0
 class Map{

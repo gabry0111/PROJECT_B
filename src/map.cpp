@@ -129,9 +129,6 @@ namespace Baba_Is_Us{
         }
     }
 
-    
-
-
     Objects& Map::At(std::size_t y, std::size_t x) 
     {
         return m_objects[y][x];
