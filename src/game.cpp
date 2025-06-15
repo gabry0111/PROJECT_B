@@ -49,7 +49,7 @@ namespace Baba_Is_Us{
             std::cerr << pos.first << ' ' << pos.second << '\n';
             // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
             // check verticale
-            if(m_map3D.isBoundary(pos.second, pos.first)) continue;
+            if(m_map3D.isWithinBoundary(pos.second, pos.first)) continue;
             if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {
                 std::cerr << "no prima\n";
                 continue; // se non sei la prima parola logica
@@ -58,8 +58,10 @@ namespace Baba_Is_Us{
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {};
                 std::vector<Type> word3 {};
-                if(m_map3D.isBoundary(pos.second, pos.first)) word2 = m_map3D.At(pos.second + 1, pos.first).getTypes();
-                if(m_map3D.isBoundary(pos.second + 1, pos.first)) word3 = m_map3D.At(pos.second + 2, pos.first).getTypes();
+                if(m_map3D.isWithinBoundary(pos.second + 2, pos.first)) {
+                    word2 = m_map3D.At(pos.second + 1, pos.first).getTypes();
+                    word3 = m_map3D.At(pos.second + 2, pos.first).getTypes();
+                } else continue;
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
                     if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
                     && +word1[1] < +Type::VERB_TYPE
@@ -72,7 +74,7 @@ namespace Baba_Is_Us{
                 }
             }
             //check orizzontale
-            if(m_map3D.isBoundary(pos.second, pos.first)) continue;
+            if(m_map3D.isWithinBoundary(pos.second, pos.first)) continue;
             if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {
                 std::cerr << "no prima\n";
                 continue; // se non sei la prima parola logica
@@ -81,8 +83,8 @@ namespace Baba_Is_Us{
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {};
                 std::vector<Type> word3 {};
-                if(m_map3D.isBoundary(pos.second, pos.first)) word2 = m_map3D.At(pos.second, pos.first + 1).getTypes();
-                if(m_map3D.isBoundary(pos.second, pos.first + 1)) word3 = m_map3D.At(pos.second, pos.first + 2).getTypes();
+                if(m_map3D.isWithinBoundary(pos.second, pos.first)) word2 = m_map3D.At(pos.second, pos.first + 1).getTypes();
+                if(m_map3D.isWithinBoundary(pos.second, pos.first + 1)) word3 = m_map3D.At(pos.second, pos.first + 2).getTypes();
                 if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
                     if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
                     && +word1[1] < +Type::VERB_TYPE
@@ -196,9 +198,7 @@ namespace Baba_Is_Us{
         // draw the map
         window.clear();
         for (const auto& row : m_map3D.getm_grid()[0]){
-            std::cerr << "dammi da disegnare\n";
             for (const auto& i : row){
-                std::cerr << "dentro le righe\n" << sprites.size();
                 switch (i){
                 case 1:
                     window.draw(sprites[6]);    //baba

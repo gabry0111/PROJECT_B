@@ -60,9 +60,9 @@ namespace Baba_Is_Us{
             int frames = std::max(1, width / MapSize::TILE_SIZE);       // 3
             textures.emplace_back(texture);
             frameCounts.emplace_back(frames);
-            current_frame_per_tile_ID.push_back(0); // ogni tile ID partirà dal frame n° 0
-        }
+            }
         std::cerr << textures.size() << " loaded textures\n";
+        std::cerr << nth_frame << ' ' << textures.size() << ' ' << frameCounts.size() << '\n'; // tutte 25, testato
     }
 
     void Map::setSprites(){
@@ -87,36 +87,20 @@ namespace Baba_Is_Us{
         }
         std::cerr << tileSprites.size() << " loaded sprites\n";
     }
-
+    // SE ESISTE ALMENO UNA NON ANIMAZIONE, SIAMO FOTTUTI
     void Map::redraw(sf::Clock &clock){
-        std::cerr<<"redraw\n";
-
-        //
+        std::cerr<<"redraw\n" << clock.getElapsedTime().asMilliseconds();
         if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
 
             //change the current frame of every individual texture
             //it could be different across textures if we add more detailed spritesheets or more frames per animation
-            for (std::size_t i{0}; i < frameCounts.size(); ++i) {
-                std::cerr<<"siamo qua\n";
-                if (frameCounts[i] > 1) { // se in i c'è un'animazione
-                    std::cerr<<"siamo qui\n";
-                    current_frame_per_tile_ID[i] = (current_frame_per_tile_ID[i] + 1) % frameCounts[i]; //frameCounts[i] sarà sempre 3 se è animazione, quindi prova a calcolare
-                }
-            }
+            nth_frame = (nth_frame + 1) % 3; //le animazioni sono sempre composte da 3 frame
+
             clock.restart();
         }
         //resize and draw
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
-
-            for (std::size_t iii{}; iii<frameCounts.size(); ++iii)
-                std::cout<<frameCounts[iii];
-            std::cerr<<"sotto la stessa luce\n";
-            int tileID {m_grid[0][i/MapSize::height][i%MapSize::width]};
-            int frame = current_frame_per_tile_ID[static_cast<size_t> (tileID)];
-            std::cerr<<"sotto la tua croce\n";
-
-            tileSprites[i].setTextureRect({frame * MapSize::TILE_SIZE, 0,MapSize::TILE_SIZE, MapSize::TILE_SIZE});
-            
+            tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, 0,MapSize::TILE_SIZE, MapSize::TILE_SIZE});
         }
     }
 
@@ -171,8 +155,8 @@ namespace Baba_Is_Us{
         return positions_with_type;
     }
 
-    bool Map::isBoundary(std::size_t x, std::size_t y) const {
-        return x == 0 || x == MapSize::width - 1 || y == 0 || y == MapSize::height - 1;
+    bool Map::isWithinBoundary(std::size_t x, std::size_t y) const {
+        return (x <= MapSize::width - 1) || (y <= MapSize::height - 1);
     }
 
     void Map::addObject(Position position, Type type) {
