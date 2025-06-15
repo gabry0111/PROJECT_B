@@ -73,27 +73,27 @@ public:
 
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
-
     const std::array<MapGrid2D, MapSize::depth>& getm_grid();
+    std::array<MapGrid2D, MapSize::depth>& accessm_grid();
+    const std::array<std::array<Objects, MapSize::height>, MapSize::width>& getm_objects();
     void setTextures();
     void setSprites();
     void redraw(sf::Clock &);
-    std::vector<sf::Sprite> getTileSprites();
-    sf::Sprite getWhichSpriteIsInPosition(Position&);
+    const std::vector<sf::Sprite> getTileSprites();
+    const sf::Sprite& getWhichSpriteIsInPosition(Position&);
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
     void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr
     
 
-    // aggiungi un oggetto
-    // constexpr void addObject(Position position, Type type);
+    // aggiungi un oggetto (constexpr)
+    void addObject(Position position, Type type);
 
-    // rimuovi un oggetto
-    // constexpr void resetObject(Position position);
+    // rimuovi un oggetto (constexpr)
+    void resetObject(Position position);
 
     // Quale oggetto c'è in quella posizione?
     // N.B: NON IN MINUSCOLO, è una funzione di vector
-
     Objects& At(std::size_t y, std::size_t x);
     const Objects& At(std::size_t y, std::size_t x) const; // NON può diventare constexpr (m_objects è vector)
 

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <array>
+#include <filesystem>
 using namespace Baba_Is_Us;
 
                         ///////////////////////
@@ -47,10 +48,11 @@ int main() {
 
     constexpr std::array<MapGrid2D, 2> map_grid3D = { base_grid, base_grid };
 */
+    std::cout << "Current working directory: " << std::filesystem::current_path() << "\n";
 
     std::cout<<"Initializing game engine... (please please work)\n";
     // game engine: handles window and game state every frame
-    Game game("/Users/lele/progetto/PROJECT_B/src/level1.txt"); // ??? non so se funziona
+    Game game("src/level1.txt"); // ??? non so se funziona
     std::cout<<"Oui\n";
 
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");

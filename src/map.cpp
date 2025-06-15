@@ -36,13 +36,17 @@ namespace Baba_Is_Us{
             
             
         }
-        std::cout<<"no gay\n";
+        std::cout<<"\nno gay\n";
     }
-
-    
 
     const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() {
         return m_grid;
+    }
+    std::array<MapGrid2D, MapSize::depth>& Map::accessm_grid() {
+        return m_grid;
+    }
+    const std::array<std::array<Objects, MapSize::height>, MapSize::width>& Map::getm_objects(){
+        return m_objects;
     }
     
     void Map::setTextures(){
@@ -58,6 +62,7 @@ namespace Baba_Is_Us{
             frameCounts.emplace_back(frames);
             current_frame_per_tile_ID.push_back(0); // ogni tile ID partirà dal frame n° 0
         }
+        std::cerr << textures.size() << " loaded textures\n";
     }
 
     void Map::setSprites(){
@@ -80,6 +85,7 @@ namespace Baba_Is_Us{
             tileSprites.emplace_back(sprite); // alla fine avrà level.size() elementi, ognuno con una sprite (<- quella che si beve?)
 
         }
+        std::cerr << tileSprites.size() << " loaded sprites\n";
     }
 
     void Map::redraw(sf::Clock &clock){
@@ -114,14 +120,13 @@ namespace Baba_Is_Us{
         }
     }
 
-    std::vector<sf::Sprite> Map::getTileSprites(){
+    const std::vector<sf::Sprite> Map::getTileSprites(){
         return tileSprites;
     }
     
-    sf::Sprite Map::getWhichSpriteIsInPosition(Position& position){
+    const sf::Sprite& Map::getWhichSpriteIsInPosition(Position& position){
         std::size_t index {position.second * MapSize::width + position.first};
-        sf::Sprite sprite {tileSprites[index]};
-        return sprite;
+        return tileSprites[index];
     }
 
 
@@ -169,15 +174,13 @@ namespace Baba_Is_Us{
     bool Map::isBoundary(std::size_t x, std::size_t y) const {
         return x == 0 || x == MapSize::width - 1 || y == 0 || y == MapSize::height - 1;
     }
-/*
-    constexpr void Map::addObject(Position position, Type type) {
+
+    void Map::addObject(Position position, Type type) {
         m_objects[position.second][position.first].addType(type);
     }
-    constexpr void Map::resetObject(Position position) {
+    void Map::resetObject(Position position) {
         m_objects[position.second][position.first] = {};
-
-        
     }
-*/
+
 
 } //anmespace Baba_Is_Us

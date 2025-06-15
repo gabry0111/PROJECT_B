@@ -159,13 +159,17 @@ namespace Baba_Is_Us{
         }    
     }
 
-    void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
+    void Game::render(sf::RenderWindow &window, const std::vector<sf::Sprite> sprites){
         std::cerr<<"render\n";
 
+        const std::vector<sf::Sprite> all_the_sprites{m_map3D.getTileSprites()};
+        std::cerr << all_the_sprites.size();
         // draw the map
         window.clear();
         for (const auto& row : m_map3D.getm_grid()[0]){
+            std::cerr << "dammi da disegnare\n";
             for (const auto& i : row){
+                std::cerr << "dentro le righe\n" << sprites.size();
                 switch (i){
                 case 1:
                     window.draw(sprites[6]);    //baba
@@ -202,7 +206,7 @@ namespace Baba_Is_Us{
             }
 
         }
-
+        std::cerr << "welp, almost end of render()";
         window.display();
     }
 
@@ -243,19 +247,26 @@ namespace Baba_Is_Us{
     }
 
 
-    void Game::rotate(Position &player_position, Direction direction){
-        player_position.first = player_position.first;
-        player_position.second = player_position.second;
-        switch(direction){
-            case Baba_Is_Us::Direction::Up:
-                break;
-            case Baba_Is_Us::Direction::Down:
-                break;
-            case Baba_Is_Us::Direction::Left:
-                break;
-            case Baba_Is_Us::Direction::Right:
-                break;
-            default: break;
+    void Game::rotate(Position &position, Direction direction){
+        position.first = position.first;
+        position.second = position.second;
+        if (m_map3D.At(position.second, position.first).getTypes()[0] == Type::Baba) { //solo Baba è speciale
+            sf::Sprite sprite {m_map3D.tileSprites[position.second * MapSize::width + position.first]};
+            switch(direction){
+                case Baba_Is_Us::Direction::Up:
+                    sprite.setTexture(m_map3D.textures[4]);
+                    break;
+                case Baba_Is_Us::Direction::Down:
+                    sprite.setTexture(m_map3D.textures[5]);
+                    break;
+                case Baba_Is_Us::Direction::Left:
+                    sprite.setTexture(m_map3D.textures[7]);
+                    break;
+                case Baba_Is_Us::Direction::Right:
+                    sprite.setTexture(m_map3D.textures[6]);
+                    break;
+                default: break;
+            }
         }
     }
 
@@ -287,10 +298,37 @@ namespace Baba_Is_Us{
 
     //overload
     void Game::movement(Direction direction){ 
+        Position shift{getShift(direction)};
+        std::size_t dx {shift.first};
+        std::size_t dy {shift.second};
         std::vector<Position>& player_positions {getPlayerPositions()};
+
         for (auto& each : player_positions) {
             rotate(each, direction);
-            sf::Sprite& sprite {m_map3D.tileSprites[each.second]};
+            sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+            sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11); //muovi in direzione direction di 11 pixels
+            if (movementCheck(direction)) {
+                sprite.move(MapSize::TILE_SIZE - static_cast<float>(dx) * 11, MapSize::TILE_SIZE - static_cast<float>(dy) * 11);
+
+                m_map3D.accessm_grid()[0][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[0][each.second][each.first];
+
+                m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[1][each.second][each.first];
+
+                m_map3D.addObject({dx, dy}, m_map3D.At(each.second, each.first).getTypes()[0]); 
+                m_map3D.resetObject({dx, dy}); // with addObj e resetObj, m_objects è a posto
+            }
+            else{
+                if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
+                    m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+                    if (m_map3D.getm_objects()[each.second + dx][each.first + dy].getTypes()[0] == Type::Void) {//se anche il target si è distrutto
+                        m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = +Type::Void;
+                    }
+                    
+                    ; //rimuovi la sprite (forse non serve, dipende quando chiamiamo la funzione che associa all'int una sprite)
+                } else { // ritorna indietro
+                    sprite.move(- static_cast<float>(dx) * 11, - static_cast<float>(dy) * 11);
+                }
+            }
         }
         /*  
         divide movement in 3rds, for each frame of the animation:
