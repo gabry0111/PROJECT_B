@@ -199,41 +199,44 @@ namespace Baba_Is_Us{
         window.clear();
         for (const auto& row : m_map3D.getm_grid()[0]){
             for (const auto& i : row){
+                std::cerr<<i;
                 switch (i){
-                case 1:
-                    window.draw(sprites[6]);    //baba
-                    break;
-                case 3:
-                    window.draw(sprites[8]);    //flag
-                    break;
-                case 4:
-                    window.draw(sprites[9]);    //lava
-                    break;
-                case 5:
-                    window.draw(sprites[10]);   //rock
-                    break;
-                case 6 :
-                    window.draw(sprites[11]);   //wall
-                    break;     
-                case 1+ +Type::Icon_Void:       //word baba
-                case 2+ +Type::Icon_Void:       //word defeat
-                case 3+ +Type::Icon_Void:       //word flag
-                case 4+ +Type::Icon_Void:       //word hot
-                case 5+ +Type::Icon_Void:       //word is
-                case 6+ +Type::Icon_Void:       //word lava
-                case 7+ +Type::Icon_Void:       //word melt
-                case 8+ +Type::Icon_Void:       //word push
-                case 9+ +Type::Icon_Void:       //word rock
-                case 10+ +Type::Icon_Void:      //word stop
-                case 11+ +Type::Icon_Void:      //word wall
-                case 12+ +Type::Icon_Void:      //word win
-                case 13+ +Type::Icon_Void:      //word you
-                    window.draw(sprites[static_cast<std::size_t>(i+3)]);
-                    break;
-                default: break;
+                    case 1:
+                        window.draw(sprites[6]);    //baba
+                        break;
+                    case 3:
+                        window.draw(sprites[8]);    //flag
+                        break;
+                    case 4:
+                        window.draw(sprites[9]);    //lava
+                        break;
+                    case 5:
+                        window.draw(sprites[10]);   //rock
+                        break;
+                    case 6 :
+                        window.draw(sprites[11]);   //wall
+                        break;     
+                    case 9:        //word baba
+                    case 10:       //word defeat
+                    case 11:       //word flag
+                    case 12:       //word hot
+                    case 13:       //word is
+                    case 14:       //word lava
+                    case 15:       //word melt
+                    case 16:       //word push
+                    case 17:       //word rock
+                    case 18:       //word stop
+                    case 19:       //word wall
+                    case 20:       //word win
+                    case 21:       //word you
+                        window.draw(sprites[static_cast<std::size_t>(i+3)]);
+                        std::cerr<<"boh????\n";
+                        break;
+                    default: break;
                 }
+                std::cerr<<" - ";
             }
-
+            std::cerr<<"\n";
         }
 
         window.display();

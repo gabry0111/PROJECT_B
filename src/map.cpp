@@ -143,7 +143,7 @@ namespace Baba_Is_Us{
     }
     // SE ESISTE ALMENO UNA NON ANIMAZIONE, SIAMO FOTTUTI
     void Map::redraw(sf::Clock &clock){
-        std::cerr<<"redraw\n" << clock.getElapsedTime().asMilliseconds();
+        std::cerr<<"redraw " << clock.getElapsedTime().asMilliseconds()<<"\n";
         if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
 
             //change the current frame of every individual texture
