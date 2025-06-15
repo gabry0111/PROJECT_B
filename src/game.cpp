@@ -30,7 +30,7 @@ namespace Baba_Is_Us{
         // checkRulesForProperty
         // aggiungi le proprietà giuste ad ogni oggetto
         m_players = m_map3D.getPositions(Type::You);
-        std::cout<<"QUA\n";
+
         m_RM.clearRules();
     }
 
