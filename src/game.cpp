@@ -192,30 +192,21 @@ namespace Baba_Is_Us{
         }    
     }
 
-    void Game::render(sf::RenderWindow &window, const std::vector<sf::Sprite> sprites){
+    void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
         std::cerr<<"render\n";
 
         // draw the map
         window.clear();
+        int x, y;
         for (const auto& row : m_map3D.getm_grid()[0]){
-            for (const auto& i : row){
-                std::cerr<<i;
+            for (auto &i : row){
                 switch (i){
+                    case 0:
                     case 1:
-                        window.draw(sprites[6]);    //baba
-                        break;
                     case 3:
-                        window.draw(sprites[8]);    //flag
-                        break;
                     case 4:
-                        window.draw(sprites[9]);    //lava
-                        break;
                     case 5:
-                        window.draw(sprites[10]);   //rock
-                        break;
-                    case 6 :
-                        window.draw(sprites[11]);   //wall
-                        break;     
+                    case 6:
                     case 9:        //word baba
                     case 10:       //word defeat
                     case 11:       //word flag
@@ -229,14 +220,15 @@ namespace Baba_Is_Us{
                     case 19:       //word wall
                     case 20:       //word win
                     case 21:       //word you
-                        window.draw(sprites[static_cast<std::size_t>(i+3)]);
-                        std::cerr<<"boh????\n";
+                        x = (static_cast<int> (i) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
+                        y = (static_cast<int> (i) / MapSize::height) * MapSize::TILE_SIZE;
+                        sprites[static_cast<std::size_t> (i)].setPosition(static_cast<float>(x), static_cast<float>(y));
+                        window.draw(sprites[static_cast<std::size_t>(i)]);
                         break;
                     default: break;
                 }
-                std::cerr<<" - ";
             }
-            std::cerr<<"\n";
+
         }
 
         window.display();
