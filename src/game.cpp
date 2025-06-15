@@ -148,38 +148,43 @@ namespace Baba_Is_Us{
                         */      
                         //checkRules 
                         temp = Direction::Up;
-                        goto pippo;
+                        //call function
+                        break;
                     case sf::Keyboard::A:
+                        //call function
                         temp = Direction::Left;
-                        goto pippo; 
+                        //call function
+                        break;
                     case sf::Keyboard::S:
                         temp = Direction::Down;
-                        goto pippo;
+                        //call function
+                        break;
                     case sf::Keyboard::D:
                         temp = Direction::Right;
-                        goto pippo;
-                        pippo:
-                        Position shift = getShift(temp);
-                        std::size_t dx {shift.first};
-                        std::size_t dy {shift.second};
-
-                        std::vector<Position>& player_positions {getPlayerPositions()};
-
-                        for(auto& each : player_positions){
-                            if(movementCheck(each, temp)==PlayState::Playing){
-                                sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
-                                sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
-                                sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
-                                sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
-                            }
-                            
-                        }
+                        //call function
                         break;
                     case sf::Keyboard::Space: 
                         //check se ha un oggetto in mano
                         //lancia oggetto
                         break;
-                    default: break;
+                    default: 
+                        break;
+                }
+                
+                Position shift = getShift(temp);
+                std::size_t dx {shift.first};
+                std::size_t dy {shift.second};
+
+                std::vector<Position>& player_positions {getPlayerPositions()};
+
+                for(auto& each : player_positions){
+                    if(movementCheck(each, temp)==PlayState::Playing){
+                        sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+                        sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                        sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
+                        sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                    }
+                    
                 }
             }
         }    
@@ -296,7 +301,7 @@ namespace Baba_Is_Us{
         if (playstate!=PlayState::Playing)  //
             playstate=PlayState::Playing;   //
 
-        /*  
+        
         divide movement in 3rds, for each frame of the animation:
             - change the player's sprite position by 1/3 towards the target's position
             - if target is pushable, game::update chiamerà anche movement(target, direction)
@@ -391,7 +396,7 @@ namespace Baba_Is_Us{
         return PlayState::Invalid;
     }
 
-    PlayState Game::conditions(Objects& object, Objects& second) { //fanculo
+    PlayState Game::conditions(Objects& object, Objects& second) { //fanculo alle 14:30
         std::vector<Type> second_types {second.getTypes()};
         PlayState action {PlayState::Invalid};
         
