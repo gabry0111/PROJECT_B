@@ -73,7 +73,7 @@ namespace Baba_Is_Us{
     void Map::setTextures(){
         for (auto& path : tilePaths) {
             sf::Texture texture;
-            if (!texture.loadFromFile(path)) {
+            if (!texture.loadFromFile(path)) { //il bastardo non vuole string_view
                 std::cerr << "Failed to load " << path << "\n";
                 continue;
             }
@@ -85,16 +85,13 @@ namespace Baba_Is_Us{
     int parseEnums(int tileID) {
         int result {};
         switch(tileID) {
-        case 0: break;
-        case 1: result = 6;
+        case 0: result = 0;
             break;
-        case 3: result = 8;
-            break;
-        case 4: result = 9;
-            break;
-        case 5: result = 10;
-            break;
-        case 6: result = 11;
+        case 1: 
+        case 3: 
+        case 4: 
+        case 5:
+        case 6: result = tileID+6;
             break;
         case 8: break;
         case 9: 
@@ -109,7 +106,7 @@ namespace Baba_Is_Us{
         case 18: 
         case 19: 
         case 20: 
-        case 21: result = tileID + 3;
+        case 21: result = tileID + 4;
         break;
         default: 
             std::cerr << tileID << " TileID" << '\n' ;
@@ -121,18 +118,13 @@ namespace Baba_Is_Us{
 
     void Map::setSprites(){
         // converti le path in sprites
-
-        for (std::size_t i = 0; i < MapSize::n_tiles; ++i) {
-            int path = parseEnums(m_grid[0][i / MapSize::height][i % MapSize::width]);
-            sf::Sprite sprite;
+        sf::Sprite sprite;
+        
+        for (const auto& texture : textures) {
             //metto la texture sullo sprite
-            sprite.setTexture(textures[static_cast<std::size_t>(path)]);
+            sprite.setTexture(texture);
 
             sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE}); //snip snip 32x32
-
-            int x = (static_cast<int> (i) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
-            int y = (static_cast<int> (i) / MapSize::height) * MapSize::TILE_SIZE;
-            sprite.setPosition(static_cast<float>(x), static_cast<float>(y));
 
             //non riesco a capire counter -> 4
             tileSprites.emplace_back(sprite); // alla fine avrà level.size() elementi, ognuno con una sprite (<- quella che si beve?)
@@ -153,11 +145,11 @@ namespace Baba_Is_Us{
         }
         //resize and draw
         for (std::size_t i{}; i < tileSprites.size(); ++i) {
-            tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, 0,MapSize::TILE_SIZE, MapSize::TILE_SIZE});
+            tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
         }
     }
 
-    const std::vector<sf::Sprite> Map::getTileSprites(){
+    std::vector<sf::Sprite> Map::getTileSprites(){
         return tileSprites;
     }
     
