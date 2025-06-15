@@ -113,6 +113,7 @@ namespace Baba_Is_Us{
 
         sf::Event event;
 
+        Direction temp;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) window.close();
@@ -128,8 +129,14 @@ namespace Baba_Is_Us{
                         //controllo di player
                         // 1) un solo oggetto in Position Player
                         //      movement_check(map, player[0], Direction::Up);
-                        //      se vero, rotate e movement
-                        //      se falso, rotate
+                        //      rotate()
+                        //      se vero,    
+                        //          poi movement, sprite.move, redraw e render 3 volte  
+                        //
+            //move, redraw, render
+            //move, redraw, render
+            //move, redraw, render
+                        //      se falso, fanculo
                         // 2) più di uno
                         //      movement_check(map, player, Direction::Up); -> vettore di pair di playState e positions
                         /*      for(auto &i : playStates){
@@ -139,15 +146,34 @@ namespace Baba_Is_Us{
                                     }
                                 }
                         */      
-                        
                         //checkRules 
-
-                        break;
+                        temp = Direction::Up;
+                        goto pippo;
                     case sf::Keyboard::A:
-                        break;
+                        temp = Direction::Left;
+                        goto pippo; 
                     case sf::Keyboard::S:
-                        break;
+                        temp = Direction::Down;
+                        goto pippo;
                     case sf::Keyboard::D:
+                        temp = Direction::Right;
+                        goto pippo;
+                        pippo:
+                        Position shift = getShift(temp);
+                        std::size_t dx {shift.first};
+                        std::size_t dy {shift.second};
+
+                        std::vector<Position>& player_positions {getPlayerPositions()};
+
+                        for(auto& each : player_positions){
+                            if(movementCheck(each, temp)==PlayState::Playing){
+                                sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+                                sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                                sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
+                                sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                            }
+                            
+                        }
                         break;
                     case sf::Keyboard::Space: 
                         //check se ha un oggetto in mano
@@ -162,8 +188,6 @@ namespace Baba_Is_Us{
     void Game::render(sf::RenderWindow &window, const std::vector<sf::Sprite> sprites){
         std::cerr<<"render\n";
 
-        const std::vector<sf::Sprite> all_the_sprites{m_map3D.getTileSprites()};
-        std::cerr << all_the_sprites.size();
         // draw the map
         window.clear();
         for (const auto& row : m_map3D.getm_grid()[0]){
@@ -229,23 +253,18 @@ namespace Baba_Is_Us{
     // se non si può fare (non si può muovere e gli oggetti sono già distrutti), allora vedere se movementCheck è "vuoto"
     // ASSICURATI CHE conditions() NON SIA MAI PIù CHIAMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // VA BENE OK DIEGO
-    std::optional<std::vector<PlayState>> Game::movementCheck(Direction direction){
+    PlayState Game::movementCheck(Position pos, Direction direction){
         Position shift{getShift(direction)};
-        std::vector<PlayState> results {};
         
-        for(const auto& pos : getPlayerPositions()){
-            if(! getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)) 
-                return std::optional<std::vector<PlayState>>{ {PlayState::Invalid, } };
+        if(! getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)) 
+            return PlayState::Invalid;
 
-            Position first_mismatch {* getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)};
-            Position last_before_mismatch {first_mismatch.first - shift.first, first_mismatch.second - shift.second};
+        Position first_mismatch {* getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)};
+        Position last_before_mismatch {first_mismatch.first - shift.first, first_mismatch.second - shift.second};
 
-            // while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
-            results.emplace_back(conditions(m_map3D.At(last_before_mismatch.first, last_before_mismatch.second), m_map3D.At(first_mismatch.first, first_mismatch.second)));
-        }
-        return results.empty() ? std::nullopt : std::optional<std::vector<PlayState>>(results);
+        // while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
+        return conditions(m_map3D.At(last_before_mismatch.first, last_before_mismatch.second), m_map3D.At(first_mismatch.first, first_mismatch.second));
     }
-
 
     void Game::rotate(Position &position, Direction direction){
         position.first = position.first;
@@ -271,7 +290,7 @@ namespace Baba_Is_Us{
     }
 
 
-    void Game::movement(Direction direction, PlayState playstate){
+   /*void Game::movement(Direction direction, PlayState playstate){
         if(direction!=Direction::Up)        //
             direction=Direction::Up;        //TEMPORANEI, per far compilare
         if (playstate!=PlayState::Playing)  //
@@ -283,7 +302,7 @@ namespace Baba_Is_Us{
             - if target is pushable, game::update chiamerà anche movement(target, direction)
         SI PUò FARE ANCHE PER OGGETTI CHE DEVONO ESSERE DISTRUTTI?
         COME FARE A VEDERE DOVE STA GUARDANDO PLAYER? (PER ROCK) (togliamo launch e mettiamoci gradino?)
-        */ 
+         
         
         // 1/3
         
@@ -294,7 +313,7 @@ namespace Baba_Is_Us{
         //position.second = target.second;
     
         //return true;
-    }
+    }*/
 
     //overload
     void Game::movement(Direction direction){ 
@@ -305,30 +324,27 @@ namespace Baba_Is_Us{
 
         for (auto& each : player_positions) {
             rotate(each, direction);
-            sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+            //sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+            /*
             sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11); //muovi in direzione direction di 11 pixels
-            if (movementCheck(direction)) {
                 sprite.move(MapSize::TILE_SIZE - static_cast<float>(dx) * 11, MapSize::TILE_SIZE - static_cast<float>(dy) * 11);
-
-                m_map3D.accessm_grid()[0][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[0][each.second][each.first];
-
-                m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[1][each.second][each.first];
-
-                m_map3D.addObject({dx, dy}, m_map3D.At(each.second, each.first).getTypes()[0]); 
-                m_map3D.resetObject({dx, dy}); // with addObj e resetObj, m_objects è a posto
-            }
-            else{
-                if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
-                    m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-                    if (m_map3D.getm_objects()[each.second + dx][each.first + dy].getTypes()[0] == Type::Void) {//se anche il target si è distrutto
-                        m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = +Type::Void;
-                    }
-                    
-                    ; //rimuovi la sprite (forse non serve, dipende quando chiamiamo la funzione che associa all'int una sprite)
-                } else { // ritorna indietro
                     sprite.move(- static_cast<float>(dx) * 11, - static_cast<float>(dy) * 11);
+            
+            */
+            m_map3D.accessm_grid()[0][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[0][each.second][each.first];
+
+            m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[1][each.second][each.first];
+
+            m_map3D.addObject({dx, dy}, m_map3D.At(each.second, each.first).getTypes()[0]); 
+            m_map3D.resetObject({dx, dy}); // with addObj e resetObj, m_objects è a posto
+            
+            if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
+                m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+                if (m_map3D.getm_objects()[each.second + dx][each.first + dy].getTypes()[0] == Type::Void) {//se anche il target si è distrutto
+                    m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = +Type::Void;
                 }
-            }
+            } 
+            
         }
         /*  
         divide movement in 3rds, for each frame of the animation:
@@ -375,7 +391,7 @@ namespace Baba_Is_Us{
         return PlayState::Invalid;
     }
 
-    PlayState Game::conditions(Objects& object, Objects& second) {
+    PlayState Game::conditions(Objects& object, Objects& second) { //fanculo
         std::vector<Type> second_types {second.getTypes()};
         PlayState action {PlayState::Invalid};
         

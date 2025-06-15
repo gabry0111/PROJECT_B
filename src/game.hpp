@@ -28,10 +28,10 @@ namespace Baba_Is_Us{
         // Objects getObject(Position); forse inutile
         // std::optional<PlayState> movementCheck(Direction, Position); inutile fare l'overload, verrà sempre scelto il vector.
         // di conseguenza anche movement per un unico oggetto sarà inutile
-        std::optional<std::vector<PlayState>> movementCheck(Direction);
+        PlayState movementCheck(Position, Direction);
         void rotate(Position&, Direction);
-        void movement(Map, Position, Direction);
-        void movement(Direction, PlayState);
+        //void movement(Map, Position, Direction); //per ora non servono
+        //void movement(Direction, PlayState);
         void movement(Direction);
         PlayState conditions(Objects&, Objects&);
     };
