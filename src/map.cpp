@@ -112,7 +112,7 @@ namespace Baba_Is_Us{
         case 21: result = tileID + 3;
         break;
         default: 
-            std::cerr << tileID << '\n';
+            std::cerr << tileID << " TileID" << '\n' ;
             throw (std::runtime_error("in level.txt not given a valid int"));
             break;
         }
@@ -124,7 +124,6 @@ namespace Baba_Is_Us{
 
         for (std::size_t i = 0; i < MapSize::n_tiles; ++i) {
             int path = parseEnums(m_grid[0][i / MapSize::height][i % MapSize::width]);
-            if( path == 0 ) continue;
             sf::Sprite sprite;
             //metto la texture sullo sprite
             sprite.setTexture(textures[static_cast<std::size_t>(path)]);
