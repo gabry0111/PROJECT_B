@@ -25,7 +25,6 @@ namespace Baba_Is_Us{
     {
         std::cout<<"aaaaaaaaa\n";
         parseRules();
-        std::cout<<"parsed rules\n";
 
         // checkRulesForProperty
         // aggiungi le proprietà giuste ad ogni oggetto
@@ -97,7 +96,8 @@ namespace Baba_Is_Us{
                 }
             }
         }
-        std::cerr << "ParseRules()";
+    
+        std::cerr << m_RM.getRules().size() <<" rules parsed\n";
     }
 
     Position getShift(Direction dir) {
@@ -200,48 +200,18 @@ namespace Baba_Is_Us{
         for (const auto& row : m_map3D.getm_grid()[0]){
             for (auto &i : row){
                 //ATTENZIONE: il valore di 'i' corrisponde al PATH, NON AD ENUM TYPE
-                switch (i){
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:        
-                    case 10:       
-                    case 11:       
-                    case 12:       
-                    case 13:       
-                    case 14:       
-                    case 15:       
-                    case 16:       
-                    case 17:       
-                    case 18:       
-                    case 19:       
-                    case 20:      
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:       
-                        x = (static_cast<int> (count) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
-                        y = (static_cast<int> (count) / MapSize::height) * MapSize::TILE_SIZE;
-                        sprites[static_cast<std::size_t> (i)].setPosition(static_cast<float>(x), static_cast<float>(y));
-                        window.draw(sprites[static_cast<std::size_t>(i)]);
-                        break;
-                    default: break;
+                if (i>=0 && i<=25){
+                    //posiziona e disegna ogni sprite
+                    x = (static_cast<int> (count) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
+                    y = (static_cast<int> (count) / MapSize::height) * MapSize::TILE_SIZE;
+                    sprites[static_cast<std::size_t> (i)].setPosition(static_cast<float>(x), static_cast<float>(y));
+                    window.draw(sprites[static_cast<std::size_t>(i)]);
                 }
                 ++count;
             }
-
         }
-
         window.display();
     }
-
 
     // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimento
     std::optional<Position> getFirstMismatchOfObjects(const MapGrid2D& grid, Direction dir, const Position& start) {

@@ -30,6 +30,9 @@ namespace Baba_Is_Us{
         }
     }
 
+    std::vector<Rule>& RuleManager::getRules(){
+        return m_rules;
+    }
     
     // void RuleManager::movedBlock()
 
