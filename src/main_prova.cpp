@@ -18,7 +18,7 @@ int main() {
 
     std::cout<<"Initializing game engine... (please please work)\n";
     // game engine: handles window and game state every frame
-    Game game("/home/diegoarcari/labs/progetto/PROJECT_B/src/level1.txt"); // ??? non so se funziona
+    Game game("../../assets/levels/level1.txt"); // ??? non so se funziona
     std::cout<<"Oui\n";
 
     sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
