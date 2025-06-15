@@ -111,7 +111,6 @@ namespace Baba_Is_Us{
     }
 
     void Game::update(sf::RenderWindow &window, Map &map){
-        std::cerr<<"update\n";
 
         sf::Event event;
 
@@ -193,7 +192,6 @@ namespace Baba_Is_Us{
     }
 
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
-        std::cerr<<"render\n";
 
         // draw the map
         window.clear();
@@ -201,26 +199,34 @@ namespace Baba_Is_Us{
         int count{};
         for (const auto& row : m_map3D.getm_grid()[0]){
             for (auto &i : row){
+                //ATTENZIONE: il valore di 'i' corrisponde al PATH, NON AD ENUM TYPE
                 switch (i){
                     case 0:
                     case 1:
+                    case 2:
                     case 3:
                     case 4:
                     case 5:
                     case 6:
-                    case 9:        //word baba
-                    case 10:       //word defeat
-                    case 11:       //word flag
-                    case 12:       //word hot
-                    case 13:       //word is
-                    case 14:       //word lava
-                    case 15:       //word melt
-                    case 16:       //word push
-                    case 17:       //word rock
-                    case 18:       //word stop
-                    case 19:       //word wall
-                    case 20:       //word win
-                    case 21:       //word you
+                    case 7:
+                    case 8:
+                    case 9:        
+                    case 10:       
+                    case 11:       
+                    case 12:       
+                    case 13:       
+                    case 14:       
+                    case 15:       
+                    case 16:       
+                    case 17:       
+                    case 18:       
+                    case 19:       
+                    case 20:      
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:       
                         x = (static_cast<int> (count) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
                         y = (static_cast<int> (count) / MapSize::height) * MapSize::TILE_SIZE;
                         sprites[static_cast<std::size_t> (i)].setPosition(static_cast<float>(x), static_cast<float>(y));

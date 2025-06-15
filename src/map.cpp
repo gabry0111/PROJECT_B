@@ -9,29 +9,76 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
+    int parseToEnums(int tileID) {
+        int result {};
+        switch(tileID) {
+        case 0: result = 0;
+            break;
+        case 1: 
+        case 2:
+        case 3: 
+        case 4: 
+        case 5:
+        case 6: 
+        case 7:
+        case 8: result = 1;             // baba's sprites
+            break;
+        case 9: 
+        case 10: 
+        case 11: 
+        case 12: result = tileID - 6;   // other NOUN_TYPE objects
+            break;
+        case 13: 
+        case 14: 
+        case 15: 
+        case 16: 
+        case 17: 
+        case 18: 
+        case 19: 
+        case 20: 
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 25: result = tileID - 4;   // text blocks
+            break;
+        default: 
+            std::cerr << tileID << '\n';
+            throw (std::runtime_error("in level.txt not given a valid int"));
+            break;
+        }
+        return result;
+    }
+
     Map::Map(std::string_view filename)  {
         std::ifstream map_file {filename.data()}; //comincia dall'inizio di file.txt bidimensionale
         if (! map_file){
                 std::cerr << "Error! can't open level";
             }
-        int value = 5;
+        int value {};
         for (std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
             map_file >> value;
             std::cerr << value;
             
             if(value > +Type::ICON_NOUN_TYPE && value != +Type::VERB_TYPE && value != +Type::PROPERTY_TYPE){
-                std::vector<Type> current{};
+                //initialize block tile value
                 m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+
+                //initialize block object in tile
+                std::vector<Type> current{};
                 current.emplace_back(Type::Block);
-                current.emplace_back(intToType(value));
+                current.emplace_back(intToType(parseToEnums(value)));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
             else{
-                std::vector<Type> current{};
+                //initialize tile value
                 m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
-                current.emplace_back(intToType(value));
+
+                //initialize object in tile
+                std::vector<Type> current{};
+                current.emplace_back(intToType(parseToEnums(value)));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
             
@@ -81,40 +128,7 @@ namespace Baba_Is_Us{
             }
         std::cerr << nth_frame << ' ' << textures.size() << ' ' << '\n'; // tutte 25, testato
     }
-    /*int parseEnums(int tileID) {
-        int result {};
-        switch(tileID) {
-        case 0: result = 0;
-            break;
-        case 1: 
-        case 3: 
-        case 4: 
-        case 5:
-        case 6: result = tileID+6;
-            break;
-        case 8: break;
-        case 9: 
-        case 10: 
-        case 11: 
-        case 12: 
-        case 13: 
-        case 14: 
-        case 15: 
-        case 16: 
-        case 17: 
-        case 18: 
-        case 19: 
-        case 20: 
-        case 21: result = tileID + 4;
-        break;
-        default: 
-            std::cerr << tileID << '\n';
-            throw (std::runtime_error("in level.txt not given a valid int"));
-            break;
-        }
-        return result;
-    }
-    */
+    
     
 
     void Map::setSprites(){
@@ -135,7 +149,7 @@ namespace Baba_Is_Us{
     }
     // SE ESISTE ALMENO UNA NON ANIMAZIONE, SIAMO FOTTUTI
     void Map::redraw(sf::Clock &clock){
-        std::cerr<<"redraw " << clock.getElapsedTime().asMilliseconds()<<"\n";
+
         if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
 
             //change the current frame of every individual texture
