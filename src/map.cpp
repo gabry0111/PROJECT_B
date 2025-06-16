@@ -9,6 +9,27 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
+
+    Type iconToAll(Type type) {
+        switch(type){
+            case Type::Icon_Void:   return Type::Void;
+            case Type::Icon_Baba:   return Type::Baba;
+            case Type::Icon_Defeat: return Type::Defeat;
+            case Type::Icon_Flag:   return Type::Flag;
+            case Type::Icon_Hot:    return Type::Hot;
+            case Type::Icon_Is:     return Type::Is;
+            case Type::Icon_Lava:   return Type::Lava;
+            case Type::Icon_Melt:   return Type::Melt;
+            case Type::Icon_Push:   return Type::Push;
+            case Type::Icon_Rock:   return Type::Rock;
+            case Type::Icon_Stop:   return Type::Stop;
+            case Type::Icon_Wall:   return Type::Wall;
+            case Type::Icon_Win:    return Type::Win;
+            case Type::Icon_You:    return Type::You;
+            default: throw(std::runtime_error("iconToAll(): scimpanzini bananini"));
+        }
+    }
+
     Map::Map(std::string_view filename)  {
         std::ifstream map_file {filename.data()}; //comincia dall'inizio di file.txt bidimensionale
         if (! map_file){
@@ -30,7 +51,7 @@ namespace Baba_Is_Us{
                 && value != +Type::Block && value != +Type::Icon_Void 
                 && "in Map(), level.txt there's an invalid value");
 
-            if (value <= 6 && value != +Type::Block){ // NOUN_TYPE (+ Void)
+            if (value <= 6){ // NOUN_TYPE (+ Void)
                 m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
 
@@ -44,7 +65,7 @@ namespace Baba_Is_Us{
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
 
                 current.emplace_back(Type::Block);
-                current.emplace_back(intToType(value));
+                current.emplace_back(iconToAll(intToType(value)));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
             else throw(std::runtime_error("Map(): in level.txt not given a valid value under +Type::VERB_TYPE"));
@@ -212,9 +233,7 @@ namespace Baba_Is_Us{
         for (std::size_t x = 0; x < MapSize::height; ++x){
             for (std::size_t y = 0; y < MapSize::width; ++y){
                 if (m_objects[y][x].objectHasType(type)){
-                    std::cout<<"daje ";
                     positions_with_type.emplace_back(Position(x, y));
-                    std::cout<<"roma\n";
                 }
             }
         }

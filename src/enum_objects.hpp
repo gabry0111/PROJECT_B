@@ -46,8 +46,10 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Is,
 
   PROPERTY_TYPE,
+  Defeat,
   Hot,
   Launch, // launchable
+  Melt,
   Move, // = Player può camminare sopra quel tipo
   Open, //door
   Push,
@@ -104,8 +106,10 @@ constexpr std::string_view getTypeName(Type type)
     case Type::VERB_TYPE:       return "VERB_TYPE";
     case Type::Is:              return "Is";
     case Type::PROPERTY_TYPE:   return "PROPERTY_TYPE";
+    case Type::Defeat:          return "Defeat";
     case Type::Hot:             return "Hot";
     case Type::Launch:          return "Launch";
+    case Type::Melt:            return "Melt";
     case Type::Move:            return "Move";
     case Type::Open:            return "Open";
     case Type::Push:            return "Push";

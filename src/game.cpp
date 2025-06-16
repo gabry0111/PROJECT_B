@@ -50,8 +50,8 @@ namespace Baba_Is_Us{
         std::cerr << "\n word3: "; for (Type iter : word3) {std::cerr << iter << ' ';}
         
         assert(!word2.empty() && !word3.empty() && "createRule()"); // una protezione in più
-            if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
-            && +word1[1] < +Type::VERB_TYPE
+            if(+word1[1] > +Type::NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+            && +word1[1] < +Type::ICON_NOUN_TYPE
             && +word2[1] > +Type::VERB_TYPE 
             && +word2[1] < +Type::PROPERTY_TYPE 
             && +word3[1] > +Type::PROPERTY_TYPE) {
@@ -63,9 +63,9 @@ namespace Baba_Is_Us{
     void Game::parseRules() {
         std::vector<Position> block_pos {m_map3D.getPositions(Type::Block)};
 
-        // check verticale
+        // check verticale (da alto a basso)
         for (Position& pos : block_pos) {
-            std::cerr << pos.first << "," << pos.second << ' ';
+            std::cerr << pos.second << "," << pos.first << ' ';
             // N.B: per Block: [0] = Block, [2] = ICON_NOUN_TYPE
             if(m_map3D.isOutOfBoundary(pos.second - 1, pos.first)) { // vera <=> è la prima di una colonna
                 std::cerr << "Prima (verticale)   /   \n";
@@ -80,8 +80,8 @@ namespace Baba_Is_Us{
                 else {continue;}
             }
 
-            if(! m_map3D.isOutOfBoundary(pos.second + 2, pos.first)) {
-                std::cerr << "No prima (verticale), ma ce ne sono altre 2   /   \n";
+            if(! m_map3D.isOutOfBoundary(pos.second + 2, pos.first)) { // soddisfatta <=> y<=14
+                std::cerr << "No prima (verticale), ma esistono altre 2 celle   /   \n";
                 std::vector<Type> word1 {m_map3D.At(pos.second    , pos.first).getTypes()};
                 std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
                 std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
@@ -111,7 +111,7 @@ namespace Baba_Is_Us{
             }
 
             if(! m_map3D.isOutOfBoundary(pos.second, pos.first + 2)) {
-                std::cerr << "No prima (orizzontale), ma ce ne sono altre 2   /   \n";
+                std::cerr << "No prima (orizzontale), ma esistono altre 2 celle   /   \n";
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first    ).getTypes()};
                 std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
                 std::vector<Type> word3 {m_map3D.At(pos.second, pos.first + 2).getTypes()};
