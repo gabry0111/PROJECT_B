@@ -331,7 +331,7 @@ namespace Baba_Is_Us{
     void Game::rotate(Position &position, Direction direction){
         position.first = position.first;
         position.second = position.second;
-        if (m_map3D.At(position.second, position.first).getTypes()[0] == Type::Baba) { //solo Baba è speciale
+        if (m_map3D.At(position.second, position.first).getTypes()[1] == Type::Baba) { //solo Baba è speciale
             sf::Sprite sprite {m_map3D.tileSprites[position.second * MapSize::width + position.first]};
             switch(direction){
                 case Baba_Is_Us::Direction::Up:
