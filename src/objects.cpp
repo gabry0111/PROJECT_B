@@ -69,6 +69,8 @@ void Objects::removeType(const Type type) {
 void Objects::resetObject() {
     assert(m_object[0] == intToType(0) && "resetObject() doesn't work like intended");
     m_object.clear();
+    m_object.push_back(Type::Void);
+    
 }
 
 } //namespace Baba_Is_Us

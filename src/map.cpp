@@ -228,7 +228,7 @@ namespace Baba_Is_Us{
         return m_objects[y][x];
     }
 
-    std::vector<Position> Map::getPositions(Type type) const {
+    std::vector<Position>& Map::getPositions(Type type) const {
         std::vector<Position> positions_with_type {};
         for (std::size_t x = 0; x < MapSize::height; ++x){
             for (std::size_t y = 0; y < MapSize::width; ++y){

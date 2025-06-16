@@ -100,7 +100,7 @@ public:
     const Objects& At(std::size_t y, std::size_t x) const; // NON può diventare constexpr (m_objects è vector)
 
     // restituisce le posizioni di uno specifico tipo
-    std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
+    std::vector<Position>& getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 
 };
 

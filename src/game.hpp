@@ -26,12 +26,12 @@ namespace Baba_Is_Us{
         // vede se era attaccata a altre parole logiche e modifica m_rules.
         // N.B: le regole si creeranno solo da sx a dx e da alto a basso
         void parseRules(); //serve la mappa, quindi la sposto qui perché avrei dovuto costruire un'altra mappa in RuleManager
-        void update(sf::RenderWindow &, Map &);
+        void update(sf::RenderWindow &, Map &, sf::Clock &);
         void render(sf::RenderWindow &, std::vector<sf::Sprite>);
         // Objects getObject(Position); forse inutile
         // std::optional<PlayState> movementCheck(Direction, Position); inutile fare l'overload, verrà sempre scelto il vector.
         // di conseguenza anche movement per un unico oggetto sarà inutile
-        PlayState movementCheck(Position, Direction);
+        PlayState movementCheck(const Position, Direction);
         void rotate(Position&, Direction);
         //void movement(Map, Position, Direction); //per ora non servono
         //void movement(Direction, PlayState);

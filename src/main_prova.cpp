@@ -36,11 +36,11 @@ int main() {
 
     while (window.isOpen()) {
         
-        game.update(window, game.getMap());
+        game.update(window, game.getMap(), clock);
         
         game.getMap().redraw(clock);
 
-        game.render(window, game.getMap().getTileSprites());
+        game.render(window, game.getMap().tileSprites);
     }
     std::cerr << "adieu\n";
     return 0;

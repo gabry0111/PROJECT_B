@@ -127,8 +127,9 @@ namespace Baba_Is_Us{
     }
 
     Position getShift(Direction dir) {
-        switch (dir) {
-            case Direction::Up:    return {-1, 0};
+        
+        switch (dir) {                                                      
+            case Direction::Up:    return {-1, 0};                          
             case Direction::Down:  return {1, 0};
             case Direction::Left:  return {0, -1};
             case Direction::Right: return {0, 1};
@@ -136,11 +137,11 @@ namespace Baba_Is_Us{
         }
     }
 
-    void Game::update(sf::RenderWindow &window, Map &map){
+    void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
 
         sf::Event event;
 
-        Direction temp;
+        Direction direction;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) window.close();
@@ -153,41 +154,20 @@ namespace Baba_Is_Us{
                         window.close();
                         break;
                     case sf::Keyboard::W:
-                        //controllo di player
-                        // 1) un solo oggetto in Position Player
-                        //      movement_check(map, player[0], Direction::Up);
-                        //      rotate()
-                        //      se vero,    
-                        //          poi movement, sprite.move, redraw e render 3 volte  
-                        //
-            //move, redraw, render
-            //move, redraw, render
-            //move, redraw, render
-                        //      se falso, fanculo
-                        // 2) più di uno
-                        //      movement_check(map, player, Direction::Up); -> vettore di pair di playState e positions
-                        /*      for(auto &i : playStates){
-                                    if(i.first == PlayState::Playing){
-                                        se è l'ultimo della fila
-                                            movement(map, i.second)
-                                    }
-                                }
-                        */      
-                        //checkRules 
-                        temp = Direction::Up;
+                        direction = Direction::Up;
                         //call function
                         break;
                     case sf::Keyboard::A:
                         //call function
-                        temp = Direction::Left;
+                        direction = Direction::Left;
                         //call function
                         break;
                     case sf::Keyboard::S:
-                        temp = Direction::Down;
+                        direction = Direction::Down;
                         //call function
                         break;
                     case sf::Keyboard::D:
-                        temp = Direction::Right;
+                        direction = Direction::Right;
                         //call function
                         break;
                     case sf::Keyboard::Space: 
@@ -197,21 +177,76 @@ namespace Baba_Is_Us{
                     default: 
                         break;
                 }
+
+        //      movement_check(map, player[0], Direction::Up);
+        //      rotate()
+        //      se vero,    
+        //          movement
+        //
+            //move, redraw, render
+            //move, redraw, render
+            //move, redraw, render
+        //      se falso, fanculo
+        //      movement_check(map, player, Direction::Up); -> vettore di pair di playState e positions
+        /*      for(auto &i : playStates){
+                    if(i.first == PlayState::Playing){
+                        se è l'ultimo della fila
+                            movement(map, i.second)
+                    }
+                    }
+                */      
+                //checkRules 
+
                 
-                Position shift = getShift(temp);
+                //movimento visivo
+                Position shift = getShift(direction);
                 std::size_t dx {shift.first};
                 std::size_t dy {shift.second};
-
+                std::cerr<<"alright here we go\n";
                 std::vector<Position>& player_positions {getPlayerPositions()};
+                Position old_position ={MapSize::height, MapSize::width};
 
                 for(auto& each : player_positions){
-                    if(movementCheck(each, temp)==PlayState::Playing){
-                        sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
-                        sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
-                        sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
-                        sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                    //Position tail{ (*getFirstMismatchOfObjects(m_map3D.getm_grid()[1], direction, each)).first };
+                    if(/*tail != each ||*/ each == old_position){
+                        old_position.first = each.first + shift.first;
+                        old_position.second = each.second + shift.second;
+                        continue;
                     }
+                    //  --O -
+                    // --O
+                    //      -O
+                    std::cerr<<"movement check\n";
+                    PlayState check {movementCheck(each, direction)};
+                    old_position.first = each.first + shift.first;
+                    old_position.second = each.second + shift.second;
+                    std::cerr<<"complete\n";
+
+                    //movimento visivo
+                    sf::Sprite& sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+                    std::cerr<<"or is it?\n";
+                    //first 11 pixel
+                    sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                    map.redraw(clock);
+                    render(window, map.tileSprites);   
                     
+                    if(check==PlayState::Playing){
+                        //rest of the movement
+                        sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
+                        map.redraw(clock);
+                        render(window, map.tileSprites);
+
+                        sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                        map.redraw(clock);
+                        render(window, map.tileSprites);
+                    }
+                    if(check==PlayState::Invalid){
+                        // GO BACK WHERE YOU BELONG
+                        sf::Sprite& backwards_sprite {m_map3D.tileSprites[each.second * MapSize::width + each.first]};
+                        backwards_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
+                        map.redraw(clock);
+                        render(window, map.tileSprites);
+                    }
                 }
             }
         }    
@@ -264,7 +299,6 @@ namespace Baba_Is_Us{
     }
 
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
-
         // draw the map
         window.clear();
         int x;
@@ -298,14 +332,19 @@ namespace Baba_Is_Us{
     }
 
     // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimento
-    std::optional<Position> getFirstMismatchOfObjects(const MapGrid2D& grid, Direction dir, const Position& start) {
+    std::optional<std::pair<Position, Position>> getFirstMismatchOfObjects(const MapGrid2D& grid, Direction dir, const Position& start) {
+        
+        std::optional<std::pair<Position, Position>> result {};
         Position shift{getShift(dir)};
         std::size_t x=start.first;
         std::size_t y=start.second;
         int value = grid[y][x];
         while(x < MapSize::width && y < MapSize::height) {
-            if(grid[y][x] != value)
-                return Position {x,y};
+            if(grid[y][x] != value){
+                result = {start, {x,y}};
+                return result;
+            }
+                
             x += shift.first;
             y += shift.second;
         }
@@ -315,17 +354,17 @@ namespace Baba_Is_Us{
     // se non si può fare (non si può muovere e gli oggetti sono già distrutti), allora vedere se movementCheck è "vuoto"
     // ASSICURATI CHE conditions() NON SIA MAI PIù CHIAMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // VA BENE OK DIEGO
-    PlayState Game::movementCheck(Position pos, Direction direction){
-        Position shift{getShift(direction)};
+    PlayState Game::movementCheck(const Position pos, Direction direction){
         
         if(! getFirstMismatchOfObjects(m_map3D.getm_grid()[1], direction, pos)) 
             return PlayState::Invalid;
 
-        Position first_mismatch {* getFirstMismatchOfObjects(m_map3D.getm_grid()[1], direction, pos)};
-        Position last_before_mismatch {first_mismatch.first - shift.first, first_mismatch.second - shift.second};
-
+        std::pair<Position, Position> result{*getFirstMismatchOfObjects(m_map3D.getm_grid()[1], direction, pos) };
+        Position first_mismatch{ result.second.first, result.second.second };      //target
+        Position first_of_line {result.first.first, result.first.second};          //farthest object relative to the target
+        
         // while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
-        return conditions(m_map3D.At(last_before_mismatch.first, last_before_mismatch.second), m_map3D.At(first_mismatch.first, first_mismatch.second));
+        return conditions(m_map3D.At(first_of_line.first, first_of_line.second), m_map3D.At(first_mismatch.first, first_mismatch.second));
     }
 
     void Game::rotate(Position &position, Direction direction){
@@ -456,7 +495,6 @@ namespace Baba_Is_Us{
     PlayState Game::conditions(Objects& object, Objects& second) { //fanculo alle 14:30
         std::vector<Type> second_types {second.getTypes()};
         PlayState action {PlayState::Invalid};
-        
         for(const auto type : second_types){ // per ogni Type di Objects second
             /*
             // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
@@ -471,7 +509,7 @@ namespace Baba_Is_Us{
             */
             // non ci interessa degli ICON_NOUN_TYPE
             // non ci interessa dei verb type che creeranno una regola. Ci penserà un'altra funzione
-
+            
             //
             // controllare che object[0] NON sia Type::Block -----------------------
             //
