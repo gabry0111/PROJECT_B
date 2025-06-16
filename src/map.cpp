@@ -9,53 +9,50 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us{
 
-    int parseToEnums(int tileID) {
-        int result {};
-        switch(tileID) {
-        case 0: result = 0;
-            break;
-        case 1: 
-        case 2:
-        case 3: 
-        case 4: 
-        case 5:
-        case 6: 
-        case 7:
-        case 8: result = 1;             // baba's sprites
-            break;
-        case 9: 
-        case 10: 
-        case 11: 
-        case 12: result = tileID - 6;   // other NOUN_TYPE objects
-            break;
-        case 13: 
-        case 14: 
-        case 15: 
-        case 16: 
-        case 17: 
-        case 18: 
-        case 19: 
-        case 20: 
-        case 21:
-        case 22:
-        case 23:
-        case 24:
-        case 25: result = tileID - 4;   // text blocks
-            break;
-        default: 
-            std::cerr << tileID << '\n';
-            throw (std::runtime_error("in level.txt not given a valid int"));
-            break;
-        }
-        return result;
-    }
-
     Map::Map(std::string_view filename)  {
         std::ifstream map_file {filename.data()}; //comincia dall'inizio di file.txt bidimensionale
         if (! map_file){
                 std::cerr << "Error! can't open level";
             }
         int value {};
+
+        // Questo for parte dal presupposto che level.txt abbia valori corrispondenti
+        // ad enum_objects.hpp (minori di VERB_TYPE (altrimento li skippa quando disegna e viene tutto traslato)),
+        // e non valori corrispondenti a tilePaths.
+        for(std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
+            map_file >> value;
+            std::cerr << value;
+            std::vector<Type> current{};
+
+            //N.B: value si basa su enum_objects. NON DEVE ESISTERE VALUE == BLOCK Nè Icon_Void
+            assert(value != +Type::NOUN_TYPE && value != +Type::ICON_NOUN_TYPE 
+                && value != +Type::VERB_TYPE && value != +Type::PROPERTY_TYPE 
+                && value != +Type::Block && value != +Type::Icon_Void 
+                && "in Map(), level.txt there's an invalid value");
+
+            if (value <= 6 && value != +Type::Block){ // NOUN_TYPE (+ Void)
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
+                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+
+                current.emplace_back(intToType(value));
+                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+            }
+
+            // Così come è ora valgono anche le PROPERTY_TYPE
+            else if (value > +Type::Icon_Void && value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
+                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+
+                current.emplace_back(Type::Block);
+                current.emplace_back(intToType(value));
+                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+            }
+            else throw(std::runtime_error("Map(): in level.txt not given a valid value under +Type::VERB_TYPE"));
+        }
+
+
+        /*
+        valgono solo i value di tilePaths
         for (std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
             map_file >> value;
             std::cerr << value;
@@ -91,15 +88,15 @@ namespace Baba_Is_Us{
                 current.emplace_back(intToType(parseToEnums(value)));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
+        */
             
-            
-        }
         std::cout<<"\nno gay\n";
         for (auto& col : m_objects) {
             for (auto& row : col) {
-                if(row.getTypes()[0] == Type::Block) std::cerr << +row.getTypes()[1] 
-                                                        << " (" << row.getTypes()[1] << ") ";
-                else std::cerr << +row.getTypes()[0] << ' ';
+                std::cerr << +row.getTypes()[0];
+                if(row.getTypes()[0] == Type::Block) std::cerr << " (" << +row.getTypes()[1] << ','
+                                                         << row.getTypes()[1] << ")   ";
+                else std::cerr << ' ';
             }
             std::cerr << '\n';
         }
@@ -113,10 +110,10 @@ namespace Baba_Is_Us{
         std::cerr << "----------------------------\n";
         for (auto& col : m_grid[1]) {
             for (auto& row : col) {
-                std::cerr << row << ' ';
+                std::cerr << intToType(row) << ' ';
             }
             std::cerr << '\n';
-        }
+        };
     }
 
     const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() {

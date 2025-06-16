@@ -19,6 +19,9 @@ namespace Baba_Is_Us{
         std::vector<Position>& getPlayerPositions(); 
         RuleManager& getRuleManager();
         Map& getMap();
+        // helper function una volta che si è assicurati che esistono tre blocchi di fila
+        void createRule(std::vector<Type>&,
+                        std::vector<Type>&, std::vector<Type>&);
         // chiamata quando una parola logica è mossa, controlla la vecchia posizione della regola e 
         // vede se era attaccata a altre parole logiche e modifica m_rules.
         // N.B: le regole si creeranno solo da sx a dx e da alto a basso

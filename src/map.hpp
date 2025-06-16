@@ -26,7 +26,7 @@ namespace Baba_Is_Us {
 
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
-    inline std::array<std::string, 26> tilePaths { //20
+    inline std::array<std::string, 26> tilePaths { 
         "../../assets/png_PROGETTO/gifs/VOID_spritesheet.png",                 //0 
         "../../assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",         //1
         "../../assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",       //2

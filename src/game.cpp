@@ -43,66 +43,87 @@ namespace Baba_Is_Us{
         return m_map3D;
     }
 
+    void Game::createRule(std::vector<Type>& word1,
+                        std::vector<Type>& word2, std::vector<Type>& word3) {
+        std::cerr << "\n word1: "; for (Type iter : word1) {std::cerr << iter << ' ';} 
+        std::cerr << "\n word2: "; for (Type iter : word2) {std::cerr << iter << ' ';}
+        std::cerr << "\n word3: "; for (Type iter : word3) {std::cerr << iter << ' ';}
+        
+        assert(!word2.empty() && !word3.empty() && "createRule()"); // una protezione in più
+            if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+            && +word1[1] < +Type::VERB_TYPE
+            && +word2[1] > +Type::VERB_TYPE 
+            && +word2[1] < +Type::PROPERTY_TYPE 
+            && +word3[1] > +Type::PROPERTY_TYPE) {
+                Rule new_rule {word1[1], word2[1], word3[1]};
+                m_RM.addRule(new_rule);
+        }
+    }
+
     void Game::parseRules() {
-        for (auto pos : m_map3D.getPositions(Type::Block)) {
-            std::cerr << pos.first << "," << pos.second << "    /   ";
-            // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
-            // check verticale
-            if(m_map3D.isOutOfBoundary(pos.second - 1, pos.first)) continue;
-            if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {
-                std::cerr << "no prima (verticale) \n";
-                continue; // se non sei la prima parola logica
-            } else {
-                std::cerr << "Prima (verticale) \n";
-                std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
-                std::vector<Type> word2 {};
-                std::vector<Type> word3 {};
-                
-                if(! m_map3D.isOutOfBoundary(pos.second + 2, pos.first)) {
-                    word2 = m_map3D.At(pos.second + 1, pos.first).getTypes();
-                    word3 = m_map3D.At(pos.second + 2, pos.first).getTypes();
-                } else continue;
+        std::vector<Position> block_pos {m_map3D.getPositions(Type::Block)};
 
-                if (!word2.empty() && !word3.empty() && word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
-                    if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
-                    && +word1[1] < +Type::VERB_TYPE
-                    && +word2[1] > +Type::VERB_TYPE 
-                    && +word2[1] < +Type::PROPERTY_TYPE 
-                    && +word3[1] > +Type::PROPERTY_TYPE) {
-                        Rule new_rule {word1[1], word2[1], word3[1]};
-                        m_RM.addRule(new_rule);
-                    }
-                }
+        // check verticale
+        for (Position& pos : block_pos) {
+            std::cerr << pos.first << "," << pos.second << ' ';
+            // N.B: per Block: [0] = Block, [2] = ICON_NOUN_TYPE
+            if(m_map3D.isOutOfBoundary(pos.second - 1, pos.first)) { // vera <=> è la prima di una colonna
+                std::cerr << "Prima (verticale)   /   \n";
+                std::vector<Type> word1 {m_map3D.At(pos.second    , pos.first).getTypes()};
+                std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
+                std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
+
+                if (word2[0] == Type::Block && word3[0] == Type::Block) {
+                    createRule(word1, word2, word3);
+                    continue;
+                } 
+                else {continue;}
             }
-            //check orizzontale
-            if(m_map3D.isOutOfBoundary(pos.second, pos.first - 1)) continue;
-            if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {
-                std::cerr << "no prima (orizzontale) \n";
-                continue; // se non sei la prima parola logica
-            } else {
-                std::cerr << "Prima (orizzontale) \n";
-                std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
-                std::vector<Type> word2 {};
-                std::vector<Type> word3 {};
-                if(! m_map3D.isOutOfBoundary(pos.second, pos.first + 2)) {
-                    word2 = m_map3D.At(pos.second, pos.first + 1).getTypes();
-                    word3 = m_map3D.At(pos.second, pos.first + 2).getTypes();
-                } else continue;
 
-                if (! word2.empty() && !word3.empty() && word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
-                    if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
-                    && +word1[1] < +Type::VERB_TYPE
-                    && +word2[1] > +Type::VERB_TYPE 
-                    && +word2[1] < +Type::PROPERTY_TYPE 
-                    && +word3[1] > +Type::PROPERTY_TYPE) {
-                        Rule new_rule {word1[1], word2[1], word3[1]};
-                        m_RM.addRule(new_rule);
-                    }
-                }
+            if(! m_map3D.isOutOfBoundary(pos.second + 2, pos.first)) {
+                std::cerr << "No prima (verticale), ma ce ne sono altre 2   /   \n";
+                std::vector<Type> word1 {m_map3D.At(pos.second    , pos.first).getTypes()};
+                std::vector<Type> word2 {m_map3D.At(pos.second + 1, pos.first).getTypes()};
+                std::vector<Type> word3 {m_map3D.At(pos.second + 2, pos.first).getTypes()};
+
+                if (word2[0] == Type::Block && word3[0] == Type::Block) {
+                    createRule(word1, word2, word3);
+                    continue;
+                } 
+                else {continue;}
             }
         }
-    
+
+        //check orizzontale
+        for (Position& pos : block_pos) {
+            std::cerr << pos.first << "," << pos.second << ' ';
+            if(m_map3D.isOutOfBoundary(pos.second, pos.first - 1)) { // vera <=> è la prima di una riga
+                std::cerr << "Prima (orizzontale)   /   \n";
+                std::vector<Type> word1 {m_map3D.At(pos.second, pos.first    ).getTypes()};
+                std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
+                std::vector<Type> word3 {m_map3D.At(pos.second, pos.first + 2).getTypes()};
+
+                if (word2[0] == Type::Block && word3[0] == Type::Block) {
+                    createRule(word1, word2, word3);
+                    continue;
+                } 
+                else {continue;}
+            }
+
+            if(! m_map3D.isOutOfBoundary(pos.second, pos.first + 2)) {
+                std::cerr << "No prima (orizzontale), ma ce ne sono altre 2   /   \n";
+                std::vector<Type> word1 {m_map3D.At(pos.second, pos.first    ).getTypes()};
+                std::vector<Type> word2 {m_map3D.At(pos.second, pos.first + 1).getTypes()};
+                std::vector<Type> word3 {m_map3D.At(pos.second, pos.first + 2).getTypes()};
+
+                if (word2[0] == Type::Block && word3[0] == Type::Block) {
+                    createRule(word1, word2, word3);
+                    continue;
+                } 
+                else {continue;}
+            }
         std::cerr << m_RM.getRules().size() <<" rules parsed\n";
+        }
     }
 
     Position getShift(Direction dir) {
@@ -195,22 +216,80 @@ namespace Baba_Is_Us{
             }
         }    
     }
+    
+    //associamo gli enum dati in level.txt a ciascun path di tilePaths
+    std::optional<std::size_t> intToBeDrawn(const std::size_t i){
+        std::size_t nth{};
+        switch(i) {
+            case 0: nth = 0;
+                break;
+            case 1: nth = 7; // fisso il default di Baba a BABA_right.png
+                break;
+            case 3: 
+            case 4:
+            case 5:
+            case 6: nth = i + 6;
+                break;
+
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21: nth = i + 4;
+                break;
+
+            case 23:
+
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+            case 31:
+            case 32:
+            case 33:
+            default : nth = tilePaths.size();
+                break;
+        }
+        return (nth == tilePaths.size() ? std::nullopt : std::optional<std::size_t>(nth) );
+    }
 
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
 
         // draw the map
         window.clear();
-        int x, y;
+        int x;
+        int y;
         int count{};
         for (const auto& row : m_map3D.getm_grid()[0]){
-            for (auto &i : row){
-                //ATTENZIONE: il valore di 'i' corrisponde al PATH, NON AD ENUM TYPE
-                if (i>=0 && i<=25){
+            for (const auto &i : row){
+                assert (i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE 
+                     && i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE 
+                     && i != +Type::Block && i != +Type::Icon_Void && "in render() not given a valid value in m_grid[0]\n");
+                
+                if(! intToBeDrawn(static_cast<std::size_t> (i)) ) continue;
+
+                std::size_t nth_sprite_to_be_drawn {* intToBeDrawn(static_cast<std::size_t>(i)) };
+                
+                assert(nth_sprite_to_be_drawn < tilePaths.size() 
+                    && "render()'s nth_sprite... is beyond tilePaths.size()");
+
+                if (nth_sprite_to_be_drawn < tilePaths.size()){
                     //posiziona e disegna ogni sprite
-                    x = (static_cast<int> (count) % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
-                    y = (static_cast<int> (count) / MapSize::height) * MapSize::TILE_SIZE;
-                    sprites[static_cast<std::size_t> (i)].setPosition(static_cast<float>(x), static_cast<float>(y));
-                    window.draw(sprites[static_cast<std::size_t>(i)]);
+                    x = ( count % MapSize::width) * MapSize::TILE_SIZE;    // = 0, 32, 64, ... 255*32 
+                    y = ( count / MapSize::width) * MapSize::TILE_SIZE;
+
+                    sprites[nth_sprite_to_be_drawn].setPosition(static_cast<float>(x), static_cast<float>(y));
+                    window.draw(sprites[nth_sprite_to_be_drawn]);
                 }
                 ++count;
             }
@@ -239,10 +318,10 @@ namespace Baba_Is_Us{
     PlayState Game::movementCheck(Position pos, Direction direction){
         Position shift{getShift(direction)};
         
-        if(! getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)) 
+        if(! getFirstMismatchOfObjects(m_map3D.getm_grid()[1], direction, pos)) 
             return PlayState::Invalid;
 
-        Position first_mismatch {* getFirstMismatchOfObjects(m_map3D.getm_grid()[0], direction, pos)};
+        Position first_mismatch {* getFirstMismatchOfObjects(m_map3D.getm_grid()[1], direction, pos)};
         Position last_before_mismatch {first_mismatch.first - shift.first, first_mismatch.second - shift.second};
 
         // while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
