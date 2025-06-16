@@ -60,24 +60,34 @@ namespace Baba_Is_Us{
             map_file >> value;
             std::cerr << value;
             
-            if(value > +Type::ICON_NOUN_TYPE && value != +Type::VERB_TYPE && value != +Type::PROPERTY_TYPE){
-                //initialize block tile value
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
+            std::vector<Type> current{};
+            if(value == 0){
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Void;
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
 
-                //initialize block object in tile
-                std::vector<Type> current{};
-                current.emplace_back(Type::Block);
+                current.emplace_back(Type::Void);
+                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+            }
+            if(value > 0 && value <= 8) {
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Baba;
+                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+
+                current.emplace_back(Type::Baba);
                 current.emplace_back(intToType(parseToEnums(value)));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
-            else{
-                //initialize tile value
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
+            else if(value > 8 && value < 13){
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = parseToEnums(value);
                 m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
 
-                //initialize object in tile
-                std::vector<Type> current{};
+                current.emplace_back(intToType(parseToEnums(value)));
+                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+            }
+            else if (value >=13){
+                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
+                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+
+                current.emplace_back(Type::Block);
                 current.emplace_back(intToType(parseToEnums(value)));
                 m_objects[iii/MapSize::height][iii%MapSize::width] = current;
             }
@@ -87,7 +97,9 @@ namespace Baba_Is_Us{
         std::cout<<"\nno gay\n";
         for (auto& col : m_objects) {
             for (auto& row : col) {
-                std::cerr << +row.getTypes()[0] << ' ';
+                if(row.getTypes()[0] == Type::Block) std::cerr << +row.getTypes()[1] 
+                                                        << " (" << row.getTypes()[1] << ") ";
+                else std::cerr << +row.getTypes()[0] << ' ';
             }
             std::cerr << '\n';
         }
@@ -212,8 +224,8 @@ namespace Baba_Is_Us{
         return positions_with_type;
     }
 
-    bool Map::isWithinBoundary(std::size_t x, std::size_t y) const {
-        return (x <= MapSize::width - 1) || (y <= MapSize::height - 1);
+    bool Map::isOutOfBoundary(std::size_t x, std::size_t y) const {
+        return (x > MapSize::width - 1) || (y > MapSize::height - 1);
     }
 
     void Map::addObject(Position position, Type type) {

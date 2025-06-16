@@ -45,23 +45,25 @@ namespace Baba_Is_Us{
 
     void Game::parseRules() {
         for (auto pos : m_map3D.getPositions(Type::Block)) {
-            std::cerr << pos.first << ' ' << pos.second << '\n';
+            std::cerr << pos.first << "," << pos.second << "    /   ";
             // N.B: per Block: [0] = Block, [1] = NOUN_TYPE, [2] = ICON_NOUN_TYPE
             // check verticale
-            if(m_map3D.isWithinBoundary(pos.second, pos.first)) continue;
+            if(m_map3D.isOutOfBoundary(pos.second - 1, pos.first)) continue;
             if (m_map3D.At(pos.second - 1, pos.first).getTypes()[0] == Type::Block) {
-                std::cerr << "no prima\n";
+                std::cerr << "no prima (verticale) \n";
                 continue; // se non sei la prima parola logica
             } else {
-                std::cerr << "Prima";
+                std::cerr << "Prima (verticale) \n";
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {};
                 std::vector<Type> word3 {};
-                if(m_map3D.isWithinBoundary(pos.second + 2, pos.first)) {
+                
+                if(! m_map3D.isOutOfBoundary(pos.second + 2, pos.first)) {
                     word2 = m_map3D.At(pos.second + 1, pos.first).getTypes();
                     word3 = m_map3D.At(pos.second + 2, pos.first).getTypes();
                 } else continue;
-                if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
+
+                if (!word2.empty() && !word3.empty() && word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
                     if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
                     && +word1[1] < +Type::VERB_TYPE
                     && +word2[1] > +Type::VERB_TYPE 
@@ -73,18 +75,21 @@ namespace Baba_Is_Us{
                 }
             }
             //check orizzontale
-            if(m_map3D.isWithinBoundary(pos.second, pos.first)) continue;
+            if(m_map3D.isOutOfBoundary(pos.second, pos.first - 1)) continue;
             if (m_map3D.At(pos.second, pos.first - 1).getTypes()[0] == Type::Block) {
-                std::cerr << "no prima\n";
+                std::cerr << "no prima (orizzontale) \n";
                 continue; // se non sei la prima parola logica
             } else {
-                std::cerr << "Prima";
+                std::cerr << "Prima (orizzontale) \n";
                 std::vector<Type> word1 {m_map3D.At(pos.second, pos.first).getTypes()};
                 std::vector<Type> word2 {};
                 std::vector<Type> word3 {};
-                if(m_map3D.isWithinBoundary(pos.second, pos.first)) word2 = m_map3D.At(pos.second, pos.first + 1).getTypes();
-                if(m_map3D.isWithinBoundary(pos.second, pos.first + 1)) word3 = m_map3D.At(pos.second, pos.first + 2).getTypes();
-                if (word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
+                if(! m_map3D.isOutOfBoundary(pos.second, pos.first + 2)) {
+                    word2 = m_map3D.At(pos.second, pos.first + 1).getTypes();
+                    word3 = m_map3D.At(pos.second, pos.first + 2).getTypes();
+                } else continue;
+
+                if (! word2.empty() && !word3.empty() && word2[0] == Type::Block && word3[0] == Type::Block) { // se ci sono altre 2 parole logiche in fila
                     if(+word1[1] > +Type::ICON_NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
                     && +word1[1] < +Type::VERB_TYPE
                     && +word2[1] > +Type::VERB_TYPE 

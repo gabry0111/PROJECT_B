@@ -2,6 +2,7 @@
 #define ENUM_OBJECTS_HPP
 
 #include <type_traits> //per underlying_type
+#include <iostream>
 
 
 namespace Baba_Is_Us {
@@ -73,6 +74,55 @@ constexpr auto operator-(T a) noexcept
   return static_cast<Type>(a);
 }
 */
+
+constexpr std::string_view getTypeName(Type type)
+{
+    switch (type)
+    {
+    case Type::NOUN_TYPE:       return "NOUN_TYPE";
+    case Type::Void:            return "Void";
+    case Type::Baba:            return "Baba";
+    case Type::Block:           return "Block";
+    case Type::Flag:            return "Flag";
+    case Type::Lava:            return "Lava";
+    case Type::Rock:            return "Rock";
+    case Type::Wall:            return "Wall";
+    case Type::ICON_NOUN_TYPE:  return "ICON_NOUN_TYPE";
+    case Type::Icon_Void:       return "Icon_Void";
+    case Type::Icon_Baba:       return "Icon_Baba";
+    case Type::Icon_Defeat:     return "Icon_Defeat";
+    case Type::Icon_Flag:       return "Icon_Flag";
+    case Type::Icon_Hot:        return "Icon_Hot";
+    case Type::Icon_Is:         return "Icon_Is";
+    case Type::Icon_Lava:       return "Icon_Lava";
+    case Type::Icon_Melt:       return "Icon_Melt";
+    case Type::Icon_Push:       return "Icon_Push";
+    case Type::Icon_Rock:       return "Icon_Rock";
+    case Type::Icon_Stop:       return "Icon_Stop";
+    case Type::Icon_Wall:       return "Icon_Wall";
+    case Type::Icon_Win:        return "Icon_Win";
+    case Type::Icon_You:        return "Icon_You";
+    case Type::VERB_TYPE:       return "VERB_TYPE";
+    case Type::Is:              return "Is";
+    case Type::PROPERTY_TYPE:   return "PROPERTY_TYPE";
+    case Type::Float:           return "Float";
+    case Type::Hot:             return "Hot";
+    case Type::Launch:          return "Launch";
+    case Type::Move:            return "Move";
+    case Type::Open:            return "Open";
+    case Type::Push:            return "Push";
+    case Type::Shut:            return "Shut";
+    case Type::Stop:            return "Stop";
+    case Type::Win:             return "Win";
+    case Type::You:             return "You";
+    default:                    return "No type";
+    }
+}
+
+inline std::ostream& operator<<(std::ostream& out, Type type)
+{
+    return out << getTypeName(type);
+}
 
 constexpr Type intToType(int value) {
   return static_cast<Type>(value);
