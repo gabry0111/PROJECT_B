@@ -52,21 +52,21 @@ namespace Baba_Is_Us{
                 && "in Map(), level.txt there's an invalid value");
 
             if (value <= 6){ // NOUN_TYPE (+ Void)
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = value;
-                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+                m_grid[1][iii / MapSize::width][iii % MapSize::width] = value;
+                m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
 
                 current.emplace_back(intToType(value));
-                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+                m_objects[iii / MapSize::width][iii % MapSize::width] = current;
             }
 
             // Così come è ora valgono anche le PROPERTY_TYPE
             else if (value > +Type::Icon_Void && value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
-                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
+                m_grid[1][iii / MapSize::width][iii % MapSize::width] = +Type::Block;
+                m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
 
                 current.emplace_back(Type::Block);
                 current.emplace_back(iconToAll(intToType(value)));
-                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
+                m_objects[iii / MapSize::width][iii % MapSize::width] = current;
             }
             else throw(std::runtime_error("Map(): in level.txt not given a valid value under +Type::VERB_TYPE"));
         }
@@ -143,7 +143,10 @@ namespace Baba_Is_Us{
     std::array<MapGrid2D, MapSize::depth>& Map::accessm_grid() {
         return m_grid;
     }
-    const std::array<std::array<Objects, MapSize::height>, MapSize::width>& Map::getm_objects(){
+    const std::array<std::array<Objects, MapSize::width>, MapSize::height>& Map::getm_objects(){
+        return m_objects;
+    }
+    std::array<std::array<Objects,MapSize::width>,MapSize::height>& Map::accessm_objects(){
         return m_objects;
     }
     
@@ -204,7 +207,7 @@ namespace Baba_Is_Us{
     }
 
 
-    void Map::Reset(const std::array<std::array<int,MapSize::height>, MapSize::width> &map_grid) { 
+    void Map::Reset(const std::array<std::array<int,MapSize::width>, MapSize::height> &map_grid) { 
         // static_assert (MapSize::height * MapSize::width == map_grid.size() * map_grid[0].size() && "Map::Reset(): sizes not equal");
         if(MapSize::height * MapSize::width != m_grid.size())
             throw std::runtime_error("Map::Reset(): sizes not equal");
@@ -212,28 +215,56 @@ namespace Baba_Is_Us{
         std::size_t iii{};
         for (auto& rows : map_grid) {
             for (auto& eee : rows) {
-                if(+(m_objects[iii/MapSize::height][iii%MapSize::width].getTypes()[0]) != eee) //se il NOUN_TYPE dell'oggetto nella mappa != corrispondente int di new_grid_map
-                    m_objects[iii/MapSize::height][iii%MapSize::width].getTypes()[0] = static_cast<Type>(eee);
+                if(+(m_objects[iii / MapSize::width][iii % MapSize::width].getTypes()[0]) != eee) //se il NOUN_TYPE dell'oggetto nella mappa != corrispondente int di new_grid_map
+                     m_objects[iii / MapSize::width][iii % MapSize::width].getTypes()[0] = static_cast<Type>(eee);
                 ++iii;
             }
         }
     }
 
-    Objects& Map::At(std::size_t y, std::size_t x) 
+    //At(y,x) getPos.. pos{y,x} if(m_obj[y][x]) QUASI GIUSTO, INVERTE BLOCK CON BABA
+    //At(y,x) getPos.. pos{x,y} if(m_obj[y][x]) NO C'è BLOCK IS YOU E BABA DA SOLA, SCAMBIATI
+    //At(y,x) getPos.. pos{x,y} if(m_obj[x][y]) NO C'è BLOCK IS E BABA YOU, SCAMBIATI (se l'ultimo m_obj resta[y][x] BABA è DA SOLA)
+    //At(y,x) getPos.. pos{y,x} if(m_obj[x][y]) NO C'è BLOCK IS YOU E BABA DA SOLA, SCAMBIATI
+    //At(x,y) getPos.. pos{y,x} if(m_obj[y][x]) NO
+    //At(x,y) getPos.. pos{x,y} if(m_obj[y][x]) NO
+    //At(x,y) getPos.. pos{y,x} if(m_obj[x][y]) NO
+    //At(x,y) getPos.. pos{x,y} if(m_obj[x][y]) NO C'è BLOCK IS YOU E BLOCK IS, SCAMBIATI
+    // Modificato --------------
+    //At(y,x) getPos.. pos{y,x} if(m_obj[y][x]) BLOCK IS, BABA YOU SCAMBIATI, VERTICALE <-> ORIZZONTALE
+    //At(y,x) getPos.. pos{x,y} if(m_obj[y][x]) BLOCK IS YOU, BABA SCAMBIATI, VERTICALE <-> ORIZZONTALE
+    //At(y,x) getPos.. pos{y,x} if(m_obj[x][y]) BLOCK IS YOU, BABA SCAMBIATI, VERTICALE <-> ORIZZONTALE
+    //At(y,x) getPos.. pos{x,y} if(m_obj[x][y]) BLOCK IS, BABA YOU SCAMBIATI, VERTICALE <-> ORIZZONTALE
+    //At(x,y) getPos.. pos{x,y} if(m_obj[x][y]) BLOCK IS YOU, BLOCK IS (come se Baba diventa Block), VERTICALE <-> ORIZZONTALE 
+    //At(x,y) getPos.. pos{x,y} if(m_obj[y][x])       IL MIGLIOR TENTATIVO
+    //At(x,y) getPos.. pos{y,x} if(m_obj[y][x]) 
+    //At(x,y) getPos.. pos{y,x} if(m_obj[x][y]) 
+    //
+
+    Objects& Map::At(std::size_t x, std::size_t y) 
     {
         return m_objects[y][x];
     }
-    const Objects& Map::At(std::size_t y, std::size_t x) const
+    const Objects& Map::At(std::size_t x, std::size_t y) const
     {
         return m_objects[y][x];
     }
 
-    std::vector<Position>& Map::getPositions(Type type) const {
+    const std::vector<Position> Map::getPositions(Type type) const {
+        
         std::vector<Position> positions_with_type {};
-        for (std::size_t x = 0; x < MapSize::height; ++x){
-            for (std::size_t y = 0; y < MapSize::width; ++y){
-                if (m_objects[y][x].objectHasType(type)){
-                    positions_with_type.emplace_back(Position(x, y));
+        for (std::size_t y = 0; y < MapSize::height; ++y){
+            for (std::size_t x = 0; x < MapSize::width; ++x){
+                if(type == Type::Block) { // altrimenti conta come Baba anche i Blocks
+                    if ((m_objects[y][x].objectHasType(type))){
+                    Position pos {x,y};
+                    positions_with_type.emplace_back(pos);
+                }
+                }
+                
+                if ((m_objects[y][x].objectHasType(type)) && !m_objects[y][x].objectHasType(Type::Block)){
+                    Position pos {x,y};
+                    positions_with_type.emplace_back(pos);
                 }
             }
         }
@@ -245,10 +276,10 @@ namespace Baba_Is_Us{
     }
 
     void Map::addObject(Position position, Type type) {
-        m_objects[position.second][position.first].addType(type);
+        m_objects[position.first][position.second].addType(type);
     }
     void Map::resetObject(Position position) {
-        m_objects[position.second][position.first] = {};
+        m_objects[position.first][position.second] = {};
     }
 
 

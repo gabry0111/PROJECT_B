@@ -20,7 +20,7 @@ namespace MapSize {
     constexpr int FRAME_TIME_MS = 150;
     
 }
-using MapGrid2D = std::array<std::array<int, MapSize::width>, MapSize::height>;
+using MapGrid2D = std::array<std::array<int, MapSize::height>, MapSize::width>;
 
 namespace Baba_Is_Us {
 
@@ -57,8 +57,9 @@ namespace Baba_Is_Us {
     
 class Map{
 private :
-
-    std::array<MapGrid2D, MapSize::depth> m_grid;
+    // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2
+    std::array<MapGrid2D, MapSize::depth> m_grid; 
+    // N.B: [1][2] accedi a x (width) = 1; y (height) = 2
     std::array<std::array<Objects, MapSize::height>, MapSize::width> m_objects;
 
 public:
@@ -78,6 +79,7 @@ public:
     const std::array<MapGrid2D, MapSize::depth>& getm_grid();
     std::array<MapGrid2D, MapSize::depth>& accessm_grid();
     const std::array<std::array<Objects, MapSize::height>, MapSize::width>& getm_objects();
+    std::array<std::array<Objects, MapSize::height>, MapSize::width>& accessm_objects();
     void setTextures();
     void setSprites();
     void redraw(sf::Clock &);
@@ -87,7 +89,6 @@ public:
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
     void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr
     
-
     // aggiungi un oggetto (constexpr)
     void addObject(Position position, Type type);
 
@@ -95,13 +96,11 @@ public:
     void resetObject(Position position);
 
     // Quale oggetto c'è in quella posizione?
-    // N.B: NON IN MINUSCOLO, è una funzione di vector
-    Objects& At(std::size_t y, std::size_t x);
-    const Objects& At(std::size_t y, std::size_t x) const; // NON può diventare constexpr (m_objects è vector)
+    Objects& At(std::size_t x, std::size_t y);
+    const Objects& At(std::size_t x, std::size_t y) const; // NON può diventare constexpr (m_objects è vector)
 
-    // restituisce le posizioni di uno specifico tipo
-    std::vector<Position>& getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
-
+    // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
+    const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 };
 
 }

@@ -14,18 +14,22 @@ namespace Baba_Is_Us{
         RuleManager m_RM;
         std::vector<Position> m_players; //player's position(s)
 
+        PlayState m_state_of_game {PlayState::Playing};
+
     public :
         Game(std::string_view);
         std::vector<Position>& getPlayerPositions(); 
         RuleManager& getRuleManager();
         Map& getMap();
+        PlayState accessm_state_of_game();
         // helper function una volta che si è assicurati che esistono tre blocchi di fila
-        void createRule(std::vector<Type>&,
-                        std::vector<Type>&, std::vector<Type>&);
+        void createRule(std::vector<Type>&, std::vector<Type>&, std::vector<Type>&);
         // chiamata quando una parola logica è mossa, controlla la vecchia posizione della regola e 
         // vede se era attaccata a altre parole logiche e modifica m_rules.
         // N.B: le regole si creeranno solo da sx a dx e da alto a basso
         void parseRules(); //serve la mappa, quindi la sposto qui perché avrei dovuto costruire un'altra mappa in RuleManager
+        void adjustRules();
+        std::vector<Position> getFirstMovingPositions(Direction);
         void update(sf::RenderWindow &, Map &, sf::Clock &);
         void render(sf::RenderWindow &, std::vector<sf::Sprite>);
         // Objects getObject(Position); forse inutile

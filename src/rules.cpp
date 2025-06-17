@@ -11,12 +11,17 @@ namespace Baba_Is_Us{
     }
 
     bool Rule::hasType(Type type) const{
-        if (std::get<0>(m_rule) == type ||
-            std::get<1>(m_rule) == type ||
-            std::get<2>(m_rule) == type)
+        if (m_rule[0] == type ||
+            m_rule[1] == type ||
+            m_rule[2] == type)
             return true;
         return false;
     }
+
+    const std::array<Type, 3>& Rule::getm_rule() const {
+        return m_rule;
+    }
+
 
     void RuleManager::addRule(const Rule& rule){
         m_rules.emplace_back(rule);
@@ -30,7 +35,7 @@ namespace Baba_Is_Us{
         }
     }
 
-    std::vector<Rule>& RuleManager::getRules(){
+    const std::vector<Rule>& RuleManager::getm_rules(){
         return m_rules;
     }
     
@@ -52,11 +57,11 @@ namespace Baba_Is_Us{
         return rules_with_rule;
     }
     
-    Type RuleManager::findPlayer() const{
+    Type RuleManager::findPlayerType() const{
         for (const auto& each_rule : m_rules) {
-            if (std::get<2>(each_rule.m_rule) == Type::You) {
+            if (each_rule.m_rule[2] == Type::You) {
 
-                Type type_Player {std::get<0>(each_rule.m_rule)};
+                Type type_Player {each_rule.m_rule[0]};
                 return type_Player;
             }
         }
