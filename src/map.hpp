@@ -83,7 +83,7 @@ public:
     void setTextures();
     void setSprites();
     void redraw(sf::Clock &);
-    std::vector<sf::Sprite> getTileSprites();
+    std::vector<sf::Sprite>& getTileSprites();
     const sf::Sprite& getWhichSpriteIsInPosition(Position&);
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
@@ -102,6 +102,7 @@ public:
     // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
     const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 };
+    std::size_t intToBeDrawn(const std::size_t i);
 
 }
 #endif

@@ -15,48 +15,7 @@
 
 namespace Baba_Is_Us{
 
-    //associamo gli enum dati in level.txt a ciascun path di tilePaths
-    std::optional<std::size_t> intToBeDrawn(const std::size_t i){
-        std::size_t nth{};
-        switch(i) {
-            case 0: nth = 0;
-                break;
-            case 1: nth = 7; // fisso il default di Baba a BABA_right.png
-                break;
-            case 3: 
-            case 4:
-            case 5:
-            case 6: nth = i + 6;
-                break;
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 21: nth = i + 4;
-                break;
-            case 23:
-            case 25:
-            case 26:
-            case 27:
-            case 28:
-            case 29:
-            case 30:
-            case 31:
-            case 32:
-            case 33:
-            default : nth = tilePaths.size();
-                break;
-        }
-        return (nth == tilePaths.size() ? std::nullopt : std::optional<std::size_t>(nth) );
-    }
+    
 
     Game::Game(std::string_view filename) : m_map3D{filename}, m_RM{}, m_players{}
     {
@@ -278,8 +237,12 @@ namespace Baba_Is_Us{
         position.first = position.first;
         position.second = position.second;
         if (m_map3D.At(position.first, position.second).getTypes()[1] == Type::Baba) { //solo Baba è speciale
-            sf::Sprite sprite {m_map3D.tileSprites[position.second * MapSize::width + position.first]};
-            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (5+ +direction) ]);
+            std::size_t index_to_be_drawn {intToBeDrawn()};
+            assert(position.second * MapSize::width + position.first < m_map3D.tileSprites.size()
+                && "rotate() has index_to_be_drawn too high");
+            sf::Sprite& sprite {m_map3D.tileSprites[position.second * MapSize::width + position.first]};
+            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (+direction + 5) ]);
+            std::cerr << "index in rotate(): " << static_cast<std::size_t> (+direction + 5) <<'\n';
         }
     }
 
@@ -299,8 +262,8 @@ namespace Baba_Is_Us{
         for (auto& each : moving_pos){ // solo i primi oggetti per fila che si spostano in quella direzione
             //movimento visivo
             
-            std::size_t to_be_drawn {*intToBeDrawn(static_cast<std::size_t>(+m_map3D.At(each.first, each.second).getTypes()[0]))};
-            sf::Sprite& sprite {m_map3D.tileSprites[to_be_drawn]};
+            std::size_t index_to_be_drawn {*intToBeDrawn(static_cast<std::size_t>(+m_map3D.At(each.first, each.second).getTypes()[0]))};
+            sf::Sprite& player_sprite {m_map3D.tileSprites[index_to_be_drawn]}; // & because all players should change
             std::cerr<<"it's visual time!\n";
          
             //ROTATE BANANA ROTATE
@@ -315,17 +278,13 @@ namespace Baba_Is_Us{
             //first 11 pixels
 
             //baba goes to moving sprite
-            sprite=m_map3D.tileSprites[to_be_drawn-4];
-            std::cerr<<to_be_drawn<<" "<<to_be_drawn-4 <<" "<<to_be_drawn+4 <<"\n";
+            sprite=m_map3D.tileSprites[index_to_be_drawn-4];
+            std::cerr<< index_to_be_drawn <<" "<< index_to_be_drawn -4 <<" "<< index_to_be_drawn +4 <<"\n";
             sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
-            std::cerr << "Moved sprite\n";
             m_map3D.redraw(clock);
-            std::cerr << "Done with redraw\n";
             render(window, m_map3D.tileSprites); 
-            std::cerr << "Done with render\n";
 
             PlayState check {movementCheck(each, direction)};
-            std::cerr << "Done with movementCheck\n";
             // se l'azione è valida (=> l'oggetto movente non è distrutto)
             if (check == PlayState::Playing) { 
                 std::cerr << "PlayState = Playing \n";
@@ -338,7 +297,7 @@ namespace Baba_Is_Us{
                 render(window, m_map3D.tileSprites);
             
                 if(m_map3D.isOutOfBoundary(each.first + dx, each.second + dy)) continue;
-                std::cerr << "Non vorrei che i seguenti siano già distrutti\n";
+
                 m_map3D.accessm_grid()[0][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[0][each.second][each.first];
 
                 m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[1][each.second][each.first];
@@ -366,7 +325,7 @@ namespace Baba_Is_Us{
             }
 
             //baba goes to idle sprite
-            sprite=m_map3D.tileSprites[to_be_drawn];
+            sprite=m_map3D.tileSprites[index_to_be_drawn];
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
 
