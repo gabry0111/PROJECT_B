@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <chrono>
 #include "map.hpp"
 #include "game.hpp"
 #include "objects.hpp"
@@ -206,15 +207,12 @@ namespace Baba_Is_Us{
         Type type {map.At(pos.first, pos.second).getTypes()[0]};
         std::size_t dx = shift.first;
         std::size_t dy = shift.second;
-        std::cerr<<"no, here! -";
         if (map.isOutOfBoundary(pos.first+dx, pos.second+dy)){
-            std::cerr<<"seems here -";
             return true;
         }
-
-        else if (map.getm_objects()[pos.second-dy][pos.first-dx].getTypes()[0] != type)
+        else if (map.getm_objects()[pos.second+dy][pos.first+dx].getTypes()[0] != type){
             return true;
-
+        }
         return false;
         /*
         //isBeginningOfLine non deve controllare questo (), deve controllare che sia il primo della FILA di oggetti, non della riga lunga 16
@@ -238,11 +236,9 @@ namespace Baba_Is_Us{
 
     std::vector<Position> Game::getFirstMovingPositions(Direction direction) {
         std::vector<Position> pos_to_be_moved {};
-        std::cerr<<"in here - ";
         assert (m_players.size() > 0);
         for (auto& pos : m_players){
             if (isBeginningOfLine(pos, m_map3D, direction)) {
-                std::cerr<<"i guess here\n";
                 pos_to_be_moved.emplace_back(pos);
             }
         }
@@ -253,7 +249,7 @@ namespace Baba_Is_Us{
     std::size_t indexToBeDrawn(const std::size_t i){
         std::size_t nth {};
         std::string substring;
-        constexpr std::size_t tilePaths_size {tilePaths.size()};
+        std::size_t tilePaths_size {tilePaths.size()};
         auto searchIndex = [tilePaths_size](const std::string& sub) -> std::size_t {
             for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
                 if (tilePaths[iter].find(sub) != std::string::npos)
@@ -310,7 +306,9 @@ namespace Baba_Is_Us{
             sf::Sprite& sprite {m_map3D.tileSprites[index_to_modify]};
             std::cerr<<m_map3D.getm_grid()[0][position.second][position.first]<<" in grid in direction "<< +direction<<"\n";
             
-            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (+direction + 1) ]);
+            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (+direction + 5) ]);
+            sf::sleep(sf::milliseconds(50));
+            std::cerr<<"DIRECTION "<<index_to_modify<<" -";
         }
     }
 
@@ -340,7 +338,7 @@ namespace Baba_Is_Us{
             rotate(each, direction, index_to_be_drawn);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
-            std::cerr<<" - rotated - ";
+            
             if(m_map3D.isOutOfBoundary(each.first + dx, each.second + dy)) {
                 continue;
             }
@@ -348,11 +346,11 @@ namespace Baba_Is_Us{
             //baba (the special one) goes to moving sprite
             if(m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) {
                 player_sprite=m_map3D.tileSprites[index_to_be_drawn -4];
-                std::cerr<<index_to_be_drawn<<" "<<index_to_be_drawn -4 <<" "<<index_to_be_drawn +4 <<"\n";
             }
             player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites); 
+            sf::sleep(sf::milliseconds(30));
             
 
             PlayState check {movementCheck(each, direction)};
@@ -362,16 +360,18 @@ namespace Baba_Is_Us{
                 player_sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
+                sf::sleep(sf::milliseconds(30));
 
                 player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
+                sf::sleep(sf::milliseconds(30));
             
                 if(m_map3D.isOutOfBoundary(each.first + dx, each.second + dy)) continue;
 
                 m_map3D.accessm_grid()[0][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[0][each.second][each.first];
-
                 m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[1][each.second][each.first];
+
 
                 m_map3D.accessm_objects()[each.second + dy][each.first + dx] =m_map3D.At(each.first, each.second).getTypes();
                 m_map3D.resetObject({each.first, each.second}); // with addObj e resetObj, m_objects è a posto -> FALSO
@@ -379,11 +379,9 @@ namespace Baba_Is_Us{
                 if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
 
                     m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-
-                    if (m_map3D.getm_objects()[each.second + dy][each.first + dx].getTypes()[0] == Type::Void) {//se anche il target si è distrutto
-                        m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = +Type::Void;
-                        std::cerr<< "uh oh - ";
-                    }
+                    m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+                    
+                    
                 } 
 
             } else if(check == PlayState::Invalid) {
@@ -405,7 +403,26 @@ namespace Baba_Is_Us{
         
         std::vector<Position>& player_positions {getPlayerPositions()};
         assert(player_positions.size() > 0 && "movement(): player_positions.size() == 0");
-        
+        for (std::size_t i {}; i<16; ++i){
+            for (std::size_t j{}; j<16; ++j){
+                std::cerr<<m_map3D.getm_grid()[0][i][j]<<" ";
+            }                
+            std::cerr<<"\n";
+        }
+        std::cerr<<"akfnjdsaknjaofbjabd\n";
+        for (std::size_t i {}; i<16; ++i){
+            for (std::size_t j{}; j<16; ++j){
+                std::cerr<<m_map3D.getm_grid()[1][i][j]<<" ";
+            }                
+            std::cerr<<"\n";
+        }
+        std::cerr<<"OBEJKFCSDJTKJSADAS------------\n";
+        for (std::size_t i {}; i<16; ++i){
+            for (std::size_t j{}; j<16; ++j){
+                std::cerr<<m_map3D.getm_objects()[i][j].getTypes()[0]<<" ";
+            }
+            std::cerr<<"\n";
+        }
     }
 
     void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
@@ -517,7 +534,7 @@ namespace Baba_Is_Us{
             return PlayState::Invalid;
 
         std::pair<Position, Position> result{*getFirstAndMismatch(m_map3D.getm_grid()[1], direction, pos) };
-        Position first_mismatch{ result.second.first, result.second.second };      //target
+        Position first_mismatch { result.second.first, result.second.second };      //target
         Position first_of_line {result.first.first, result.first.second};          //farthest object relative to the target
         
         // ATTENZIONE: while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
@@ -556,7 +573,7 @@ namespace Baba_Is_Us{
 
     PlayState Game::conditions(Objects& object, Objects& second) { //fanculo alle 14:30
         std::vector<Type> second_types {second.getTypes()};
-        PlayState action {PlayState::Invalid};
+        PlayState action {PlayState::Playing};
         for(const auto type : second_types){ // per ogni Type di Objects second
             /*
             // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
@@ -571,15 +588,13 @@ namespace Baba_Is_Us{
             */
             // non ci interessa degli ICON_NOUN_TYPE
             // non ci interessa dei verb type che creeranno una regola. Ci penserà un'altra funzione
-            
-            //
             // controllare che object[0] NON sia Type::Block -----------------------
             // beh, in teoria vale
 
             switch (type) {
             case Type::Block:  return PlayState::Playing; break; // i blocchi si possono sempre muovere, LASCIAMOLO PER PRIMO
 
-            case Type::Void: action = PlayState::Playing; break;
+            case Type::Void:   action = PlayState::Playing; break;
             case Type::Defeat: action = handleDefeat(object, second, m_state_of_game); break;
             case Type::Hot:    action = handleHot(object, second); break;
             case Type::Launch: action = PlayState::Playing; break;
