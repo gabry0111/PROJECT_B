@@ -274,13 +274,16 @@ namespace Baba_Is_Us{
         }
     }
 
-    void Game::rotate(Position &position, Direction direction){
+    sf::Sprite& Game::rotate(Position &position, Direction direction){
         position.first = position.first;
         position.second = position.second;
-        if (m_map3D.At(position.first, position.second).getTypes()[1] == Type::Baba) { //solo Baba è speciale
-            sf::Sprite sprite {m_map3D.tileSprites[position.second * MapSize::width + position.first]};
-            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (5+ +direction) ]);
+        sf::Sprite& sprite {m_map3D.tileSprites[ static_cast<std::size_t> (m_map3D.accessm_grid()[0][position.second][position.first] )]};
+        if (m_map3D.At(position.first, position.second).getTypes()[0] == Type::Baba) { //solo Baba è speciale
+            std::cerr<<m_map3D.accessm_grid()[0][position.second][position.first]<<" in grid in direction "<< +direction<<"\n";
+
+            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (1+ +direction) ]);
         }
+        return sprite;
     }
 
     //overload
@@ -292,7 +295,7 @@ namespace Baba_Is_Us{
         std::cerr<<"alright here we go\n";
         std::vector<Position> moving_pos {getFirstMovingPositions(direction)};
 
-        assert(moving_pos.size() > 0 && "update(): moving_pos.size() == 0");
+        assert(moving_pos.size() > 0 && "movement(): moving_pos.size() == 0");
         std::cerr << "moving_pos.size() == "<< moving_pos.size() << " positions: " << moving_pos[0].first << moving_pos[0].second << ' ' 
                     << moving_pos[1].first << moving_pos[1].second << '\n';
 
@@ -304,7 +307,7 @@ namespace Baba_Is_Us{
             std::cerr<<"it's visual time!\n";
          
             //ROTATE BANANA ROTATE
-            rotate(each, direction);
+            sprite = rotate(each, direction);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
 
@@ -313,10 +316,11 @@ namespace Baba_Is_Us{
             }
 
             //first 11 pixels
-
             //baba goes to moving sprite
-            sprite=m_map3D.tileSprites[to_be_drawn-4];
-            std::cerr<<to_be_drawn<<" "<<to_be_drawn-4 <<" "<<to_be_drawn+4 <<"\n";
+            if (m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) { 
+                sprite=m_map3D.tileSprites[to_be_drawn-4];
+                std::cerr<<to_be_drawn<<" "<<to_be_drawn-4 <<" "<<to_be_drawn+4 <<"\n";
+            }
             sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
             std::cerr << "Moved sprite\n";
             m_map3D.redraw(clock);
