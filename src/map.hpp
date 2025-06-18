@@ -102,6 +102,8 @@ public:
     // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
     const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 };
+    std::size_t indexToInitialize(const std::size_t i);
+
 
 }
 #endif
