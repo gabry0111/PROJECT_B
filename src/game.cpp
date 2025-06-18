@@ -190,11 +190,34 @@ namespace Baba_Is_Us{
 
     // controlla se l'oggetto è all'inizio della riga (vert o orizz)
     //AGGIUNGERE LO SHIFT PER FARLO PIù BELLINO
-    bool isBeginningOfLine(Position pos, Map &map, Direction dir) {
+
+
+    Position getShift(Direction dir) {
+        switch (dir) {                                                      
+            case Direction::Up:    return {0, -1};                          
+            case Direction::Down:  return {0, 1 };
+            case Direction::Left:  return {-1, 0};
+            case Direction::Right: return {1, 0 };
+            default:               return {0, 0 };
+        }
+    }
+    bool isBeginningOfLine(Position pos, Map &map, Direction dir) { //prima (circa) funzione ricorsiva!!!! yay :3 yippee :DDDD
+        Position shift {getShift(dir)};
         Type type {map.At(pos.first, pos.second).getTypes()[0]};
-        std::size_t x = pos.first;
-        std::size_t y = pos.second;
-        
+        std::size_t dx = shift.first;
+        std::size_t dy = shift.second;
+        std::cerr<<"no, here! -";
+        if (map.isOutOfBoundary(pos.first+dx, pos.second+dy)){
+            std::cerr<<"seems here -";
+            return true;
+        }
+
+        else if (map.getm_objects()[pos.second-dy][pos.first-dx].getTypes()[0] != type)
+            return true;
+
+        return false;
+        /*
+        //isBeginningOfLine non deve controllare questo (), deve controllare che sia il primo della FILA di oggetti, non della riga lunga 16
         switch(dir){ // è la prima della riga <=> ...
             case Direction::Up: 
                 return (y == MapSize::height || map.At(x, y - 1).getTypes()[0] != type);
@@ -210,27 +233,74 @@ namespace Baba_Is_Us{
                 break;
             default: throw(std::runtime_error("isBeginningOfLine(): not given a valid direction"));
         }
+            */
     }
 
     std::vector<Position> Game::getFirstMovingPositions(Direction direction) {
         std::vector<Position> pos_to_be_moved {};
+        std::cerr<<"in here - ";
         assert (m_players.size() > 0);
         for (auto& pos : m_players){
             if (isBeginningOfLine(pos, m_map3D, direction)) {
+                std::cerr<<"i guess here\n";
                 pos_to_be_moved.emplace_back(pos);
             }
         }
         return pos_to_be_moved;
     }
+    
+    //associamo gli int sottostanti a enum Type, dati in level.txt, a un path di tilePaths
+    std::size_t indexToBeDrawn(const std::size_t i){
+        std::size_t nth {};
+        std::string substring;
+        constexpr std::size_t tilePaths_size {tilePaths.size()};
+        auto searchIndex = [tilePaths_size](const std::string& sub) -> std::size_t {
+            for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
+                if (tilePaths[iter].find(sub) != std::string::npos)
+                    return iter;
+            }
+            std::cerr << "Failed to find substring: " << sub << " in tilePaths\n";
+            return tilePaths_size;
 
-    Position getShift(Direction dir) {
-        switch (dir) {                                                      
-            case Direction::Up:    return {0, -1};                          
-            case Direction::Down:  return {0, 1 };
-            case Direction::Left:  return {-1, 0};
-            case Direction::Right: return {1, 0 };
-            default:               return {0, 0 };
+        };
+
+        switch(i) {
+            case 0:  substring = "gifs/VOID";                    break;
+            case 1:  substring = "gifs/BABA_spritesheet_right";  break; // fisso il default di Baba a BABA_right.png
+            case 3:  substring = "gifs/FLAG";                    break;
+            case 4:  substring = "gifs/LAVA";                    break;
+            case 5:  substring = "gifs/ROCK";                    break;
+            case 6:  substring = "gifs/WALL";                    break;
+
+            case 9:  substring = "text/BABA";                    break;
+            case 10: substring = "text/DEFEAT";                  break;
+            case 11: substring = "text/FLAG";                    break;
+            case 12: substring = "text/HOT";                     break;
+            case 13: substring = "text/IS";                      break;
+            case 14: substring = "text/LAVA";                    break;
+            case 15: substring = "text/MELT";                    break;
+            case 16: substring = "text/PUSH";                    break;
+            case 17: substring = "text/ROCK";                    break;
+            case 18: substring = "text/STOP";                    break;
+            case 19: substring = "text/WALL";                    break;
+            case 20: substring = "text/WIN";                     break;
+            case 21: substring = "text/YOU";                     break;
+
+            case 23:
+
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+            case 31:
+            case 32:
+            case 33:
+            default : break;
         }
+        if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
+        else {return (nth = searchIndex(substring));}
     }
     //N.B: la sprite di Baba sarà quella ferma, non "...move_up"
     void Game::rotate(Position &position, Direction direction, std::size_t& index_to_modify){
@@ -254,10 +324,10 @@ namespace Baba_Is_Us{
         std::vector<Position> moving_pos {getFirstMovingPositions(direction)};
 
         assert(moving_pos.size() > 0 && "movement(): moving_pos.size() == 0");
-        std::cerr << "moving_pos.size() == "<< moving_pos.size() << " positions: " << moving_pos[0].first << moving_pos[0].second << ' ' 
-                    << moving_pos[1].first << moving_pos[1].second << '\n';
-        
-        
+            std::cerr << "moving_pos.size() == "<< moving_pos.size() << " positions: ";
+
+        for (const auto& pos : moving_pos)
+            std::cerr<<pos.first<<" "<<pos.second<<"\n";
         
         for (auto& each : moving_pos){ // solo i primi oggetti per fila che si spostano in quella direzione
             //movimento visivo
@@ -270,11 +340,10 @@ namespace Baba_Is_Us{
             rotate(each, direction, index_to_be_drawn);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
-
+            std::cerr<<" - rotated - ";
             if(m_map3D.isOutOfBoundary(each.first + dx, each.second + dy)) {
                 continue;
             }
-
             //first 11 pixels
             //baba (the special one) goes to moving sprite
             if(m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) {
@@ -284,11 +353,12 @@ namespace Baba_Is_Us{
             player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites); 
+            
 
             PlayState check {movementCheck(each, direction)};
             // se l'azione è valida (=> l'oggetto movente non è distrutto)
             if (check == PlayState::Playing) { 
-                std::cerr << "PlayState = Playing \n";
+                std::cerr << "PlayState = Playing - ";
                 player_sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
@@ -306,15 +376,13 @@ namespace Baba_Is_Us{
                 m_map3D.accessm_objects()[each.second + dy][each.first + dx] =m_map3D.At(each.first, each.second).getTypes();
                 m_map3D.resetObject({each.first, each.second}); // with addObj e resetObj, m_objects è a posto -> FALSO
                 
-                std::cerr<<"eh eh\n";
                 if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
-                    std::cerr<<"ih ih\n";
+
                     m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-                    std::cerr << "oh uh\n";
 
                     if (m_map3D.getm_objects()[each.second + dy][each.first + dx].getTypes()[0] == Type::Void) {//se anche il target si è distrutto
                         m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = +Type::Void;
-                        std::cerr<< "uh oh\n";
+                        std::cerr<< "uh oh - ";
                     }
                 } 
 
@@ -327,10 +395,11 @@ namespace Baba_Is_Us{
 
             //baba goes to idle sprite
             player_sprite=m_map3D.tileSprites[index_to_be_drawn];
+            player_sprite.setTexture(m_map3D.textures[index_to_be_drawn]);
+
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
 
-            std::cerr << "Next position to move \n";
         }
         std::cerr<<" visual movement complete\n";
         
@@ -423,14 +492,13 @@ namespace Baba_Is_Us{
 
     // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimento
     std::optional<std::pair<Position, Position>> getFirstAndMismatch(const MapGrid2D& grid, Direction dir, Position start) {
-        
         std::optional<std::pair<Position, Position>> result {};
         Position shift{getShift(dir)};
         std::size_t x {start.first};
         std::size_t y {start.second};
-        int value = grid[x][y];
+        int value = grid[y][x];
         while(x < MapSize::width && y < MapSize::height) {
-            if(grid[x][y] != value){
+            if(grid[y][x] != value){
                 result = {start, {x,y}};
                 return result;
             }
@@ -445,7 +513,6 @@ namespace Baba_Is_Us{
     // ASSICURATI CHE conditions() NON SIA MAI PIù CHIAMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // VA BENE OK DIEGO
     PlayState Game::movementCheck(const Position pos, Direction direction){
-        
         if(! getFirstAndMismatch(m_map3D.getm_grid()[1], direction, pos)) // se la linea continua fino a fine mappa
             return PlayState::Invalid;
 

@@ -150,60 +150,6 @@ namespace Baba_Is_Us{
         return m_objects;
     }
     
-    //associamo gli int sottostanti a enum Type, dati in level.txt, a un path di tilePaths
-    std::size_t indexToBeDrawn(const std::size_t i){
-        std::size_t nth {};
-        std::string substring;
-        constexpr std::size_t tilePaths_size {tilePaths.size()};
-        auto searchIndex = [tilePaths_size](const std::string& sub) -> std::size_t {
-            for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
-                if (tilePaths[iter].find(sub) != std::string::npos)
-                    return iter;
-            }
-            std::cerr << "Failed to find substring: " << sub << " in tilePaths\n";
-            return tilePaths_size;
-
-        };
-
-        switch(i) {
-            case 0:  substring = "gifs/VOID";                    break;
-            case 1:  substring = "gifs/BABA_spritesheet_right";  break; // fisso il default di Baba a BABA_right.png
-            case 3:  substring = "gifs/FLAG";                    break;
-            case 4:  substring = "gifs/LAVA";                    break;
-            case 5:  substring = "gifs/ROCK";                    break;
-            case 6:  substring = "gifs/WALL";                    break;
-
-            case 9:  substring = "text/BABA";                    break;
-            case 10: substring = "text/DEFEAT";                  break;
-            case 11: substring = "text/FLAG";                    break;
-            case 12: substring = "text/HOT";                     break;
-            case 13: substring = "text/IS";                      break;
-            case 14: substring = "text/LAVA";                    break;
-            case 15: substring = "text/MELT";                    break;
-            case 16: substring = "text/PUSH";                    break;
-            case 17: substring = "text/ROCK";                    break;
-            case 18: substring = "text/STOP";                    break;
-            case 19: substring = "text/WALL";                    break;
-            case 20: substring = "text/WIN";                     break;
-            case 21: substring = "text/YOU";                     break;
-
-            case 23:
-
-            case 25:
-            case 26:
-            case 27:
-            case 28:
-            case 29:
-            case 30:
-            case 31:
-            case 32:
-            case 33:
-            default : break;
-        }
-        if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
-        else {return (nth = searchIndex(substring));}
-    }
-
     void Map::setTextures(){
         for (auto& path : tilePaths) {
             sf::Texture texture;
@@ -329,7 +275,8 @@ namespace Baba_Is_Us{
     }
 
     bool Map::isOutOfBoundary(std::size_t x, std::size_t y) const {
-        return (x > MapSize::width - 1) || (y > MapSize::height - 1);
+        std::cerr<<" whereth? - \n";
+        return ((x > MapSize::width - 1) || (y > MapSize::height - 1));
     }
 
     void Map::addObject(Position position, Type type) {
