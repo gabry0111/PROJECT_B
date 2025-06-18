@@ -39,7 +39,7 @@ namespace Baba_Is_Us{
         void rotate(Position&, Direction);
         //void movement(Map, Position, Direction); //per ora non servono
         //void movement(Direction, PlayState);
-        void movement(Direction);
+        void movement(sf::RenderWindow &, sf::Clock &, Direction);
         PlayState conditions(Objects&, Objects&);
     };
 }

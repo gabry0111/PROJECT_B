@@ -30,8 +30,8 @@ namespace Baba_Is_Us {
         "../../assets/png_PROGETTO/gifs/VOID_spritesheet.png",                 //0 
         "../../assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",         //1
         "../../assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",       //2
-        "../../assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",       //3
-        "../../assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",      //4
+        "../../assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",      //3
+        "../../assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",       //4
         "../../assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",              //5
         "../../assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",            //6
         "../../assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",           //7

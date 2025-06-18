@@ -257,9 +257,9 @@ namespace Baba_Is_Us{
             for (std::size_t x = 0; x < MapSize::width; ++x){
                 if(type == Type::Block) { // altrimenti conta come Baba anche i Blocks
                     if ((m_objects[y][x].objectHasType(type))){
-                    Position pos {x,y};
-                    positions_with_type.emplace_back(pos);
-                }
+                        Position pos {x,y};
+                        positions_with_type.emplace_back(pos);
+                    }
                 }
                 
                 if ((m_objects[y][x].objectHasType(type)) && !m_objects[y][x].objectHasType(Type::Block)){
@@ -279,7 +279,7 @@ namespace Baba_Is_Us{
         m_objects[position.first][position.second].addType(type);
     }
     void Map::resetObject(Position position) {
-        m_objects[position.first][position.second] = {};
+        m_objects[position.second][position.first] = {{Type::Void}};
     }
 
 
