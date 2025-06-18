@@ -26,6 +26,7 @@ namespace Baba_Is_Us {
 
 // va implementato un modo per cui il compilatore prenda il file dalla BUILD
     // così da semplificare l'azione che prende il percorso (di tipo std::string)
+    // N.B: non modificare l'ordine delle sprite di Baba
     inline std::array<std::string, 26> tilePaths { 
         "../../assets/png_PROGETTO/gifs/VOID_spritesheet.png",                 //0 
         "../../assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",         //1
@@ -102,7 +103,7 @@ public:
     // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
     const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 };
-    std::size_t intToBeDrawn(const std::size_t i);
+    std::size_t indexToBeDrawn(const std::size_t i);
 
 }
 #endif

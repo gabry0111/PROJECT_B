@@ -232,19 +232,16 @@ namespace Baba_Is_Us{
             default:               return {0, 0 };
         }
     }
-
-    sf::Sprite& Game::rotate(Position &position, Direction direction){
-        position.first = position.first;
-        position.second = position.second;
-        if (m_map3D.At(position.first, position.second).getTypes()[1] == Type::Baba) { //solo Baba è speciale
-            sf::Sprite sprite {m_map3D.tileSprites[ static_cast<std::size_t> (m_map3D.accessm_grid()[0][position.second][position.first] )]};
-            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (5+ +direction) ]);
-            assert(position.second * MapSize::width + position.first < m_map3D.tileSprites.size()
-                && "rotate() has index_to_be_drawn too high");
-            std::cerr<<m_map3D.accessm_grid()[0][position.second][position.first]<<" in grid in direction "<< +direction<<"\n";
-            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (1+ +direction) ]);
+    //N.B: la sprite di Baba sarà quella ferma, non "...move_up"
+    void Game::rotate(Position &position, Direction direction, std::size_t& index_to_modify){
+        if (m_map3D.At(position.first, position.second).getTypes()[0] == Type::Baba) { //solo Baba è speciale
+            // purché teniamo sempre l'ordine di: enum Direction e gifs di Baba in tilePaths possiamo fare:
+            index_to_modify = static_cast<std::size_t> (+direction + 5);
+            sf::Sprite& sprite {m_map3D.tileSprites[index_to_modify]};
+            std::cerr<<m_map3D.getm_grid()[0][position.second][position.first]<<" in grid in direction "<< +direction<<"\n";
+            
+            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (+direction + 1) ]);
         }
-        return sprite;
     }
 
     //overload
@@ -259,16 +256,18 @@ namespace Baba_Is_Us{
         assert(moving_pos.size() > 0 && "movement(): moving_pos.size() == 0");
         std::cerr << "moving_pos.size() == "<< moving_pos.size() << " positions: " << moving_pos[0].first << moving_pos[0].second << ' ' 
                     << moving_pos[1].first << moving_pos[1].second << '\n';
-
+        
+        
+        
         for (auto& each : moving_pos){ // solo i primi oggetti per fila che si spostano in quella direzione
             //movimento visivo
             
-            std::size_t index_to_be_drawn {*intToBeDrawn(static_cast<std::size_t>(+m_map3D.At(each.first, each.second).getTypes()[0]))};
+            std::size_t index_to_be_drawn {indexToBeDrawn(static_cast<std::size_t>(+m_map3D.getm_grid()[0][each.second][each.first]))};
             sf::Sprite& player_sprite {m_map3D.tileSprites[index_to_be_drawn]}; // & because all players should change
             std::cerr<<"it's visual time!\n";
          
             //ROTATE BANANA ROTATE
-            sprite = rotate(each, direction);
+            rotate(each, direction, index_to_be_drawn);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
 
@@ -277,10 +276,12 @@ namespace Baba_Is_Us{
             }
 
             //first 11 pixels
-            //baba goes to moving sprite
-            sprite=m_map3D.tileSprites[index_to_be_drawn-4];
-            std::cerr<< index_to_be_drawn <<" "<< index_to_be_drawn -4 <<" "<< index_to_be_drawn +4 <<"\n";
-            sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+            //baba (the special one) goes to moving sprite
+            if(m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) {
+                player_sprite=m_map3D.tileSprites[index_to_be_drawn -4];
+                std::cerr<<index_to_be_drawn<<" "<<index_to_be_drawn -4 <<" "<<index_to_be_drawn +4 <<"\n";
+            }
+            player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites); 
 
@@ -288,11 +289,11 @@ namespace Baba_Is_Us{
             // se l'azione è valida (=> l'oggetto movente non è distrutto)
             if (check == PlayState::Playing) { 
                 std::cerr << "PlayState = Playing \n";
-                sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
+                player_sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
 
-                sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
             
@@ -319,13 +320,13 @@ namespace Baba_Is_Us{
 
             } else if(check == PlayState::Invalid) {
                 std::cerr << "PlayState = Invalid \n";
-                sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
+                player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
             }
 
             //baba goes to idle sprite
-            sprite=m_map3D.tileSprites[index_to_be_drawn];
+            player_sprite=m_map3D.tileSprites[index_to_be_drawn];
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
 
@@ -398,10 +399,9 @@ namespace Baba_Is_Us{
                 assert (i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE 
                      && i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE 
                      && i != +Type::Block && i != +Type::Icon_Void && "in render() not given a valid value in m_grid[0]\n");
-                
-                if(! intToBeDrawn(static_cast<std::size_t> (i)) ) continue;
+                if(indexToBeDrawn(static_cast<std::size_t> (i)) > tilePaths.size()) continue;
 
-                std::size_t nth_sprite_to_be_drawn {* intToBeDrawn(static_cast<std::size_t>(i)) };
+                std::size_t nth_sprite_to_be_drawn {indexToBeDrawn(static_cast<std::size_t>(i)) };
                 assert(nth_sprite_to_be_drawn < tilePaths.size() 
                     && "render()'s nth_sprite... is beyond tilePaths.size()");
 

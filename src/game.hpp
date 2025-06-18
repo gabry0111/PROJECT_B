@@ -36,7 +36,7 @@ namespace Baba_Is_Us{
         // std::optional<PlayState> movementCheck(Direction, Position); inutile fare l'overload, verrà sempre scelto il vector.
         // di conseguenza anche movement per un unico oggetto sarà inutile
         PlayState movementCheck(const Position, Direction);
-        sf::Sprite& rotate(Position&, Direction);
+        void rotate(Position&, Direction, std::size_t& index_to_change);
         //void movement(Map, Position, Direction); //per ora non servono
         //void movement(Direction, PlayState);
         void movement(sf::RenderWindow &, sf::Clock &, Direction);

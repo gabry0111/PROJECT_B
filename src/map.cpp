@@ -150,17 +150,19 @@ namespace Baba_Is_Us{
         return m_objects;
     }
     
-    //associamo gli enum dati in level.txt a ciascun path di tilePaths
-    std::size_t intToBeDrawn(const std::size_t i){
+    //associamo gli int sottostanti a enum Type, dati in level.txt, a un path di tilePaths
+    std::size_t indexToBeDrawn(const std::size_t i){
         std::size_t nth {};
-        std::string substring{};
+        std::string substring;
         constexpr std::size_t tilePaths_size {tilePaths.size()};
-        auto searchIndex = [tilePaths_size](const std::string& substring) -> std::size_t {
+        auto searchIndex = [tilePaths_size](const std::string& sub) -> std::size_t {
             for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
-                if (tilePaths[iter].find(substring) < tilePaths_size)
+                if (tilePaths[iter].find(sub) != std::string::npos)
                     return iter;
             }
+            std::cerr << "Failed to find substring: " << sub << " in tilePaths\n";
             return tilePaths_size;
+
         };
 
         switch(i) {
@@ -173,7 +175,7 @@ namespace Baba_Is_Us{
 
             case 9:  substring = "text/BABA";                    break;
             case 10: substring = "text/DEFEAT";                  break;
-            case 11: substring = "texT/FLAG";                    break;
+            case 11: substring = "text/FLAG";                    break;
             case 12: substring = "text/HOT";                     break;
             case 13: substring = "text/IS";                      break;
             case 14: substring = "text/LAVA";                    break;
@@ -199,7 +201,7 @@ namespace Baba_Is_Us{
             default : break;
         }
         if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
-            else return (nth = searchIndex(substring));
+        else {return (nth = searchIndex(substring));}
     }
 
     void Map::setTextures(){
@@ -226,7 +228,7 @@ namespace Baba_Is_Us{
 
             sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE}); //snip snip 32x32
 
-            //non riesco a capire counter -> 4
+            // gli indici saranno sempre nell'ordine di tilePaths
             tileSprites.emplace_back(sprite); // alla fine avrà tilePaths.size() elementi, ognuno con una sprite (<- quella che si beve?)
 
         }
