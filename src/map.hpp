@@ -84,7 +84,7 @@ public:
     void setSprites();
     void redraw(sf::Clock &);
     std::vector<sf::Sprite>& getTileSprites();
-    const sf::Sprite& getWhichSpriteIsInPosition(Position&);
+    sf::Sprite& accessWhichSpriteIsInPosition(Position&);
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
     void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr
@@ -102,7 +102,7 @@ public:
     // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
     const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
 };
-    std::size_t indexToInitialize(const std::size_t i);
+    std::size_t indexToBeDrawn(const std::size_t i);
 
 
 }

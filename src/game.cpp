@@ -45,34 +45,43 @@ namespace Baba_Is_Us{
     ///////////////////////////////////     Chapter: HandlingRules     ///////////////////////////////////
 
     // Per ogni regola di m_rules, aggiunge il PROPERTY_TYPE della regola a tutti gli oggetti indicati dalla regola
-    void Game::adjustRules() {
+    void Game::adjustAddingRules() {
         std::vector<Rule> rules {m_RM.getm_rules()};
         assert (rules.size() > 0);
         for (const Rule& each_rule : m_RM.getm_rules()) { // per ogni singola regola
-            for (auto rule_type : each_rule.getm_rule()) {std::cerr <<"rule_type: " << rule_type << ' ';}
+            //for (auto rule_type : each_rule.getm_rule()) {std::cerr <<"rule_type: " << rule_type << ' ';}
 
             Type noun_type {each_rule.getm_rule()[0]}; // cerca il NOUN_TYPE a cui fa riferimento
-            assert(noun_type != Type::Block);
+            assert(noun_type != Type::Block && "adjustAddingRules(): noun_type == Type::Block");
             Type prop_or_noun_type {each_rule.getm_rule()[2]}; // salva la NOUN o PROPERTY_TYPE della regola
             std::vector<Position> pos_of_types_with_rule {m_map3D.getPositions(noun_type)}; 
 
-            for (const Position& each_pos : pos_of_types_with_rule) { // per ogni istanza dell'oggetto
-                std::cerr << noun_type << prop_or_noun_type << each_pos.first << each_pos.second << '\n';
-
-                Objects obj {m_map3D.At(each_pos.first, each_pos.second)};
-                if(! obj.objectHasType(prop_or_noun_type)){ // controlla che non abbia già il tipo delle regole
-                    obj.addType(prop_or_noun_type);
-                    // gli Objects sono tutti salvati qui, non in m_grid
-                    m_map3D.accessm_objects()[each_pos.second][each_pos.first] = obj;
-                    for (auto types : obj.getTypes()) 
-                        std::cerr <<"Types: " << types << '\n';
-                } else {}
+            assert(((+prop_or_noun_type > +Type::NOUN_TYPE && +prop_or_noun_type < +Type::ICON_NOUN_TYPE) 
+                || (+prop_or_noun_type > +Type::PROPERTY_TYPE)) && "adjustAddingRules(): prop_or_noun_type not one of the two Types");
+            for (const Position& each_pos : pos_of_types_with_rule) { // per ogni istanza dell'oggetto NOUN_TYPE
+                Objects& obj {m_map3D.At(each_pos.first, each_pos.second)};
+                //std::cerr << noun_type << prop_or_noun_type << each_pos.first << each_pos.second << '\n';
+                std::cerr << "Property or noun type is: " << prop_or_noun_type;
+                if (+prop_or_noun_type > +Type::PROPERTY_TYPE) { // se è una PROPERTY_TYPE, aggiungila o toglila semplicemente
+                    if(! obj.objectHasType(prop_or_noun_type)){ // controlla che non abbia già il tipo delle regole
+                        obj.addType(prop_or_noun_type); //N.B: obj è reference
+                        //for (auto types : obj.getTypes()) 
+                        //    std::cerr <<"Types: " << types << '\n';
+                    } 
+                } else { // se è una NOUN_TYPE, aggiungi tutte le property di quel NOUN_TYPE
+                    for (const Rule iter_rules : m_RM.getm_rules()) {
+                        if(std::find(iter_rules.getm_rule().begin(), iter_rules.getm_rule().end()
+                                      , prop_or_noun_type) != iter_rules.getm_rule().end()) {
+                            obj.addType(iter_rules.getm_rule()[2]); //aggiungi la PROPERTY_TYPE della regola
+                        }
+                    }
+                }
             }
         }
     }
 
-    void Game::createRule(std::vector<Type>& word1,
-                        std::vector<Type>& word2, std::vector<Type>& word3) {
+    void Game::createRule(const std::vector<Type>& word1,
+                        const std::vector<Type>& word2, const std::vector<Type>& word3) {
         std::cerr << "\n word1: "; for (Type iter : word1) {std::cerr << iter << ' ';} 
         std::cerr << "\n word2: "; for (Type iter : word2) {std::cerr << iter << ' ';}
         std::cerr << "\n word3: "; for (Type iter : word3) {std::cerr << iter << ' ';}
@@ -99,82 +108,44 @@ namespace Baba_Is_Us{
     }
 
     void Game::parseRules() {
+        m_RM.clearRules();
         std::cerr << "In parseRules()\n";
         std::vector<Position> block_pos {m_map3D.getPositions(Type::Block)};
 
-        // check verticale (da alto a basso)
-        for (Position& pos : block_pos) {
-            std::cerr << '(' << pos.first << "," << pos.second << ')';
-            
-            // N.B: per Block: [0] = Block, [2] = ICON_NOUN_TYPE
-            if(m_map3D.isOutOfBoundary(pos.first, pos.second - 1)) { // vera <=> è la prima di una colonna
-                std::cerr << " Prima (verticale)   /   \n";
-                std::cerr << "Rule orientation: vertical" << " | From (x=" << pos.first << ", y=" << pos.second 
-                << " to " << pos.first << pos.second + 1 <<  ")\n";
+        for (const Position& pos : block_pos) {
+            std::cerr << '(' << pos.first << "," << pos.second << ") ";
 
-                std::vector<Type> word1 {m_map3D.At(pos.first, pos.second    ).getTypes()};
-                std::vector<Type> word2 {m_map3D.At(pos.first, pos.second + 1).getTypes()};
-                std::vector<Type> word3 {m_map3D.At(pos.first, pos.second + 2).getTypes()};
+            // check verticale
+            if (!m_map3D.isOutOfBoundary(pos.first, pos.second + 2)) {
+                std::cerr << "Rule orientation: vertical"
+                        << " | From (x=" << pos.first << ", y=" << pos.second
+                        << ") to (" << pos.first << "," << pos.second + 2 << ")\n";
 
-                if (word2[0] == Type::Block && word3[0] == Type::Block) {
+                const auto& word1 = m_map3D.At(pos.first, pos.second    ).getTypes();
+                const auto& word2 = m_map3D.At(pos.first, pos.second + 1).getTypes();
+                const auto& word3 = m_map3D.At(pos.first, pos.second + 2).getTypes();
 
+                if (word2[0] == Type::Block && word3[0] == Type::Block)
                     createRule(word1, word2, word3);
-                    continue;
-                } 
-                else {continue;}
             }
 
-            if(! m_map3D.isOutOfBoundary(pos.first, pos.second + 2)) { // soddisfatta <=> y<=14
-                std::cerr << " No prima (verticale), ma esistono altre 2 celle   /   \n";
-                std::cerr << "Rule orientation: vertical" << " | From (x=" << pos.first << ", y=" << pos.second 
-                << " to " << pos.first << pos.second + 1 <<  ")\n";
-                std::vector<Type> word1 {m_map3D.At(pos.first, pos.second    ).getTypes()};
-                std::vector<Type> word2 {m_map3D.At(pos.first, pos.second + 1).getTypes()};
-                std::vector<Type> word3 {m_map3D.At(pos.first, pos.second + 2).getTypes()};
+            // check orizzontale
+            if (!m_map3D.isOutOfBoundary(pos.first + 2, pos.second)) {
+                std::cerr << "Rule orientation: horizontal"
+                        << " | From (x=" << pos.first << ", y=" << pos.second
+                        << ") to (" << pos.first + 2 << "," << pos.second << ")\n";
 
-                if (word2[0] == Type::Block && word3[0] == Type::Block) {
+                const auto& word1 = m_map3D.At(pos.first    , pos.second).getTypes();
+                const auto& word2 = m_map3D.At(pos.first + 1, pos.second).getTypes();
+                const auto& word3 = m_map3D.At(pos.first + 2, pos.second).getTypes();
+
+                if (word2[0] == Type::Block && word3[0] == Type::Block)
                     createRule(word1, word2, word3);
-                    continue;
-                } 
-                else {continue;}
             }
         }
 
-        //check orizzontale
-        for (Position& pos : block_pos) {
-            std::cerr << pos.first << "," << pos.second << ' ';
-            if(m_map3D.isOutOfBoundary(pos.first - 1, pos.second)) { // vera <=> è la prima di una riga
-                std::cerr << " Prima (orizzontale)   /   \n";
-                std::cerr << "Rule orientation: horizontal" << " | From (x=" << pos.first << ", y=" << pos.second 
-                << " to " << pos.first + 1 << pos.second <<  ")\n";
-                std::vector<Type> word1 {m_map3D.At(pos.first    , pos.second).getTypes()};
-                std::vector<Type> word2 {m_map3D.At(pos.first + 1, pos.second).getTypes()};
-                std::vector<Type> word3 {m_map3D.At(pos.first + 2, pos.second).getTypes()};
-
-                if (word2[0] == Type::Block && word3[0] == Type::Block) {
-                    createRule(word1, word2, word3);
-                    continue;
-                } 
-                else {continue;}
-            }
-
-            if(! m_map3D.isOutOfBoundary(pos.first + 2, pos.second)) {
-                std::cerr << " No prima (orizzontale), ma esistono altre 2 celle   /   \n";
-                std::cerr << "Rule orientation: horizontal" << " | From (x=" << pos.first << ", y=" << pos.second 
-                << " to " << pos.first + 1 << pos.second <<  ")\n";
-                std::vector<Type> word1 {m_map3D.At(pos.first    , pos.second).getTypes()};
-                std::vector<Type> word2 {m_map3D.At(pos.first + 1, pos.second).getTypes()};
-                std::vector<Type> word3 {m_map3D.At(pos.first + 2, pos.second).getTypes()};
-
-                if (word2[0] == Type::Block && word3[0] == Type::Block) {
-                    createRule(word1, word2, word3);
-                    continue;
-                } 
-                else {continue;}
-            }
-        }
         std::cerr << m_RM.getm_rules().size() <<" rules parsed\n";
-        adjustRules();
+        adjustAddingRules();
         std::cerr << "Exiting parseRules()\n";
         for(Type type : m_map3D.At(0,1).getTypes()) {
             std::cerr << "Types of object at position (0,1) from .At(): " << m_map3D.At(0,1).getTypes()[0] << type << '\n';}
@@ -186,6 +157,7 @@ namespace Baba_Is_Us{
             std::cerr << "Types of object at position (0,1) from m_objects: " << m_map3D.getm_objects()[1][0].getTypes()[0] << type << '\n';}
         std::cerr << '\n';
     }
+
 
     /////////////////////////////////// Chapter: Handling Movement and KeyPressing ///////////////////////////////////
 
@@ -202,47 +174,50 @@ namespace Baba_Is_Us{
             default:               return {0, 0 };
         }
     }
-    bool isBeginningOfLine(Position pos, Map &map, Direction dir) { //prima (circa) funzione ricorsiva!!!! yay :3 yippee :DDDD
-        Position shift {getShift(dir)};
+
+    // N.B: data una fila verticale di oggetti attaccati e la direzione Up, l'oggetto Tail è quello più in basso
+    bool isTailOfLine(Position pos, Map &map, Direction dir) { //prima (circa) funzione ricorsiva!!!! yay :3 yippee :DDDD
         Type type {map.At(pos.first, pos.second).getTypes()[0]};
-        std::size_t dx = shift.first;
-        std::size_t dy = shift.second;
-        if (map.isOutOfBoundary(pos.first+dx, pos.second+dy)){
+        std::size_t dx = getShift(dir).first;
+        std::size_t dy = getShift(dir).second;
+        if (map.isOutOfBoundary(pos.first-dx, pos.second-dy)){
             return true;
         }
-        else if (map.getm_objects()[pos.second+dy][pos.first+dx].getTypes()[0] != type){
-            return true;
-        }
-        return false;
-        /*
-        //isBeginningOfLine non deve controllare questo (), deve controllare che sia il primo della FILA di oggetti, non della riga lunga 16
-        switch(dir){ // è la prima della riga <=> ...
-            case Direction::Up: 
-                return (y == MapSize::height || map.At(x, y - 1).getTypes()[0] != type);
-                break;
-            case Direction::Down:
-                return (y == 0 || map.At(x, y + 1).getTypes()[0] != type);
-                break;
-            case Direction::Left:
-                return (x == MapSize::width || map.At(x - 1, y).getTypes()[0] != type);
-                break;
-            case Direction::Right:
-                return (x == MapSize::width || map.At(x + 1, y).getTypes()[0] != type);
-                break;
-            default: throw(std::runtime_error("isBeginningOfLine(): not given a valid direction"));
-        }
-            */
+        return type!= map.At(pos.first - dx, pos.second - dy).getTypes()[0];
     }
 
-    std::vector<Position> Game::getFirstMovingPositions(Direction direction) {
+    std::vector<Position> Game::getTailMovingPosition(Direction direction) {
         std::vector<Position> pos_to_be_moved {};
         assert (m_players.size() > 0);
-        for (auto& pos : m_players){
-            if (isBeginningOfLine(pos, m_map3D, direction)) {
+        for (const Position& pos : m_players){
+            if (isTailOfLine(pos, m_map3D, direction)) {
                 pos_to_be_moved.emplace_back(pos);
             }
         }
         return pos_to_be_moved;
+    }
+
+
+    // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimentoMore actions
+    // N.B: TAIL SARà GIA PASSATO COME START PERCHé è CHIAMATA PRIMA getTailMovingPosition()
+    std::optional<Position> getMismatch(const MapGrid2D& grid, Direction dir, Position start) {
+        std::optional<Position> result {};
+        Position shift{getShift(dir)};
+        std::size_t x {start.first};
+        std::size_t y {start.second};
+        int value = grid[y][x];
+        std::cerr << "Position start: " << start.first << start.second << " And type: " << intToType(value) << '\n';
+        while(x < MapSize::width && y < MapSize::height) {
+            if(grid[y][x] != value){
+                result = {x,y};
+                std::cerr << "Mismatch is in position: " << x << y << '\n';
+                return result;
+            }
+
+            x += shift.first;
+            y += shift.second;
+        }
+        return std::nullopt;
     }
     
     //N.B: la sprite di Baba sarà quella ferma, non "...move_up"
@@ -262,21 +237,25 @@ namespace Baba_Is_Us{
     //overload
     void Game::movement(sf::RenderWindow& window, sf::Clock& clock, Direction direction){ 
 
+        
         Position shift = getShift(direction);
         std::size_t dx {shift.first};
         std::size_t dy {shift.second};
+        
         std::cerr<<"alright here we go\n";
-        std::vector<Position> moving_pos {getFirstMovingPositions(direction)};
+        std::vector<Position> tail_pos {getTailMovingPosition(direction)};
 
-        assert(moving_pos.size() > 0 && "movement(): moving_pos.size() == 0");
-            std::cerr << "moving_pos.size() == "<< moving_pos.size() << " positions: ";
+        assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
+            std::cerr << "tail_pos.size() == "<< tail_pos.size() << " positions: ";
 
-        for (const auto& pos : moving_pos)
+        for (const auto& pos : tail_pos)
             std::cerr<<pos.first<<" "<<pos.second<<"\n";
         
-        for (auto& each : moving_pos){ // solo i primi oggetti per fila che si spostano in quella direzione
-            //movimento visivo
-            
+        for (auto& each : tail_pos){ // solo gli oggetti tail, per ciascuna fila, si spostano in quella direzione, non tutti
+
+            //////////// movimento visivo
+
+            //N.B: m_grid[0] è quella "visiva", da modificare se un oggetto è sopra qualcos'altro
             std::size_t index_to_be_drawn {indexToBeDrawn(static_cast<std::size_t>(+m_map3D.getm_grid()[0][each.second][each.first]))};
             sf::Sprite& player_sprite {m_map3D.tileSprites[index_to_be_drawn]}; // & because all players should change
             std::cerr<<"it's visual time!\n";
@@ -286,67 +265,90 @@ namespace Baba_Is_Us{
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
             
-            if(m_map3D.isOutOfBoundary(each.first + dx, each.second + dy)) {
-                continue;
-            }
-            //first 11 pixels
-            //baba (the special one) goes to moving sprite
-            if(m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) {
-                player_sprite=m_map3D.tileSprites[index_to_be_drawn -4];
-            }
-            player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
-            m_map3D.redraw(clock);
-            render(window, m_map3D.tileSprites); 
-            sf::sleep(sf::milliseconds(30));
-            
-
-            PlayState check {movementCheck(each, direction)};
-            // se l'azione è valida (=> l'oggetto movente non è distrutto)
-            if (check == PlayState::Playing) { 
-                std::cerr << "PlayState = Playing - ";
-                player_sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
-                m_map3D.redraw(clock);
-                render(window, m_map3D.tileSprites);
-                sf::sleep(sf::milliseconds(30));
-
+            // COME MOSTRARE CHE UNA SPRITE è AL CONFINE DELLA MAPPA?
+            if(! getMismatch(m_map3D.getm_grid()[1], direction, each).has_value()) {continue;}
+            else {
+                //first 11 pixels
+                //baba (the special one) goes to moving sprite
+                if(m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) {
+                    player_sprite=m_map3D.tileSprites[index_to_be_drawn -4];
+                }
                 player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
                 m_map3D.redraw(clock);
-                render(window, m_map3D.tileSprites);
+                render(window, m_map3D.tileSprites); 
                 sf::sleep(sf::milliseconds(30));
-            
-                if(m_map3D.isOutOfBoundary(each.first + dx, each.second + dy)) continue;
 
-                m_map3D.accessm_grid()[0][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[0][each.second][each.first];
-                m_map3D.accessm_grid()[1][each.second + dy][each.first + dx] = m_map3D.accessm_grid()[1][each.second][each.first];
+                //movimento visivo ////////////
+                //////////// movimento effettivo
 
-
-                m_map3D.accessm_objects()[each.second + dy][each.first + dx] =m_map3D.At(each.first, each.second).getTypes();
-                m_map3D.resetObject({each.first, each.second}); // with addObj e resetObj, m_objects è a posto -> FALSO
+                std::cerr << "Prima di *getMismatch()\n";
+                Position mismatch {*getMismatch(m_map3D.getm_grid()[1], direction, each)};
                 
-                if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
+                std::cerr << "Pair: Tail: " << mismatch.first << mismatch.second << " And mismatch: " << mismatch.first << mismatch.second << '\n';
+                // N.B: non serve il valore assoluto, ma il loro segno dipende dalla direzione mandata in getMismatch()
+                std::size_t delta_x {mismatch.first - each.first};
+                std::size_t delta_y {mismatch.second - each.second};
+                Objects obj_tail {m_map3D.getm_objects()[each.second][each.first]};
+                Objects obj_mismatch {m_map3D.getm_objects()[mismatch.second][mismatch.first]};
 
-                    m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-                    m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
-                    
-                    
-                } 
+                if(m_map3D.isOutOfBoundary(each.first + delta_x, each.second + delta_y)) {continue;}
+                
+                std::cerr << "Prima di movementCheck() \n";
+                PlayState check {conditions(obj_tail, obj_mismatch)};
+                std::cerr << "Dopo di movementCheck() \n";
 
-            } else if(check == PlayState::Invalid) {
-                std::cerr << "PlayState = Invalid \n";
-                player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
+                // se l'azione è valida (=> l'oggetto movente non è distrutto)
+                if (check == PlayState::Playing) { 
+                    std::cerr << "PlayState = Playing - \n";
+
+                    //////////// movimento visivo
+
+                    player_sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
+                    m_map3D.redraw(clock);
+                    render(window, m_map3D.tileSprites);
+                    sf::sleep(sf::milliseconds(30));
+
+                    player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+                    m_map3D.redraw(clock);
+                    render(window, m_map3D.tileSprites);
+                    sf::sleep(sf::milliseconds(30));
+
+                    //movimento visivo ////////////
+                    //////////// movimento effettivo
+                
+                    m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[0][each.second][each.first];
+                    m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[1][each.second][each.first];
+
+                    m_map3D.accessm_objects()[each.second + delta_y][each.first + delta_x] =m_map3D.At(each.first, each.second).getTypes();
+                    m_map3D.resetObject({each.first, each.second}); // with addObj e resetObj, m_objects è a posto -> FALSO
+                    
+                    if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
+
+                        m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+                        m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;    
+                    } 
+                    //movimento effettivo ////////////
+
+                } else if(check == PlayState::Invalid) {
+                    std::cerr << "PlayState = Invalid \n";
+                    player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
+                    m_map3D.redraw(clock);
+                    render(window, m_map3D.tileSprites);
+                }
+
+                //////////// movimento visivo
+                //baba goes to idle sprite
+                player_sprite=m_map3D.tileSprites[index_to_be_drawn];
+                player_sprite.setTexture(m_map3D.textures[index_to_be_drawn]);
+
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
+                std::cerr << "Next position\n";
+
+                //movimento visivo ////////////
             }
-
-            //baba goes to idle sprite
-            player_sprite=m_map3D.tileSprites[index_to_be_drawn];
-            player_sprite.setTexture(m_map3D.textures[index_to_be_drawn]);
-
-            m_map3D.redraw(clock);
-            render(window, m_map3D.tileSprites);
-
         }
-        std::cerr<<" visual movement complete\n";
+        std::cerr<<" movement complete\n";
         
         std::vector<Position>& player_positions {getPlayerPositions()};
         assert(player_positions.size() > 0 && "movement(): player_positions.size() == 0");
@@ -454,41 +456,6 @@ namespace Baba_Is_Us{
 
     /////////////////////////////////// Chapter: Handling Interactions ///////////////////////////////////
 
-    // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimento
-    std::optional<std::pair<Position, Position>> getFirstAndMismatch(const MapGrid2D& grid, Direction dir, Position start) {
-        std::optional<std::pair<Position, Position>> result {};
-        Position shift{getShift(dir)};
-        std::size_t x {start.first};
-        std::size_t y {start.second};
-        int value = grid[y][x];
-        while(x < MapSize::width && y < MapSize::height) {
-            if(grid[y][x] != value){
-                result = {start, {x,y}};
-                return result;
-            }
-                
-            x += shift.first;
-            y += shift.second;
-        }
-        return std::nullopt;
-    }
-
-    // se non si può fare (non si può muovere e gli oggetti sono già distrutti), allora vedere se movementCheck è "vuoto"
-    // ASSICURATI CHE conditions() NON SIA MAI PIù CHIAMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // VA BENE OK DIEGO
-    PlayState Game::movementCheck(const Position pos, Direction direction){
-        if(! getFirstAndMismatch(m_map3D.getm_grid()[1], direction, pos)) // se la linea continua fino a fine mappa
-            return PlayState::Invalid;
-
-        std::pair<Position, Position> result{*getFirstAndMismatch(m_map3D.getm_grid()[1], direction, pos) };
-        Position first_mismatch { result.second.first, result.second.second };      //target
-        Position first_of_line {result.first.first, result.first.second};          //farthest object relative to the target
-        
-        // ATTENZIONE: while(conditions(getMap().At(target), getMap().At(next_target)) != PlayState::Invalid) non lo posso fare. conditions() distrugge gli objects
-        return conditions(m_map3D.At(first_of_line.first, first_of_line.second)
-                        , m_map3D.At(first_mismatch.first, first_mismatch.second));
-    }
-
     PlayState handleDefeat(Objects& object, Objects&, PlayState& state_of_game) {
         if (object.objectHasType(Type::You)) {
             state_of_game = PlayState::Lose;
@@ -518,10 +485,11 @@ namespace Baba_Is_Us{
         return PlayState::Invalid;
     }
 
-    PlayState Game::conditions(Objects& object, Objects& second) { //fanculo alle 14:30
-        std::vector<Type> second_types {second.getTypes()};
+    PlayState Game::conditions(Objects& tail, Objects& mismatch) { //fanculo alle 14:30
+        
+        std::vector<Type> mismatch_types {mismatch.getTypes()};
         PlayState action {PlayState::Playing};
-        for(const auto type : second_types){ // per ogni Type di Objects second
+        for(const auto type : mismatch_types){ // per ogni Type di Objects second
             /*
             // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
             if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
@@ -542,15 +510,15 @@ namespace Baba_Is_Us{
             case Type::Block:  return PlayState::Playing; break; // i blocchi si possono sempre muovere, LASCIAMOLO PER PRIMO
 
             case Type::Void:   action = PlayState::Playing; break;
-            case Type::Defeat: action = handleDefeat(object, second, m_state_of_game); break;
-            case Type::Hot:    action = handleHot(object, second); break;
+            case Type::Defeat: action = handleDefeat(tail, mismatch, m_state_of_game); break;
+            case Type::Hot:    action = handleHot(tail, mismatch); break;
             case Type::Launch: action = PlayState::Playing; break;
             case Type::Melt:   action = PlayState::Playing; break;
             case Type::Move:   action = PlayState::Playing; break;
             case Type::Open:   action = PlayState::Playing; break;
             case Type::Push:   action = PlayState::Playing; break;
-            case Type::Shut:   action = handleShut(object, second); break;
-            case Type::Stop:   action = handleStop(object, second); break;
+            case Type::Shut:   action = handleShut(tail, mismatch); break;
+            case Type::Stop:   action = handleStop(tail, mismatch); break;
             case Type::Win:    action = PlayState::Won; break;
             case Type::You:    action = PlayState::Playing; break;
             default:           break;

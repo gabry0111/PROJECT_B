@@ -23,25 +23,26 @@ namespace Baba_Is_Us{
         Map& getMap();
         PlayState accessm_state_of_game();
         // helper function una volta che si è assicurati che esistono tre blocchi di fila
-        void createRule(std::vector<Type>&, std::vector<Type>&, std::vector<Type>&);
+        void createRule(const std::vector<Type>&, const std::vector<Type>&, const std::vector<Type>&);
         // chiamata quando una parola logica è mossa, controlla la vecchia posizione della regola e 
         // vede se era attaccata a altre parole logiche e modifica m_rules.
         // N.B: le regole si creeranno solo da sx a dx e da alto a basso
-        void parseRules(); //serve la mappa, quindi la sposto qui perché avrei dovuto costruire un'altra mappa in RuleManager
-        void adjustRules();
-        std::vector<Position> getFirstMovingPositions(Direction);
+        void parseRules(); 
+        // le seguenti adjust..() NON CONTROLLANO se un blocco ha creato o tolto una regola
+        void adjustAddingRules(); // SOLO PER AGGIUNGERE REGOLE
+        std::vector<Position> getTailMovingPosition(Direction);
         void update(sf::RenderWindow &, Map &, sf::Clock &);
         void render(sf::RenderWindow &, std::vector<sf::Sprite>);
         // Objects getObject(Position); forse inutile
         // std::optional<PlayState> movementCheck(Direction, Position); inutile fare l'overload, verrà sempre scelto il vector.
         // di conseguenza anche movement per un unico oggetto sarà inutile
-        PlayState movementCheck(const Position, Direction);
-        void rotate(Position&, Direction, std::size_t& index_to_change);
+        void rotate(Position&, Direction, std::size_t& index_to_change); //N.B: il parametro Position può essere tolto
         //void movement(Map, Position, Direction); //per ora non servono
         //void movement(Direction, PlayState);
         void movement(sf::RenderWindow &, sf::Clock &, Direction);
         PlayState conditions(Objects&, Objects&);
     };
+    
 }
 
 #endif

@@ -31,7 +31,7 @@ namespace Baba_Is_Us{
     }
 
     //associamo gli int sottostanti a enum Type, dati in level.txt, a un path di tilePaths
-    std::size_t indexToInitialize(const std::size_t i){
+    std::size_t indexToBeDrawn(const std::size_t i){
         std::size_t nth {};
         std::string substring;
         constexpr std::size_t tilePaths_size {tilePaths.size()};
@@ -256,10 +256,10 @@ namespace Baba_Is_Us{
         return tileSprites;
     }
     
-    const sf::Sprite& Map::getWhichSpriteIsInPosition(Position& position){
-        std::size_t index {position.second * MapSize::width + position.first};
+    sf::Sprite& Map::accessWhichSpriteIsInPosition(Position& position){
+        std::size_t index {static_cast<std::size_t>(getm_grid()[0][position.second][position.first])};
 
-        assert(index < tileSprites.size() && "getWhichSpriteIsInPosition() has index too high");
+        assert(index < tileSprites.size() && "accessWhichSpriteIsInPosition() has index too high");
         return tileSprites[index];
     }
 
