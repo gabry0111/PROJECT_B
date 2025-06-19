@@ -6,14 +6,6 @@
 #include "objects.hpp"
 #include "rules.hpp"
 
-/* Avuta la mappa del livello corrente, verifica quali azioni sono possibili:
-- verifica le proprietà di ciascun oggetto (sarà fatto nel Main Loop)
-- resetta il livello se PlayState è Invalid
-- gestisce il movimento del Player
-- gestisce il movimento degli oggetti 
-- 
-*/ 
-
 namespace Baba_Is_Us{
 
     
@@ -160,10 +152,21 @@ namespace Baba_Is_Us{
 
 
     /////////////////////////////////// Chapter: Handling Movement and KeyPressing ///////////////////////////////////
-
-    // controlla se l'oggetto è all'inizio della riga (vert o orizz)
-    //AGGIUNGERE LO SHIFT PER FARLO PIù BELLINO
-
+    
+    // servirà per un altro controllo che nessun oggetto abbia tre NOUN_TYPE
+    std::optional<std::size_t> findSecondNoun(const std::vector<Type>& types) {
+        int count {};
+        for (std::size_t i = 0; i < types.size(); ++i) {
+            if (types[i] > Type::Void && types[i] < Type::ICON_NOUN_TYPE) { 
+                ++count;
+                if (count == 2) {
+                    return i;
+                }
+            }
+        }
+        assert (count > 0 && count < 3  &&"findSecondNoun() non funziona"); // N.B: t==0 sarebbe il primo NOUN_TYPE
+        return std::nullopt; 
+    }
 
     Position getShift(Direction dir) {
         switch (dir) {                                                      
@@ -183,7 +186,7 @@ namespace Baba_Is_Us{
         if (map.isOutOfBoundary(pos.first-dx, pos.second-dy)){
             return true;
         }
-        return type!= map.At(pos.first - dx, pos.second - dy).getTypes()[0];
+        return (type != map.At(pos.first - dx, pos.second - dy).getTypes()[0]);
     }
 
     std::vector<Position> Game::getTailMovingPosition(Direction direction) {
@@ -241,6 +244,7 @@ namespace Baba_Is_Us{
         Position shift = getShift(direction);
         std::size_t dx {shift.first};
         std::size_t dy {shift.second};
+
         
         std::cerr<<"alright here we go\n";
         std::vector<Position> tail_pos {getTailMovingPosition(direction)};
@@ -248,105 +252,105 @@ namespace Baba_Is_Us{
         assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
             std::cerr << "tail_pos.size() == "<< tail_pos.size() << " positions: ";
 
+        const std::size_t baba_move_index{static_cast<std::size_t> (+direction + 1)};
+        const std::size_t baba_idle_index{static_cast<std::size_t> (+direction + 5)};
+
         for (const auto& pos : tail_pos)
             std::cerr<<pos.first<<" "<<pos.second<<"\n";
         
         for (auto& each : tail_pos){ // solo gli oggetti tail, per ciascuna fila, si spostano in quella direzione, non tutti
 
-            //////////// movimento visivo
-
-            //N.B: m_grid[0] è quella "visiva", da modificare se un oggetto è sopra qualcos'altro
-            std::size_t index_to_be_drawn {indexToBeDrawn(static_cast<std::size_t>(+m_map3D.getm_grid()[0][each.second][each.first]))};
-            sf::Sprite& player_sprite {m_map3D.tileSprites[index_to_be_drawn]}; // & because all players should change
-            std::cerr<<"it's visual time!\n";
-         
-            //ROTATE BANANA ROTATE
-            rotate(each, direction, index_to_be_drawn);
+            // CASO POSSIBILE: nel caso Baba is Wall, m_grid[0] sarà Baba, m_grid[1] sarà Baba, m_objects sarà Baba con NOUN_TYPE Wall, e sarà disegnato Wall
+            
+            // ???????????????????????????????????????????????????????????????? 
+            // CASO POSSIBILE: nel caso Wall is Move (scavalcabile), m_grid[0] sarà Baba, m_grid[1] sarà ???, m_objects ???
+            // Perché m_objects se ha un altro NOUN_TYPE dentro un oggetto, visualizzerà il secondo
+            
+            // quale sprite devi muovere e/o ruotare, tenendo conto del caso descritto?
+            std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
+            std::size_t index_to_modify {};
+            findSecondNoun(types).has_value() ? index_to_modify = +(*findSecondNoun(types))
+                                              : index_to_modify = indexToBeDrawn(static_cast<size_t>(m_map3D.getm_grid()[0][each.second][each.first]));
+            
+            sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
+            
+            // solo Baba (in tilePaths con indice da 1 a 8) ha varianti nelle texture.
+            // Per prima cosa, giriamo la sprite.
+            if (index_to_modify >= 1 && index_to_modify <= 8){  
+                player_sprite = m_map3D.tileSprites[baba_idle_index];
+                player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
+            }
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
-            
-            // COME MOSTRARE CHE UNA SPRITE è AL CONFINE DELLA MAPPA?
-            if(! getMismatch(m_map3D.getm_grid()[1], direction, each).has_value()) {continue;}
-            else {
-                //first 11 pixels
-                //baba (the special one) goes to moving sprite
-                if(m_map3D.At(each.first, each.second).getTypes()[0] == Type::Baba) {
-                    player_sprite=m_map3D.tileSprites[index_to_be_drawn -4];
-                }
-                player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
+
+            std::optional<Position> mismatch_opt {getMismatch(m_map3D.getm_grid()[1], direction, each)};
+            if (!mismatch_opt) continue;
+            Position pos_mismatch = *mismatch_opt;
+            // N.B: non serve il valore assoluto, ma il loro segno dipende dalla direzione mandata in getMismatch()
+            size_t delta_x = pos_mismatch.first - each.first;
+            size_t delta_y = pos_mismatch.second - each.second;
+
+            // Verifichiamo che il movimento eventuale non sia fuori dalla mappa
+            if(m_map3D.isOutOfBoundary(each.first + delta_x, each.second + delta_y)) {continue;}
+
+
+            // Ora siamo pronti
+
+            //////////// movimento visivo
+
+            // se la sprite è a bordo mappa, muoverla oltre la mappa crea casini (N.B: deve essere m_grid[1])
+            if(! getMismatch(m_map3D.getm_grid()[1], direction, each).has_value()) {continue;
+            } else {
+            player_sprite = m_map3D.tileSprites[baba_move_index];
+            player_sprite.setTexture(m_map3D.textures[baba_move_index]);
+            player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
+            m_map3D.redraw(clock);
+            render(window, m_map3D.tileSprites);
+            sf::sleep(sf::milliseconds(30));
+            }
+
+            Objects& obj_tail = m_map3D.At(each.first, each.second);
+            Objects& obj_mismatch = m_map3D.At(pos_mismatch.first, pos_mismatch.second);
+            PlayState state = conditions(obj_tail, obj_mismatch);
+
+            if (state == PlayState::Playing) {
+                player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
                 m_map3D.redraw(clock);
-                render(window, m_map3D.tileSprites); 
+                render(window, m_map3D.tileSprites);
+                sf::sleep(sf::milliseconds(30));
+
+                player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
+                m_map3D.redraw(clock);
+                render(window, m_map3D.tileSprites);
                 sf::sleep(sf::milliseconds(30));
 
                 //movimento visivo ////////////
                 //////////// movimento effettivo
 
-                std::cerr << "Prima di *getMismatch()\n";
-                Position mismatch {*getMismatch(m_map3D.getm_grid()[1], direction, each)};
-                
-                std::cerr << "Pair: Tail: " << mismatch.first << mismatch.second << " And mismatch: " << mismatch.first << mismatch.second << '\n';
-                // N.B: non serve il valore assoluto, ma il loro segno dipende dalla direzione mandata in getMismatch()
-                std::size_t delta_x {mismatch.first - each.first};
-                std::size_t delta_y {mismatch.second - each.second};
-                Objects obj_tail {m_map3D.getm_objects()[each.second][each.first]};
-                Objects obj_mismatch {m_map3D.getm_objects()[mismatch.second][mismatch.first]};
+                m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[0][each.second][each.first];
+                m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
 
-                if(m_map3D.isOutOfBoundary(each.first + delta_x, each.second + delta_y)) {continue;}
-                
-                std::cerr << "Prima di movementCheck() \n";
-                PlayState check {conditions(obj_tail, obj_mismatch)};
-                std::cerr << "Dopo di movementCheck() \n";
+                m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[1][each.second][each.first];
+                m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;    
 
-                // se l'azione è valida (=> l'oggetto movente non è distrutto)
-                if (check == PlayState::Playing) { 
-                    std::cerr << "PlayState = Playing - \n";
+                m_map3D.accessm_objects()[each.second + delta_y][each.first + delta_x] = m_map3D.At(each.first, each.second).getTypes();
+                m_map3D.resetObject({each.first, each.second}); 
 
+                    //movimento effettivo ////////////
                     //////////// movimento visivo
 
-                    player_sprite.move(static_cast<float>(dx) * 10, static_cast<float>(dy) * 10);
-                    m_map3D.redraw(clock);
-                    render(window, m_map3D.tileSprites);
-                    sf::sleep(sf::milliseconds(30));
-
-                    player_sprite.move(static_cast<float>(dx) * 11, static_cast<float>(dy) * 11);
-                    m_map3D.redraw(clock);
-                    render(window, m_map3D.tileSprites);
-                    sf::sleep(sf::milliseconds(30));
-
-                    //movimento visivo ////////////
-                    //////////// movimento effettivo
-                
-                    m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[0][each.second][each.first];
-                    m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[1][each.second][each.first];
-
-                    m_map3D.accessm_objects()[each.second + delta_y][each.first + delta_x] =m_map3D.At(each.first, each.second).getTypes();
-                    m_map3D.resetObject({each.first, each.second}); // with addObj e resetObj, m_objects è a posto -> FALSO
-                    
-                    if(m_map3D.getm_objects()[each.second][each.first].getTypes()[0] == Type::Void) { // se l'oggetto che si muove si è distrutto
-
-                        m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-                        m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;    
-                    } 
-                    //movimento effettivo ////////////
-
-                } else if(check == PlayState::Invalid) {
-                    std::cerr << "PlayState = Invalid \n";
+                } else if(state == PlayState::Invalid) {
                     player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
                     m_map3D.redraw(clock);
                     render(window, m_map3D.tileSprites);
                 }
 
-                //////////// movimento visivo
-                //baba goes to idle sprite
-                player_sprite=m_map3D.tileSprites[index_to_be_drawn];
-                player_sprite.setTexture(m_map3D.textures[index_to_be_drawn]);
-
+                player_sprite = m_map3D.tileSprites[baba_idle_index];
+                player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
-                std::cerr << "Next position\n";
-
+                
                 //movimento visivo ////////////
-            }
         }
         std::cerr<<" movement complete\n";
         
