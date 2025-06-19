@@ -222,20 +222,6 @@ namespace Baba_Is_Us{
         }
         return std::nullopt;
     }
-    
-    //N.B: la sprite di Baba sarà quella ferma, non "...move_up"
-    void Game::rotate(Position &position, Direction direction, std::size_t& index_to_modify){
-        if (m_map3D.At(position.first, position.second).getTypes()[0] == Type::Baba) { //solo Baba è speciale
-            // purché teniamo sempre l'ordine di: enum Direction e gifs di Baba in tilePaths possiamo fare:
-            index_to_modify = static_cast<std::size_t> (+direction + 5);
-            sf::Sprite& sprite {m_map3D.tileSprites[index_to_modify]};
-            std::cerr<<m_map3D.getm_grid()[0][position.second][position.first]<<" in grid in direction "<< +direction<<"\n";
-            
-            sprite.setTexture(m_map3D.textures[ static_cast<std::size_t> (+direction + 5) ]);
-            sf::sleep(sf::milliseconds(50));
-            std::cerr<<"DIRECTION "<<index_to_modify<<" -";
-        }
-    }
 
     //overload
     void Game::movement(sf::RenderWindow& window, sf::Clock& clock, Direction direction){ 
