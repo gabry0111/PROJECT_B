@@ -286,7 +286,7 @@ namespace Baba_Is_Us{
 
             if (! getMismatch(m_map3D.getm_grid()[1], direction, each)) continue;
             Position pos_mismatch = *getMismatch(m_map3D.getm_grid()[1], direction, each);
-;
+
             // N.B: non serve il valore assoluto, ma il loro segno dipende dalla direzione mandata in getMismatch()
             std::size_t delta_x = pos_mismatch.first - each.first;
             std::size_t delta_y = pos_mismatch.second - each.second;
@@ -301,12 +301,12 @@ namespace Baba_Is_Us{
             // se la sprite è tail bordo mappa, muoverla oltre la mappa crea casini (N.B: deve essere m_grid[1])
             if(! getMismatch(m_map3D.getm_grid()[1], direction, each).has_value()) {continue;
             } else {
-            player_sprite = m_map3D.tileSprites[baba_move_index];
-            player_sprite.setTexture(m_map3D.textures[baba_move_index]);
-            player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
-            m_map3D.redraw(clock);
-            render(window, m_map3D.tileSprites);
-            sf::sleep(sf::milliseconds(30));
+                player_sprite = m_map3D.tileSprites[baba_move_index];
+                player_sprite.setTexture(m_map3D.textures[baba_move_index]);
+                player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
+                m_map3D.redraw(clock);
+                render(window, m_map3D.tileSprites);
+                sf::sleep(sf::milliseconds(10));
             }
 
             Objects& obj_tail = m_map3D.At(each.first, each.second);
@@ -321,16 +321,16 @@ namespace Baba_Is_Us{
                 player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
-                sf::sleep(sf::milliseconds(30));
+                sf::sleep(sf::milliseconds(10));
 
                 player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
-                sf::sleep(sf::milliseconds(30));
-
+                sf::sleep(sf::milliseconds(10));
                 //movimento visivo ////////////
-                //////////// movimento effettivo
 
+
+                //////////// movimento effettivo
                 m_map3D.accessm_objects()[each.second + delta_y][each.first + delta_x] = m_map3D.At(each.first, each.second).getTypes();
                 m_map3D.resetObject({each.first, each.second}); 
 

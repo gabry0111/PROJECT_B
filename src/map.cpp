@@ -34,7 +34,7 @@ namespace Baba_Is_Us{
     std::size_t indexToBeDrawn(const std::size_t i){
         std::size_t nth {};
         std::string substring;
-        constexpr std::size_t tilePaths_size {tilePaths.size()};
+        std::size_t tilePaths_size {tilePaths.size()};
         auto searchIndex = [tilePaths_size](const std::string& sub) -> std::size_t {
             for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
                 if (tilePaths[iter].find(sub) != std::string::npos)
