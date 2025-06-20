@@ -43,10 +43,11 @@ namespace Baba_Is_Us{
 
     void RuleManager::clearRules(){
         m_rules.clear();
+        assert (m_rules.size() == 0);
     }
 
-    constexpr std::vector<std::reference_wrapper<const Rule>> RuleManager::getWhichRuleHasType(Type type) const{
-        std::vector<std::reference_wrapper<const Rule>> rules_with_rule;
+    constexpr std::vector<Rule> RuleManager::getWhichRuleHasType(Type type) const{
+        std::vector<Rule> rules_with_rule;
 
         for (const auto& rule : m_rules) {
             if (rule.hasType(type))
@@ -57,7 +58,7 @@ namespace Baba_Is_Us{
         return rules_with_rule;
     }
     
-    Type RuleManager::findPlayerType() const{
+    std::optional<Type> RuleManager::findPlayerType() const{
         for (const auto& each_rule : m_rules) {
             if (each_rule.m_rule[2] == Type::You) {
 
@@ -65,7 +66,7 @@ namespace Baba_Is_Us{
                 return type_Player;
             }
         }
-        return Type::Void;
+        return std::nullopt;
     }
     /* In teoria non serve: Objects ha funzione objectHasType, e objectHasProperty è usata per controllare 
     in una cella della mappa se l'oggetto ha RuleManager.objectHasProperty(Objects, Type::SINK) (che comunque abbiamo conditions()).

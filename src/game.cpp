@@ -36,14 +36,14 @@ namespace Baba_Is_Us{
 
     ///////////////////////////////////     Chapter: HandlingRules     ///////////////////////////////////
 
-    // Per ogni regola di m_rules, aggiunge il PROPERTY_TYPE della regola a tutti gli oggetti indicati dalla regola
+    // Per ogni regola di m_rules, aggiunge il PROPERTY_TYPE della regola tail tutti gli oggetti indicati dalla regola
     void Game::adjustAddingRules() {
         std::vector<Rule> rules {m_RM.getm_rules()};
         assert (rules.size() > 0);
         for (const Rule& each_rule : m_RM.getm_rules()) { // per ogni singola regola
             //for (auto rule_type : each_rule.getm_rule()) {std::cerr <<"rule_type: " << rule_type << ' ';}
 
-            Type noun_type {each_rule.getm_rule()[0]}; // cerca il NOUN_TYPE a cui fa riferimento
+            Type noun_type {each_rule.getm_rule()[0]}; // cerca il NOUN_TYPE tail cui fa riferimento
             assert(noun_type != Type::Block && "adjustAddingRules(): noun_type == Type::Block");
             Type prop_or_noun_type {each_rule.getm_rule()[2]}; // salva la NOUN o PROPERTY_TYPE della regola
             std::vector<Position> pos_of_types_with_rule {m_map3D.getPositions(noun_type)}; 
@@ -61,7 +61,7 @@ namespace Baba_Is_Us{
                         //    std::cerr <<"Types: " << types << '\n';
                     } 
                 } else { // se è una NOUN_TYPE, aggiungi tutte le property di quel NOUN_TYPE
-                    for (const Rule iter_rules : m_RM.getm_rules()) {
+                    for (const Rule& iter_rules : m_RM.getm_rules()) {
                         if(std::find(iter_rules.getm_rule().begin(), iter_rules.getm_rule().end()
                                       , prop_or_noun_type) != iter_rules.getm_rule().end()) {
                             obj.addType(iter_rules.getm_rule()[2]); //aggiungi la PROPERTY_TYPE della regola
@@ -69,6 +69,13 @@ namespace Baba_Is_Us{
                     }
                 }
             }
+        }
+        for (const Rule& iter_rules : m_RM.getm_rules()) {
+            std::cerr << "Rules added: ";
+            for(const Type type : iter_rules.getm_rule()) {
+                std::cerr << type << ' ';
+            }
+            std::cerr << '\n';
         }
     }
 
@@ -136,9 +143,16 @@ namespace Baba_Is_Us{
             }
         }
 
+        //Controlla se c'è la regola .. is you, altrimenti il gioco si ferma
+        if(m_RM.getm_rules().size() == 0 || !m_RM.findPlayerType().has_value()) {
+            m_state_of_game = PlayState::Invalid;
+            return;
+        }
+
         std::cerr << m_RM.getm_rules().size() <<" rules parsed\n";
         adjustAddingRules();
         std::cerr << "Exiting parseRules()\n";
+        /*
         for(Type type : m_map3D.At(0,1).getTypes()) {
             std::cerr << "Types of object at position (0,1) from .At(): " << m_map3D.At(0,1).getTypes()[0] << type << '\n';}
         for(Type type : m_map3D.At(1,0).getTypes()) {
@@ -148,6 +162,7 @@ namespace Baba_Is_Us{
         for(Type type : m_map3D.getm_objects()[1][0].getTypes() ) {
             std::cerr << "Types of object at position (0,1) from m_objects: " << m_map3D.getm_objects()[1][0].getTypes()[0] << type << '\n';}
         std::cerr << '\n';
+        */
     }
 
 
@@ -174,7 +189,7 @@ namespace Baba_Is_Us{
             case Direction::Down:  return {0, 1 };
             case Direction::Left:  return {-1, 0};
             case Direction::Right: return {1, 0 };
-            default:               return {0, 0 };
+            default:               throw(std::runtime_error("getShift(): ok, something's really broken"));
         }
     }
 
@@ -260,7 +275,7 @@ namespace Baba_Is_Us{
             
             sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
             
-            // solo Baba (in tilePaths con indice da 1 a 8) ha varianti nelle texture.
+            // solo Baba (in tilePaths con indice da 1 tail 8) ha varianti nelle texture.
             // Per prima cosa, giriamo la sprite.
             if (index_to_modify >= 1 && index_to_modify <= 8){  
                 player_sprite = m_map3D.tileSprites[baba_idle_index];
@@ -269,22 +284,21 @@ namespace Baba_Is_Us{
             m_map3D.redraw(clock);
             render(window, m_map3D.tileSprites);
 
-            std::optional<Position> mismatch_opt {getMismatch(m_map3D.getm_grid()[1], direction, each)};
-            if (!mismatch_opt) continue;
-            Position pos_mismatch = *mismatch_opt;
+            if (! getMismatch(m_map3D.getm_grid()[1], direction, each)) continue;
+            Position pos_mismatch = *getMismatch(m_map3D.getm_grid()[1], direction, each);
+;
             // N.B: non serve il valore assoluto, ma il loro segno dipende dalla direzione mandata in getMismatch()
-            size_t delta_x = pos_mismatch.first - each.first;
-            size_t delta_y = pos_mismatch.second - each.second;
+            std::size_t delta_x = pos_mismatch.first - each.first;
+            std::size_t delta_y = pos_mismatch.second - each.second;
 
             // Verifichiamo che il movimento eventuale non sia fuori dalla mappa
             if(m_map3D.isOutOfBoundary(each.first + delta_x, each.second + delta_y)) {continue;}
-
 
             // Ora siamo pronti
 
             //////////// movimento visivo
 
-            // se la sprite è a bordo mappa, muoverla oltre la mappa crea casini (N.B: deve essere m_grid[1])
+            // se la sprite è tail bordo mappa, muoverla oltre la mappa crea casini (N.B: deve essere m_grid[1])
             if(! getMismatch(m_map3D.getm_grid()[1], direction, each).has_value()) {continue;
             } else {
             player_sprite = m_map3D.tileSprites[baba_move_index];
@@ -297,7 +311,11 @@ namespace Baba_Is_Us{
 
             Objects& obj_tail = m_map3D.At(each.first, each.second);
             Objects& obj_mismatch = m_map3D.At(pos_mismatch.first, pos_mismatch.second);
+            // se un blocco è a bordo mappa, non puoi "spostarlo" oltre la mappa
+            if( obj_mismatch.objectHasType(Type::Block) 
+             && m_map3D.isOutOfBoundary(pos_mismatch.first + dx, pos_mismatch.second + dy)) {continue;} 
             PlayState state = conditions(obj_tail, obj_mismatch);
+            std::cerr << obj_tail.getTypes()[0];
 
             if (state == PlayState::Playing) {
                 player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
@@ -313,30 +331,42 @@ namespace Baba_Is_Us{
                 //movimento visivo ////////////
                 //////////// movimento effettivo
 
-                m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[0][each.second][each.first];
-                m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-
-                m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] = m_map3D.accessm_grid()[1][each.second][each.first];
-                m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;    
-
                 m_map3D.accessm_objects()[each.second + delta_y][each.first + delta_x] = m_map3D.At(each.first, each.second).getTypes();
                 m_map3D.resetObject({each.first, each.second}); 
+
+                m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] 
+                    = +(m_map3D.getm_objects()[each.second + delta_y][each.first + delta_x].getTypes()[0]);
+                m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+
+                m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] 
+                    = +(m_map3D.getm_objects()[each.second][each.first].getTypes()[0]);
+                m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;    
+
+                if (obj_mismatch.objectHasType(Type::Block)) {parseRules();}
 
                     //movimento effettivo ////////////
                     //////////// movimento visivo
 
-                } else if(state == PlayState::Invalid) {
-                    player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
-                    m_map3D.redraw(clock);
-                    render(window, m_map3D.tileSprites);
-                }
+            } else if(state == PlayState::Invalid) {
+                m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] 
+                    = +(m_map3D.getm_objects()[each.second + delta_y][each.first + delta_x].getTypes()[0]);
+                m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
 
-                player_sprite = m_map3D.tileSprites[baba_idle_index];
-                player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
+                m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] 
+                    = +(m_map3D.getm_objects()[each.second][each.first].getTypes()[0]);
+                m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+                
+                player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
-                
-                //movimento visivo ////////////
+            }
+
+            player_sprite = m_map3D.tileSprites[baba_idle_index];
+            player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
+            m_map3D.redraw(clock);
+            render(window, m_map3D.tileSprites);
+            
+            //movimento visivo ////////////
         }
         std::cerr<<" movement complete\n";
         
@@ -405,6 +435,9 @@ namespace Baba_Is_Us{
                     default: 
                         break;
                 }
+                if (m_state_of_game == PlayState::Lose) {
+                    std::cerr << "Hai perso\n";
+                    window.close();}
             }
         }
     }    
@@ -423,7 +456,7 @@ namespace Baba_Is_Us{
             for (const auto &i : rows){
                 assert (i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE 
                      && i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE 
-                     && i != +Type::Block && i != +Type::Icon_Void && "in render() not given a valid value in m_grid[0]\n");
+                     && i != +Type::Block && i != +Type::Icon_Void && "in render() not given tail valid value in m_grid[0]\n");
                 if(indexToBeDrawn(static_cast<std::size_t> (i)) > tilePaths.size()) continue;
 
                 std::size_t nth_sprite_to_be_drawn {indexToBeDrawn(static_cast<std::size_t>(i)) };
@@ -446,51 +479,73 @@ namespace Baba_Is_Us{
 
     /////////////////////////////////// Chapter: Handling Interactions ///////////////////////////////////
 
-    PlayState handleDefeat(Objects& object, Objects&, PlayState& state_of_game) {
-        if (object.objectHasType(Type::You)) {
-            state_of_game = PlayState::Lose;
-            return PlayState::Playing;
-        }
-        return PlayState::Invalid;
-    }
-
-    PlayState handleHot(Objects& object, Objects& second) {
-        if (!second.objectHasType(Type::Push)) {
-            object.resetObject();
+    PlayState handleDefeat(Objects& tail) {
+        if (tail.objectHasType(Type::You)) {
+            tail.resetObject();
+            return PlayState::Invalid;
         }
         return PlayState::Playing;
     }
 
-    PlayState handleShut(Objects& object, Objects& second) {
-        if (object.objectHasType(Type::Open)) {
-            second.resetObject();
-            object.resetObject();
+    PlayState handleHot(Objects& tail, Objects& mismatch) {
+        if (! mismatch.objectHasType(Type::Push)) {
+            tail.resetObject();
+            return PlayState::Invalid;
+        }
+        return PlayState::Playing;
+    }
+
+    PlayState handleMelt(Objects& tail, Objects& mismatch) {
+        if (tail.objectHasType(Type::Hot)) {
+            mismatch.resetObject();
+            tail.resetObject();
+            return PlayState::Invalid;
+        }
+        else {
+            mismatch.resetObject();
             return PlayState::Playing;
         }
-        return PlayState::Invalid;
     }
 
-    PlayState handleStop(Objects& object, Objects&) {
-        if (object.objectHasType(Type::Push)) return PlayState::Playing;
-        return PlayState::Invalid;
+    PlayState handleShut(Objects& tail, Objects& mismatch) {
+        if (! tail.objectHasType(Type::Open)) {
+            mismatch.resetObject();
+            tail.resetObject();
+            return PlayState::Invalid;
+        }
+        mismatch.resetObject();
+        return PlayState::Playing;
     }
 
+    PlayState handleStop(Objects& tail) {
+        if (! tail.objectHasType(Type::Push) 
+         || ! tail.objectHasType(Type::Move)) {return PlayState::Invalid;}
+        return PlayState::Playing;
+    }
+
+    PlayState handleWin(Objects& tail, Objects& mismatch) {
+        if (mismatch.objectHasType(Type::Defeat)) {
+            handleDefeat(tail);
+        }
+        return PlayState::Won;
+    }
+/*
     PlayState Game::conditions(Objects& tail, Objects& mismatch) { //fanculo alle 14:30
         
         std::vector<Type> mismatch_types {mismatch.getTypes()};
         PlayState action {PlayState::Playing};
         for(const auto type : mismatch_types){ // per ogni Type di Objects second
-            /*
+            
             // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
-            if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
-                assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
-                if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
-                    object.addType(type);
-                    action = PlayState::Playing;
-                }
-                else{} //{std::iter_swap(std::find(object.getTypes().begin(), object.getTypes().end(), type), object.getTypes().end() - 1);}
-            }
-            */
+            //if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
+            //    assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
+            //    if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
+            //        object.addType(type);
+            //        action = PlayState::Playing;
+            //    }
+            //    else{} //{std::iter_swap(std::find(object.getTypes().begin(), object.getTypes().end(), type), object.getTypes().end() - 1);}
+            //}
+            
             // non ci interessa degli ICON_NOUN_TYPE
             // non ci interessa dei verb type che creeranno una regola. Ci penserà un'altra funzione
             // controllare che object[0] NON sia Type::Block -----------------------
@@ -518,5 +573,40 @@ namespace Baba_Is_Us{
         return action;
     }
 
-    // check se intorno a target delle rules sono state cambiate, in tal caso reverse the effects of that rule
+    // check se intorno tail target delle rules sono state cambiate, in tal caso reverse the effects of that rule
+*/
+
+    PlayState Game::conditions(Objects& tail, Objects& mismatch) {
+        PlayState result = PlayState::Playing;
+        //for(const Type& mism_type : mismatch.getTypes()){std::cerr << "Mismatch has types: " << mism_type;}
+
+
+        for (Type mism_type : mismatch.getTypes()) { // I BLOCK LI GESTIAMO IN MOVEMENT()
+            if(+mism_type < +Type::ICON_NOUN_TYPE && +mism_type > +Type::NOUN_TYPE) {continue;}
+            switch (mism_type) {
+                case Type::Void:    return result; // sempre valido
+                case Type::Block:   return result;
+                case Type::Defeat:  return handleDefeat(tail);
+                case Type::Hot:     return handleHot(tail, mismatch);
+                case Type::Melt:    return handleMelt(tail, mismatch);
+                case Type::Shut:    return handleShut(tail, mismatch);
+                case Type::Stop:    return handleStop(tail);
+
+                case Type::Launch:
+                case Type::Push:
+                case Type::Move:
+                case Type::Open:
+                case Type::You:
+                    result = PlayState::Playing;
+                    break;
+
+                case Type::Win:     return handleWin(tail, mismatch);
+                default: std::cerr << "conditions()Not handled: " << mism_type << '\n';
+                    throw(std::runtime_error("conditions(): default statement"));
+                    break;
+            }
+        }
+
+        return result;
+    }
 }

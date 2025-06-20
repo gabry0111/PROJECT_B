@@ -58,23 +58,12 @@ public :
     void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
     void removeRule(const Rule& rule); // come addRule()
     const std::vector<Rule>& getm_rules();
-    std::vector<Type> checkObjectForProperty(const Objects&);
     void clearRules(); // forse non serve
     // dato un'insieme di regole, servirà per avere un vettore con le tuple che hanno la regola type in modo da confrontare se un'azione è possibile.
     //N.B: se m_rules cambia, diventano dangling references
-    void movedBlock(); // gestisce cosa succede alle regole se è mosso un Block; sarà chiamata in conditions
-    constexpr std::vector<std::reference_wrapper<const Rule>> getWhichRuleHasType(Type type) const;
+    constexpr std::vector<Rule> getWhichRuleHasType(Type type) const;
     // std::size_t GetNumRules() const; è inutile. guarda dove viene usato...
-    Type findPlayerType() const; // può diventare constexpr (dipende da objectHasType())
-    bool objectHasProperty(const Objects& object, Type property); // controlla se un oggetto ha una proprietà
-    // controlla le interazioni possibili tra un object e un altro object e dice se un'azione può essere fatta.
-    // Per certe azioni che cambiano qualcosa dell'oggetto, si può vedere cosa è cambiato nell'ultimo Type del vector<Type> dell'oggetto
-    // N.B: questa funzione NON si occupa di verificare la posizione nella mappa di niente. 
-    // N.B: questa funzione NON si occupa di verificare che due parole logiche siano vicine
-    // Se un oggetto ha più tipi, allora fare un ciclo che chiama conditions() per decidere se l'azione è legale.
-    // le regole si leggono da sx a dx e da alto a basso
-    PlayState conditions( Objects& object, Objects& second) const; // DA SPOSTARE IN GAME restituisce la condizione di gioco; può forse diventare constexpr (non è finita)
-
+    std::optional<Type> findPlayerType() const; // può diventare constexpr (dipende da objectHasType())
 };
 }
 
