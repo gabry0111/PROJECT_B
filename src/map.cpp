@@ -48,36 +48,45 @@ namespace Baba_Is_Us{
         switch(i) {
             case 0:  substring = "gifs/VOID";                    break;
             case 1:  substring = "gifs/BABA_spritesheet_right";  break; // fisso il default di Baba a BABA_right.png
-            case 3:  substring = "gifs/FLAG";                    break;
-            case 4:  substring = "gifs/LAVA";                    break;
-            case 5:  substring = "gifs/ROCK";                    break;
-            case 6:  substring = "gifs/WALL";                    break;
-
-            case 9:  substring = "text/BABA";                    break;
-            case 10: substring = "text/DEFEAT";                  break;
-            case 11: substring = "text/FLAG";                    break;
-            case 12: substring = "text/HOT";                     break;
-            case 13: substring = "text/IS";                      break;
-            case 14: substring = "text/LAVA";                    break;
-            case 15: substring = "text/MELT";                    break;
-            case 16: substring = "text/PUSH";                    break;
-            case 17: substring = "text/ROCK";                    break;
-            case 18: substring = "text/STOP";                    break;
-            case 19: substring = "text/WALL";                    break;
-            case 20: substring = "text/WIN";                     break;
-            case 21: substring = "text/YOU";                     break;
-
-            case 23:
-
-            case 25:
-            case 26:
-            case 27:
+            case 3:  substring = "gifs/DOOR";                    break;
+            case 4:  substring = "gifs/FLAG";                    break;
+            case 5:  substring = "gifs/GEAR";                    break;
+            case 6:  substring = "gifs/KEY";                     break;
+            case 7:  substring = "gifs/LAVA";                    break;
+            case 8:  substring = "gifs/LEVER_LEFT";              break;
+            case 9:  substring = "gifs/PENDULUM";                break;
+            case 10: substring = "gifs/ROCK";                    break;
+            case 11: substring = "gifs/WALL";                    break;
+            
+            case 14: substring = "text/BABA";                    break;
+            case 15: substring = "text/DEFEAT";                  break;
+            case 16: substring = "text/FLAG";                    break;
+            case 17: substring = "text/HOT";                     break;
+            case 18: substring = "text/IS";                      break;
+            case 19: substring = "text/LAVA";                    break;
+            case 20: substring = "text/MELT";                    break;
+            case 21: substring = "text/PUSH";                    break;
+            case 22: substring = "text/ROCK";                    break;
+            case 23: substring = "text/STOP";                    break;
+            case 24: substring = "text/WALL";                    break;
+            case 25: substring = "text/WIN";                     break;
+            case 26: substring = "text/YOU";                     break;
+            
             case 28:
-            case 29:
+
             case 30:
             case 31:
             case 32:
             case 33:
+            case 34:
+            case 35:
+            case 36:
+            case 37:
+            case 38:
+            case 39:
+            case 40:
+            case 41:
+            case 42:
             default : break;
         }
         if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
@@ -105,7 +114,7 @@ namespace Baba_Is_Us{
                 && value != +Type::Block && value != +Type::Icon_Void 
                 && "in Map(), level.txt there's an invalid value");
 
-            if (value <= 6){ // NOUN_TYPE (+ Void)
+            if (value < +Type::ICON_NOUN_TYPE){ // NOUN_TYPE (+ Void)
                 m_grid[1][iii / MapSize::width][iii % MapSize::width] = value;
                 m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
 
@@ -329,7 +338,6 @@ namespace Baba_Is_Us{
     }
 
     bool Map::isOutOfBoundary(std::size_t x, std::size_t y) const {
-        std::cerr<<" whereth? - \n";
         return ((x > MapSize::width - 1) || (y > MapSize::height - 1));
     }
 

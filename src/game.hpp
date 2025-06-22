@@ -28,6 +28,8 @@ namespace Baba_Is_Us{
         // vede se era attaccata a altre parole logiche e modifica m_rules.
         // N.B: le regole si creeranno solo da sx a dx e da alto a basso
         void parseRules(); 
+        // add properties to door, key, gear, pendulum (constant, don't depend by the rules)
+        void constantProperties();
         // le seguenti adjust..() NON CONTROLLANO se un blocco ha creato o tolto una regola
         void adjustAddingRules(); // SOLO PER AGGIUNGERE REGOLE
         std::vector<Position> getTailMovingPosition(Direction);
@@ -40,6 +42,7 @@ namespace Baba_Is_Us{
         //void movement(Map, Position, Direction); //per ora non servono
         //void movement(Direction, PlayState);
         void movement(sf::RenderWindow &, sf::Clock &, Direction);
+        PlayState handlePush(Objects&, Objects&, Direction, Position);
         PlayState conditions(Objects&, Objects&);
     };
     

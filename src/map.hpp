@@ -1,5 +1,5 @@
-#ifndef MOVEMENT_HPP
-#define MOVEMENT_HPP
+#ifndef MAP_HPP
+#define MAP_HPP
 #include "enum_objects.hpp"
 #include "objects.hpp"
 #include <SFML/Graphics.hpp>

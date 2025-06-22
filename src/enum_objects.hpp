@@ -14,8 +14,13 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Baba, // aspetto del Player di default
   Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica eccezione al tipico m_object vector<Type> perché sarà del tipo
          // [0] = Block, [1] (da vedere se sarà così) = ICON_NOUN_TYPE
-  Flag, 
+  Door,
+  Flag,
+  Gear,
+  Key, 
   Lava,
+  Lever,
+  Pendulum,
   Rock,  // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per 
          // poterla lanciare(con tasto space premuto e direzione)
   Wall,  
@@ -54,6 +59,8 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Open, //door
   Push,
   Shut, //door
+  Spin,
+  Swing,
   Stop,
   Win,
   You,
