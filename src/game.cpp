@@ -10,8 +10,6 @@
 
 namespace Baba_Is_Us{
 
-    
-
     Game::Game(std::string_view filename) : m_map3D{filename}, m_RM{}, m_players{}
     {
         std::cout<<"aaaaaaaaa\n";
@@ -22,7 +20,6 @@ namespace Baba_Is_Us{
         m_players = m_map3D.getPositions(Type::You);
         m_RM.clearRules();
     }
-
     std::vector<Position>& Game::getPlayerPositions() {
         return m_players;
     } 
@@ -35,7 +32,6 @@ namespace Baba_Is_Us{
     PlayState Game::accessm_state_of_game() {
         return m_state_of_game;
     }
-
     ///////////////////////////////////     Chapter: HandlingRules     ///////////////////////////////////
     // Per ogni regola di m_rules, aggiunge il PROPERTY_TYPE della regola tail tutti gli oggetti indicati dalla regola
     void Game::adjustAddingRules() {
@@ -101,8 +97,6 @@ namespace Baba_Is_Us{
                 Rule new_rule {word1[1], word2[1], word3[1]};
                 m_RM.addRule(new_rule);
                 std::cerr << "Rule added: " << word1[1] << " " << word2[1] << " " << word3[1] << '\n';
-
-
             }
         }
     }
@@ -114,13 +108,11 @@ namespace Baba_Is_Us{
 
         for (const Position& pos : block_pos) {
             std::cerr << '(' << pos.first << "," << pos.second << ") ";
-
             // check verticale
             if (!m_map3D.isOutOfBoundary(pos.first, pos.second + 2)) {
                 std::cerr << "Rule orientation: vertical"
                         << " | From (x=" << pos.first << ", y=" << pos.second
                         << ") to (" << pos.first << "," << pos.second + 2 << ")\n";
-
                 const auto& word1 = m_map3D.At(pos.first, pos.second    ).getTypes();
                 const auto& word2 = m_map3D.At(pos.first, pos.second + 1).getTypes();
                 const auto& word3 = m_map3D.At(pos.first, pos.second + 2).getTypes();
@@ -128,7 +120,6 @@ namespace Baba_Is_Us{
                 if (word2[0] == Type::Block && word3[0] == Type::Block)
                     createRule(word1, word2, word3);
             }
-
             // check orizzontale
             if (!m_map3D.isOutOfBoundary(pos.first + 2, pos.second)) {
                 std::cerr << "Rule orientation: horizontal"
@@ -149,7 +140,6 @@ namespace Baba_Is_Us{
             m_state_of_game = PlayState::Invalid;
             return;
         }
-
         std::cerr << m_RM.getm_rules().size() <<" rules parsed\n";
         adjustAddingRules();
         std::cerr << "Exiting parseRules()\n";
@@ -206,7 +196,6 @@ namespace Baba_Is_Us{
         assert (count > 0 && count < 3  &&"findSecondNoun() non funziona"); // N.B: t==0 sarebbe il primo NOUN_TYPE
         return std::nullopt; 
     }
-
     Position getShift(Direction dir) {
         switch (dir) {                                                      
             case Direction::Up:    return {0, -1};                          
@@ -216,7 +205,6 @@ namespace Baba_Is_Us{
             default:               throw(std::runtime_error("getShift(): ok, something's really broken"));
         }
     }
-
     // N.B: data una fila verticale di oggetti attaccati e la direzione Up, l'oggetto Tail è quello più in basso
     bool isTailOfLine(Position pos, Map &map, Direction dir) { //prima (circa) funzione ricorsiva!!!! yay :3 yippee :DDDD
         Type type {map.At(pos.first, pos.second).getTypes()[0]};
@@ -227,7 +215,6 @@ namespace Baba_Is_Us{
         }
         return (type != map.At(pos.first - dx, pos.second - dy).getTypes()[0]);
     }
-
     std::vector<Position> Game::getTailMovingPosition(Direction direction) {
         std::vector<Position> pos_to_be_moved {};
         assert (m_players.size() > 0);
@@ -238,8 +225,6 @@ namespace Baba_Is_Us{
         }
         return pos_to_be_moved;
     }
-
-
     // fallisce solo se è boundary. gli passo la mappa 2D e non 3D perché se Player può "andare sopra" all'oggetto, non crea nessun problema al movimentoMore actions
     // N.B: TAIL SARà GIA PASSATO COME START PERCHé è CHIAMATA PRIMA getTailMovingPosition()
     std::optional<Position> getMismatch(const MapGrid2D& grid, Direction dir, Position start) {
@@ -263,25 +248,30 @@ namespace Baba_Is_Us{
     }
 
 
-    PlayState Game::handlePush(Objects& tail, Objects& mismatch, Direction direction, Position start){ //hehe recursive function :3 ihhihii :D
+    PlayState Game::handlePush(Objects& tail, Objects& target, Direction direction, Position start){ //hehe recursive function :3 ihhihii :D
         Position shift {getShift(direction)};
-        Position pos_mism {start.first + shift.first, start.first + shift.second};
+        Position pos_mism {start.first + shift.first, start.second + shift.second};
         Position pos_next_mism {pos_mism.first + shift.first, pos_mism.second + shift.second};
 
         if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second)) return PlayState::Invalid;
-        for (Type mism_type : mismatch.getTypes()){
-            if (mism_type == Type::Stop || mism_type == Type::Shut) return PlayState::Invalid;
+        for (Type mism_type : target.getTypes()){
+            if (mism_type == Type::Void) return PlayState::Playing;
+            else if (mism_type == Type::Stop || mism_type == Type::Shut) return PlayState::Invalid; 
+            else if (mism_type == Type::Push) break;
         }
         std::cerr<<"balls ";
-        if (handlePush(mismatch, m_map3D.At(pos_next_mism.first, pos_next_mism.second), direction, pos_mism) == PlayState::Invalid)
+        if (handlePush(target, m_map3D.At(pos_next_mism.first, pos_next_mism.second), direction, pos_mism) == PlayState::Invalid)
             return PlayState::Invalid;
         else{
-            m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] = m_map3D.getm_grid()[0][start.first][start.second];
+            m_map3D.accessm_grid()[0][pos_next_mism.second][pos_next_mism.first] = m_map3D.getm_grid()[0][pos_mism.second][pos_mism.first];
+            m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] = m_map3D.getm_grid()[0][start.second][start.first];
             m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
 
+            m_map3D.accessm_grid()[1][pos_next_mism.second][pos_next_mism.first] = +target.getTypes()[0];
             m_map3D.accessm_grid()[1][pos_mism.second][pos_mism.first] = +tail.getTypes()[0];
             m_map3D.accessm_grid()[1][start.second][start.first] = +Type::Void;
 
+            m_map3D.accessm_objects()[pos_next_mism.second][pos_next_mism.first] = target;
             m_map3D.accessm_objects()[pos_mism.second][pos_mism.first] = tail;
             m_map3D.resetObject(start);
             return PlayState::Playing;
@@ -292,7 +282,6 @@ namespace Baba_Is_Us{
         Position shift = getShift(direction);
         std::size_t dx {shift.first};
         std::size_t dy {shift.second};
-   
         std::cerr<<"alright here we go\n";
         std::vector<Position> tail_pos {getTailMovingPosition(direction)};
         assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
@@ -315,7 +304,6 @@ namespace Baba_Is_Us{
             std::size_t index_to_modify {};
             findSecondNoun(types).has_value() ? index_to_modify = +(*findSecondNoun(types))
                                               : index_to_modify = indexToBeDrawn(static_cast<size_t>(m_map3D.getm_grid()[0][each.second][each.first]));
-            
             sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
             
             // solo Baba (in tilePaths con indice da 1 tail 8) ha varianti nelle texture.
@@ -329,7 +317,6 @@ namespace Baba_Is_Us{
 
             if (! getMismatch(m_map3D.getm_grid()[1], direction, each)) continue;
             Position pos_mismatch = *getMismatch(m_map3D.getm_grid()[1], direction, each);
-            Position pos_next = {pos_mismatch.first+shift.first,  pos_mismatch.second+shift.second};
 
             // N.B: non serve il valore assoluto, ma il loro segno dipende dalla direzione mandata in getMismatch()
             std::size_t delta_x = pos_mismatch.first - each.first;
@@ -348,11 +335,9 @@ namespace Baba_Is_Us{
                 render(window, m_map3D.tileSprites);
                 sf::sleep(sf::milliseconds(10));
             }
-
             Objects& obj_tail = m_map3D.At(each.first, each.second);
             Objects& obj_mismatch = m_map3D.At(pos_mismatch.first, pos_mismatch.second);
             
-
             // se un blocco è a bordo mappa, non puoi "spostarlo" oltre la mappa
             // andrebbe invertito il check
             if( obj_mismatch.objectHasType(Type::Block) && m_map3D.isOutOfBoundary(pos_mismatch.first + dx, pos_mismatch.second + dy)) {continue;} 
@@ -379,31 +364,20 @@ namespace Baba_Is_Us{
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
                 sf::sleep(sf::milliseconds(10));
-
                 player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
                 sf::sleep(sf::milliseconds(10));
                 //movimento visivo ////////////
-               
-
                 if (obj_mismatch.objectHasType(Type::Block)) {parseRules();}
                     //movimento effettivo ////////////
                     //////////// movimento visivo
             } else if(state == PlayState::Invalid) {
-                m_map3D.accessm_grid()[0][each.second + delta_y][each.first + delta_x] 
-                    = +(m_map3D.getm_objects()[each.second + delta_y][each.first + delta_x].getTypes()[0]);
-                m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-
-                m_map3D.accessm_grid()[1][each.second + delta_y][each.first + delta_x] 
-                    = +(m_map3D.getm_objects()[each.second][each.first].getTypes()[0]);
-                m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
-                
+                player_sprite = m_map3D.tileSprites[baba_idle_index];
                 player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
             }
-
             player_sprite = m_map3D.tileSprites[baba_idle_index];
             player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
             m_map3D.redraw(clock);
@@ -444,7 +418,6 @@ namespace Baba_Is_Us{
 
             if (event.type == sf::Event::KeyPressed){
                 m_players = map.getPositions(Type::You);
-
                 switch(event.key.code){
                     case sf::Keyboard::Escape:
                         window.close();
@@ -481,7 +454,6 @@ namespace Baba_Is_Us{
     }    
     
     /////////////////////////////////// Chapter: Handling Displaying ///////////////////////////////////
-
     void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
         // draw the map
         window.clear();
@@ -490,6 +462,7 @@ namespace Baba_Is_Us{
         int count{};
         for (const auto& rows : m_map3D.getm_grid()[0]){
             for (const auto &i : rows){
+                
                 assert (i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE 
                      && i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE 
                      && i != +Type::Block && i != +Type::Icon_Void && "in render() not given tail valid value in m_grid[0]\n");
@@ -514,7 +487,6 @@ namespace Baba_Is_Us{
     }
 
     /////////////////////////////////// Chapter: Handling Interactions ///////////////////////////////////
-
     PlayState handleDefeat(Objects& tail) {
         if (tail.objectHasType(Type::You)) {
             tail.resetObject();
@@ -522,7 +494,6 @@ namespace Baba_Is_Us{
         }
         return PlayState::Playing;
     }
-
     PlayState handleHot(Objects& tail, Objects& mismatch) {
         if (! mismatch.objectHasType(Type::Push)) {
             tail.resetObject();
@@ -530,7 +501,6 @@ namespace Baba_Is_Us{
         }
         return PlayState::Playing;
     }
-
     PlayState handleMelt(Objects& tail, Objects& mismatch) {
         if (tail.objectHasType(Type::Hot)) {
             mismatch.resetObject();
@@ -542,7 +512,6 @@ namespace Baba_Is_Us{
             return PlayState::Playing;
         }
     }
-
     PlayState handleShut(Objects& tail, Objects& mismatch) {
         if (! tail.objectHasType(Type::Open)) {
             mismatch.resetObject();
@@ -552,66 +521,17 @@ namespace Baba_Is_Us{
         mismatch.resetObject();
         return PlayState::Playing;
     }
-
     PlayState handleStop(Objects& tail) {
         if (! tail.objectHasType(Type::Push) 
          || ! tail.objectHasType(Type::Move)) {return PlayState::Invalid;}
         return PlayState::Playing;
     }
-
     PlayState handleWin(Objects& tail, Objects& mismatch) {
         if (mismatch.objectHasType(Type::Defeat)) {
             handleDefeat(tail);
         }
         return PlayState::Won;
     }
-/*
-    PlayState Game::conditions(Objects& tail, Objects& mismatch) { //fanculo alle 14:30
-        
-        std::vector<Type> mismatch_types {mismatch.getTypes()};
-        PlayState action {PlayState::Playing};
-        for(const auto type : mismatch_types){ // per ogni Type di Objects second
-            
-            // deve essere valido Baba is you, Baba is wall, Baba is lava, ma non Baba is block
-            //if(+Type::NOUN_TYPE < +type && +type < +Type::ICON_NOUN_TYPE && type != Type::Block) { 
-            //    assert(!object.objectHasType(type)); // controlla non abbia già quel tipo in m_object
-            //    if(!object.objectHasType(type)) { // per la grafica (nel caso Baba is wall and rock) verrà applicata solo la skin del primo tipo
-            //        object.addType(type);
-            //        action = PlayState::Playing;
-            //    }
-            //    else{} //{std::iter_swap(std::find(object.getTypes().begin(), object.getTypes().end(), type), object.getTypes().end() - 1);}
-            //}
-            
-            // non ci interessa degli ICON_NOUN_TYPE
-            // non ci interessa dei verb type che creeranno una regola. Ci penserà un'altra funzione
-            // controllare che object[0] NON sia Type::Block -----------------------
-            // beh, in teoria vale
-
-            switch (type) {
-            case Type::Block:  return PlayState::Playing; break; // i blocchi si possono sempre muovere, LASCIAMOLO PER PRIMO
-
-            case Type::Void:   action = PlayState::Playing; break;
-            case Type::Defeat: action = handleDefeat(tail, mismatch, m_state_of_game); break;
-            case Type::Hot:    action = handleHot(tail, mismatch); break;
-            case Type::Launch: action = PlayState::Playing; break;
-            case Type::Melt:   action = PlayState::Playing; break;
-            case Type::Move:   action = PlayState::Playing; break;
-            case Type::Open:   action = PlayState::Playing; break;
-            case Type::Push:   action = PlayState::Playing; break;
-            case Type::Shut:   action = handleShut(tail, mismatch); break;
-            case Type::Stop:   action = handleStop(tail, mismatch); break;
-            case Type::Win:    action = PlayState::Won; break;
-            case Type::You:    action = PlayState::Playing; break;
-            default:           break;
-            }
-            if (action == PlayState::Invalid) return PlayState::Invalid;
-        }
-        return action;
-    }
-
-    // check se intorno tail target delle rules sono state cambiate, in tal caso reverse the effects of that rule
-*/
-
     PlayState Game::conditions(Objects& tail, Objects& mismatch) {
         PlayState result = PlayState::Playing;
         //for(const Type& mism_type : mismatch.getTypes()){std::cerr << "Mismatch has types: " << mism_type;}
@@ -626,7 +546,6 @@ namespace Baba_Is_Us{
                 case Type::Melt:    return handleMelt(tail, mismatch);
                 case Type::Shut:    return handleShut(tail, mismatch);
                 case Type::Stop:    return handleStop(tail);
-
                 case Type::Launch:
                 case Type::Push:    throw(std::runtime_error("conditions(): mism_type = Type::Push "));
                 case Type::Move:
@@ -634,14 +553,12 @@ namespace Baba_Is_Us{
                 case Type::You:
                     result = PlayState::Playing;
                     break;
-
                 case Type::Win:     return handleWin(tail, mismatch);
                 default: std::cerr << "conditions()Not handled: " << mism_type << '\n';
                     throw(std::runtime_error("conditions(): default statement"));
                     break;
             }
         }
-
         return result;
     }
 }
