@@ -24,11 +24,6 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   Rock,  // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per 
          // poterla lanciare(con tasto space premuto e direzione)
   Wall,  
-  
-  //Door,  // apribile automaticamente azionando ingranaggio/leva
-  //Gear,  // fisso
-  //Lever,  // ?trasportabile?
-  
 
   ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante sarà calcolabile facilmente)
                   // abbinerà ciascun oggetto Objects alla sua sprite
@@ -53,14 +48,14 @@ enum class Type {  // DA AGGIUNGERE overload per convertirli in int (learncpp.co
   PROPERTY_TYPE,
   Defeat,
   Hot,
-  Launch, // launchable
+  Interact, // launchable
   Melt,
   Move, // = Player può camminare sopra quel tipo
   Open, //door
   Push,
   Shut, //door
   Spin,
-  Swing,
+  Switch,
   Stop,
   Win,
   You,
@@ -115,7 +110,6 @@ constexpr std::string_view getTypeName(Type type)
     case Type::PROPERTY_TYPE:   return "PROPERTY_TYPE";
     case Type::Defeat:          return "Defeat";
     case Type::Hot:             return "Hot";
-    case Type::Launch:          return "Launch";
     case Type::Melt:            return "Melt";
     case Type::Move:            return "Move";
     case Type::Open:            return "Open";

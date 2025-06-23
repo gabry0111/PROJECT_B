@@ -62,54 +62,85 @@ namespace Baba_Is_Us {
     };
 
     
+    inline std::optional<std::size_t> findLastNoun(const std::vector<Type>& types) {
+        std::size_t last {};
+        std::size_t i{};
+        for (i = 0; i < types.size(); ++i) {
+            if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
+                last = i;
+            }
+        }
+        if (last>1) return last;
+        return std::nullopt; 
+    }
+    inline Type iconToAll(Type type) {
+        switch(type){
+            case Type::Icon_Void:   return Type::Void;
+            case Type::Icon_Baba:   return Type::Baba;
+            case Type::Icon_Defeat: return Type::Defeat;
+            case Type::Icon_Flag:   return Type::Flag;
+            case Type::Icon_Hot:    return Type::Hot;
+            case Type::Icon_Is:     return Type::Is;
+            case Type::Icon_Lava:   return Type::Lava;
+            case Type::Icon_Melt:   return Type::Melt;
+            case Type::Icon_Push:   return Type::Push;
+            case Type::Icon_Rock:   return Type::Rock;
+            case Type::Icon_Stop:   return Type::Stop;
+            case Type::Icon_Wall:   return Type::Wall;
+            case Type::Icon_Win:    return Type::Win;
+            case Type::Icon_You:    return Type::You;
+            default: throw(std::runtime_error("iconToAll(): scimpanzini bananini"));
+        }
+    }
+    class Map{
+    private :
+        // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2
+        std::array<MapGrid2D, MapSize::depth> m_grid; 
+        // N.B: [1][2] accedi a x (width) = 1; y (height) = 2
+        std::array<std::array<Objects, MapSize::height>, MapSize::width> m_objects;
 
-class Map{
-private :
-    // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2
-    std::array<MapGrid2D, MapSize::depth> m_grid; 
-    // N.B: [1][2] accedi a x (width) = 1; y (height) = 2
-    std::array<std::array<Objects, MapSize::height>, MapSize::width> m_objects;
+    public:
+        bool isOutOfBoundary(std::size_t x, std::size_t y) const;
 
-public:
-    bool isOutOfBoundary(std::size_t x, std::size_t y) const;
+        std::vector<sf::Texture> textures{};
+        std::vector<int> frameCounts{};
+        int nth_frame{};
+        std::vector<sf::Sprite> tileSprites{};
 
-    std::vector<sf::Texture> textures{};
-    std::vector<int> frameCounts{};
-    int nth_frame{};
-    std::vector<sf::Sprite> tileSprites{};
+        Map() = default;
+        // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
+        Map(std::string_view);
+        
+        void spriteOverlay();
+        // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
+        // da chiamare appena creata un'istanza di Map
+        const std::array<MapGrid2D, MapSize::depth>& getm_grid() const;
+        std::array<MapGrid2D, MapSize::depth>& accessm_grid() ;
+        const std::array<std::array<Objects, MapSize::height>, MapSize::width>& getm_objects() const;
+        std::array<std::array<Objects, MapSize::height>, MapSize::width>& accessm_objects() ;
+        void setTextures();
+        void setSprites();
+        void redraw(sf::Clock &);
+        const std::vector<sf::Sprite>& getTileSprites() const;
+        sf::Sprite& accessWhichSpriteIsInPosition(Position&);
+        // resetta la mappa (se PlayState::Invalid o se cambia livello)
+        // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
+        void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr
+        
+        // aggiungi un oggetto (constexpr)
+        void addObject(Position position, Type type);
 
-    Map() = default;
-    // alloca lo spazio di m_objects per (MapSize::width * MapSize::height) elementi
-    Map(std::string_view);
+        // rimuovi un oggetto (constexpr)
+        void resetObject(Position position);
 
-    // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
-    // da chiamare appena creata un'istanza di Map
-    const std::array<MapGrid2D, MapSize::depth>& getm_grid() const;
-    std::array<MapGrid2D, MapSize::depth>& accessm_grid() ;
-    const std::array<std::array<Objects, MapSize::height>, MapSize::width>& getm_objects() const;
-    std::array<std::array<Objects, MapSize::height>, MapSize::width>& accessm_objects() ;
-    void setTextures();
-    void setSprites();
-    void redraw(sf::Clock &);
-    const std::vector<sf::Sprite>& getTileSprites() const;
-    sf::Sprite& accessWhichSpriteIsInPosition(Position&);
-    // resetta la mappa (se PlayState::Invalid o se cambia livello)
-    // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa
-    void Reset(const std::array<std::array<int,MapSize::width>,MapSize::height>& ); // può diventare constexpr
-    
-    // aggiungi un oggetto (constexpr)
-    void addObject(Position position, Type type);
+        // Quale oggetto c'è in quella posizione?
+        Objects& At(std::size_t x, std::size_t y);
+        const Objects& At(std::size_t x, std::size_t y) const; // NON può diventare constexpr (m_objects è vector)
 
-    // rimuovi un oggetto (constexpr)
-    void resetObject(Position position);
+        // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
+        const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
+    };
 
-    // Quale oggetto c'è in quella posizione?
-    Objects& At(std::size_t x, std::size_t y);
-    const Objects& At(std::size_t x, std::size_t y) const; // NON può diventare constexpr (m_objects è vector)
-
-    // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
-    const std::vector<Position> getPositions(Type) const; // non conviene diventare constexpr (dovrebbe essere template di array)
-};
     std::size_t indexToBeDrawn(const std::size_t i);
 
 

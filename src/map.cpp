@@ -10,25 +10,7 @@ using Position = std::pair<std::size_t, std::size_t>;
 namespace Baba_Is_Us{
 
 
-    Type iconToAll(Type type) {
-        switch(type){
-            case Type::Icon_Void:   return Type::Void;
-            case Type::Icon_Baba:   return Type::Baba;
-            case Type::Icon_Defeat: return Type::Defeat;
-            case Type::Icon_Flag:   return Type::Flag;
-            case Type::Icon_Hot:    return Type::Hot;
-            case Type::Icon_Is:     return Type::Is;
-            case Type::Icon_Lava:   return Type::Lava;
-            case Type::Icon_Melt:   return Type::Melt;
-            case Type::Icon_Push:   return Type::Push;
-            case Type::Icon_Rock:   return Type::Rock;
-            case Type::Icon_Stop:   return Type::Stop;
-            case Type::Icon_Wall:   return Type::Wall;
-            case Type::Icon_Win:    return Type::Win;
-            case Type::Icon_You:    return Type::You;
-            default: throw(std::runtime_error("iconToAll(): scimpanzini bananini"));
-        }
-    }
+    
 
     //associamo gli int sottostanti a enum Type, dati in level.txt, a un path di tilePaths
     std::size_t indexToBeDrawn(const std::size_t i){
@@ -128,52 +110,13 @@ namespace Baba_Is_Us{
                 m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
 
                 current.emplace_back(Type::Block);
-                current.emplace_back(iconToAll(intToType(value)));
+                current.emplace_back(intToType(value));
                 m_objects[iii / MapSize::width][iii % MapSize::width] = current;
             }
             else throw(std::runtime_error("Map(): in level.txt not given a valid value under +Type::VERB_TYPE"));
         }
+        spriteOverlay();
 
-
-        /*
-        valgono solo i value di tilePaths
-        for (std::size_t iii=0; iii < MapSize::height * MapSize::width; ++iii) {
-            map_file >> value;
-            std::cerr << value;
-            
-            std::vector<Type> current{};
-            if(value == 0){
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Void;
-                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
-
-                current.emplace_back(Type::Void);
-                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
-            }
-            if(value > 0 && value <= 8) {
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Baba;
-                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
-
-                current.emplace_back(Type::Baba);
-                current.emplace_back(intToType(parseToEnums(value)));
-                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
-            }
-            else if(value > 8 && value < 13){
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = parseToEnums(value);
-                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
-
-                current.emplace_back(intToType(parseToEnums(value)));
-                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
-            }
-            else if (value >=13){
-                m_grid[1][iii/MapSize::height][iii%MapSize::width] = +Type::Block;
-                m_grid[0][iii/MapSize::height][iii%MapSize::width] = value;
-
-                current.emplace_back(Type::Block);
-                current.emplace_back(intToType(parseToEnums(value)));
-                m_objects[iii/MapSize::height][iii%MapSize::width] = current;
-            }
-        */
-            
         std::cout<<"\nno gay\n";
         for (auto& col : m_objects) {
             for (auto& row : col) {
@@ -199,7 +142,21 @@ namespace Baba_Is_Us{
             std::cerr << '\n';
         };
     }
-
+    
+    void Map::spriteOverlay(){
+        for (std::size_t i{}; i<MapSize::n_tiles; ++i){
+            if ( findLastNoun(m_objects[i/MapSize::width][i%MapSize::height].accessTypes()).has_value() &&  m_grid[1][i/MapSize::width][i%MapSize::height] != +Type::Block){
+                m_grid[0][i/MapSize::width][i%MapSize::height] = static_cast<int> ( *findLastNoun(m_objects[i/MapSize::width][i%MapSize::height].accessTypes()) );
+            }
+        }
+        std::cerr << "----------------------------\n";
+        for (auto& col : m_grid[0]) {
+            for (auto& row : col) {
+                std::cerr << row << ' ';
+            }
+            std::cerr << '\n';
+        }
+    }
     const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() const{
         return m_grid;
     }

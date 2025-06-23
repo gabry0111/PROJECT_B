@@ -44,6 +44,7 @@ namespace Baba_Is_Us{
         
         //void movement(Map, Position, Direction); //per ora non servono
         //void movement(Direction, PlayState);
+        void interact(sf::RenderWindow &, sf::Clock &);
         void movement(sf::RenderWindow &, sf::Clock &, Direction);
         PlayState handlePush(Objects&, Objects&, Direction, Position);
         PlayState conditions(Objects&, Objects&);
