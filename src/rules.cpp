@@ -38,6 +38,9 @@ namespace Baba_Is_Us{
     const std::vector<Rule>& RuleManager::getm_rules() const{
         return m_rules;
     }
+    std::vector<Rule>& RuleManager::accessm_rules() {
+        return m_rules;
+    }
     
     // void RuleManager::movedBlock()
 
