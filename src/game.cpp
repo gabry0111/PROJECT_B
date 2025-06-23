@@ -407,8 +407,7 @@ namespace Baba_Is_Us{
                 }
             }
 
-            const std::vector<Position>& player_positions {getPlayerPositions()};
-            assert(player_positions.size() > 0 && "movement(): player_positions.size() == 0");
+            assert(getPlayerPositions().size() > 0 && "movement(): player_positions.size() == 0");
             for (std::size_t i {}; i<16; ++i){
                 for (std::size_t j{}; j<16; ++j){
                     std::cerr<<m_map3D.getm_grid()[0][i][j]<<" ";
@@ -471,11 +470,7 @@ namespace Baba_Is_Us{
         }
         std::cerr<<" movement complete\n";
     }
-    void Game::interact(sf::RenderWindow& window, sf::Clock& clock){
-        for (const auto& player_pos : getPlayerPositions()){
-            std::cerr<< "/ interact \\ \n";
-        }
-    }
+    
     void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
         sf::Event event;
         Direction direction;
@@ -507,7 +502,7 @@ namespace Baba_Is_Us{
                         movement(window, clock, direction);
                         break;
                     case sf::Keyboard::Space: 
-                        interact(window, clock);
+                        //interact(window, clock);
                         //check se ha un oggetto in mano
                         //lancia oggetto
                         break;
