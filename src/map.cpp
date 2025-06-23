@@ -83,7 +83,7 @@ namespace Baba_Is_Us{
             if (obj.getTypes()[0] != Type::Block){
                 std::cerr << "spriteOverlay(): int of noun: " << static_cast<int>(findLastNoun(obj.getTypes())) << '\n';
                 m_grid[0][i/MapSize::width][i%MapSize::height] = 
-                    static_cast<int> (indexToBeDrawn(+intToType( static_cast<int> (findLastNoun(obj.getTypes())) )));
+                    static_cast<int> (findLastNoun(obj.getTypes()));
             }
         }
         std::cerr << "----------------------------\n";

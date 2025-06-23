@@ -132,7 +132,7 @@ namespace Baba_Is_Us {
             }
         }
         std::cerr << "findLastNoun(): " << last << ", type = " << types[last] << '\n';
-        return last; 
+        return static_cast<std::size_t>(+(types[last])); 
     }
 
     inline Type iconToAll(Type type) {

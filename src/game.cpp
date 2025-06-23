@@ -340,7 +340,7 @@ namespace Baba_Is_Us{
             // quale sprite devi muovere e/o ruotare, tenendo conto del caso descritto?
             std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
             std::size_t index_to_modify {};
-            index_to_modify = indexToBeDrawn(static_cast<size_t>(m_map3D.getm_grid()[0][each.second][each.first]));
+            index_to_modify = indexToBeDrawn(m_map3D.getm_grid()[0][each.second][each.first]);
             sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
             
             // solo Baba (in tilePaths con indice da 1 tail 8) ha varianti nelle texture.
@@ -528,16 +528,16 @@ namespace Baba_Is_Us{
         int x;
         int y;
         int count{};
-        for (const auto& rows : m_map3D.getm_grid()[0]){
+        for (auto& rows : m_map3D.getm_grid()[0]){
 
-            for (const auto &i : rows){
+            for (auto &i : rows){
                 
                 assert (i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE 
                      && i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE 
-                     && i != +Type::Block && i != +Type::Icon_Void && "in render() not given tail valid value in m_grid[0]\n");
-                if(indexToBeDrawn(static_cast<std::size_t> (i)) > tilePaths.size()) continue;
+                     && i != +Type::Block     && i != +Type::Icon_Void && "in render() not given tail valid value in m_grid[0]\n");
+                if(indexToBeDrawn(i) > tilePaths.size()) continue;
 
-                std::size_t nth_sprite_to_be_drawn {indexToBeDrawn(static_cast<std::size_t>(i)) };
+                std::size_t nth_sprite_to_be_drawn {indexToBeDrawn(i) };
                 assert(nth_sprite_to_be_drawn < tilePaths.size() 
                     && "render()'s nth_sprite... is beyond tilePaths.size()");
 
