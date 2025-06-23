@@ -13,23 +13,30 @@ namespace Baba_Is_Us{
     Game::Game(std::string_view filename) : m_map3D{filename}, m_RM{}, m_players{}
     {
         std::cout<<"aaaaaaaaa\n";
+        m_RM.clearRules();
         parseRules();
         constantProperties();
         // checkRulesForProperty
         // aggiungi le proprietà giuste ad ogni oggetto
         m_players = m_map3D.getPositions(Type::You);
-        m_RM.clearRules();
     }
-    std::vector<Position>& Game::getPlayerPositions() {
+    const std::vector<Position>& Game::getPlayerPositions() {
         return m_players;
     } 
-    RuleManager& Game::getRuleManager() {
+    const RuleManager& Game::getRuleManager() {
         return m_RM;
     }
-    Map& Game::getMap() {
+    const Map& Game::getMap() {
         return m_map3D;
     }
-    PlayState Game::accessm_state_of_game() {
+    Map& Game::accessMap(){
+        return m_map3D;
+    }
+
+    const PlayState& Game::getm_state_of_game() {
+        return m_state_of_game;
+    }
+    PlayState& Game::accessm_state_of_game() {
         return m_state_of_game;
     }
     ///////////////////////////////////     Chapter: HandlingRules     ///////////////////////////////////
@@ -51,7 +58,7 @@ namespace Baba_Is_Us{
             for (const Position& each_pos : pos_of_types_with_rule) { // per ogni istanza dell'oggetto NOUN_TYPE
                 Objects& obj {m_map3D.At(each_pos.first, each_pos.second)};
                 //std::cerr << noun_type << prop_or_noun_type << each_pos.first << each_pos.second << '\n';
-                std::cerr << "Property or noun type is: " << prop_or_noun_type;
+                std::cerr << "Property or noun type is: " << prop_or_noun_type << " / ";
                 if (+prop_or_noun_type > +Type::PROPERTY_TYPE) { // se è una PROPERTY_TYPE, aggiungila o toglila semplicemente
                     if(! obj.objectHasType(prop_or_noun_type)){ // controlla che non abbia già il tipo delle regole
                         obj.addType(prop_or_noun_type); //N.B: obj è reference
@@ -75,6 +82,7 @@ namespace Baba_Is_Us{
             }
             std::cerr << '\n';
         }
+        std::cerr << "After adjustAddingRules(), m_RM has size: " << m_RM.getm_rules().size() << '\n';
     }
 
     void Game::createRule(const std::vector<Type>& word1,
@@ -85,11 +93,12 @@ namespace Baba_Is_Us{
         std::cerr << '\n'; 
         
         assert(!word2.empty() && !word3.empty() && "createRule()"); // una protezione in più
-        if(+word1[1] > +Type::NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e PROPERTY_TYPE
+        if(+word1[1] > +Type::NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e NOUN / PROPERTY_TYPE
         && +word1[1] < +Type::ICON_NOUN_TYPE
         && +word2[1] > +Type::VERB_TYPE 
         && +word2[1] < +Type::PROPERTY_TYPE 
-        && +word3[1] > +Type::PROPERTY_TYPE) {
+        && (+word3[1] > +Type::PROPERTY_TYPE
+        || (+word3[1] > +Type::NOUN_TYPE && +word3[1] < +Type::ICON_NOUN_TYPE)) ) {
             bool already_exists = std::any_of(m_RM.getm_rules().begin(), m_RM.getm_rules().end(),[&](const Rule& rule) {
                 return rule.getm_rule()[0] == word1[1] &&
                     rule.getm_rule()[1] == word2[1] &&
@@ -99,18 +108,38 @@ namespace Baba_Is_Us{
                 m_RM.addRule(new_rule);
                 std::cerr << "Rule added: " << word1[1] << " " << word2[1] << " " << word3[1] << '\n';
             }
+            else {
+                std::cerr << "Rule already exists: " << word1[1] << " " << word2[1] << " " << word3[1] << '\n';
+            }
         }
     }
-void Game::adjustRemovingRules(){
-    for (const auto rule: m_RM.getm_rules()){
-        for (const auto& pos : m_map3D.getPositions(rule.getm_rule()[0])){
-            m_map3D.At(pos.first, pos.second).removeType(rule.getm_rule()[2]);
+
+    void Game::adjustRemovingRules(){
+        for (const Rule rule: m_RM.getm_rules()){
+            for (const Position& pos : m_map3D.getPositions(rule.getm_rule()[0])){
+                Objects& obj = m_map3D.At(pos.first, pos.second);
+                const Type& type_to_remove = rule.getm_rule()[2];
+                for(const Type type_rule : rule.getm_rule()) {std::cerr << "Rule is: " << type_rule;}
+                if (obj.objectHasType(type_to_remove)) {
+                    std::cerr << "At pos: " << pos.first << pos.second
+                            << " object type[0] == " << obj.getTypes()[0]
+                            << " Removing property type: " << type_to_remove << '\n';
+                    for(const Type type_obj : obj.getTypes()) {std::cerr << "Object has types: " << type_obj;}
+                    obj.removeType(type_to_remove);
+                } else {
+                    std::cerr << "At pos: " << pos.first << pos.second
+                            << " Tried to remove type not present: " << type_to_remove << '\n';
+                }
+            }
         }
     }
-}
+    
     void Game::parseRules() {
-        if(m_RM.getm_rules().size() != 0)
+        std::cerr << "m_RM has m_rules of size: " << m_RM.getm_rules().size() << '\n';
+        if(!m_RM.getm_rules().empty()){
+            std::cerr << "entering adjustRemovingRules(). \n";
             adjustRemovingRules();
+        }
         m_RM.clearRules();
         std::cerr << "In parseRules()\n";
         std::vector<Position> block_pos {m_map3D.getPositions(Type::Block)};
@@ -146,7 +175,8 @@ void Game::adjustRemovingRules(){
 
         //Controlla se c'è la regola .. is you, altrimenti il gioco si ferma
         if(m_RM.getm_rules().size() == 0 || !m_RM.findPlayerType().has_value()) {
-            m_state_of_game = PlayState::Invalid;
+            std::cerr << " m_RM.getm_rules().size() == " << m_RM.getm_rules().size() << '\n';
+            m_state_of_game = PlayState::Lose;
             return;
         }
         std::cerr << m_RM.getm_rules().size() <<" rules parsed\n";
@@ -258,6 +288,7 @@ void Game::adjustRemovingRules(){
 
 
     PlayState Game::handlePush(Objects& tail, Objects& target, Direction direction, Position start){ //hehe recursive function :3 ihhihii :D
+        std::cerr << "handlePush(): m_RM has m_rules of size: " << m_RM.getm_rules().size() << '\n';
         Position shift {getShift(direction)};
         Position pos_mism {start.first + shift.first, start.second + shift.second};
         Position pos_next_mism {pos_mism.first + shift.first, pos_mism.second + shift.second};
@@ -266,7 +297,7 @@ void Game::adjustRemovingRules(){
             if (mism_type == Type::Void) return PlayState::Playing;
             else if (mism_type == Type::Stop || mism_type == Type::Shut) return PlayState::Invalid;
             else if (mism_type == Type::Block) m_RM.block_moved=true; 
-            else if (mism_type == Type::Push) break;
+            if (mism_type == Type::Push) break;
         }
         if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second)) return PlayState::Invalid;
         std::cerr<<"balls ";
@@ -275,20 +306,22 @@ void Game::adjustRemovingRules(){
         else{
             m_map3D.accessm_grid()[0][pos_next_mism.second][pos_next_mism.first] = m_map3D.getm_grid()[0][pos_mism.second][pos_mism.first];
             m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] = m_map3D.getm_grid()[0][start.second][start.first];
-            m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
+            //m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
 
             m_map3D.accessm_grid()[1][pos_next_mism.second][pos_next_mism.first] = +target.getTypes()[0];
             m_map3D.accessm_grid()[1][pos_mism.second][pos_mism.first] = +tail.getTypes()[0];
-            m_map3D.accessm_grid()[1][start.second][start.first] = +Type::Void;
+            //m_map3D.accessm_grid()[1][start.second][start.first] = +Type::Void;
 
             m_map3D.accessm_objects()[pos_next_mism.second][pos_next_mism.first] = target;
             m_map3D.accessm_objects()[pos_mism.second][pos_mism.first] = tail;
-            m_map3D.resetObject(start);
+            //m_map3D.resetObject(start);
             return PlayState::Playing;
         }
     }
     //
-    void Game::movement(sf::RenderWindow& window, sf::Clock& clock, Direction direction){     
+    void Game::movement(sf::RenderWindow& window, sf::Clock& clock, Direction direction){    
+        std::cerr << "beginning of movement(): m_RM has m_rules of size: " << m_RM.getm_rules().size() << '\n';
+
         Position shift = getShift(direction);
         std::size_t dx {shift.first};
         std::size_t dy {shift.second};
@@ -351,16 +384,24 @@ void Game::adjustRemovingRules(){
             // se un blocco è a bordo mappa, non puoi "spostarlo" oltre la mappa
             // andrebbe invertito il check
             if( obj_mismatch.objectHasType(Type::Block) && m_map3D.isOutOfBoundary(pos_mismatch.first + dx, pos_mismatch.second + dy)) {continue;} 
-            std::cerr<<"Object mismatch "<<obj_mismatch.getTypes()[0]<<"\n";
-            for(const auto& prop : obj_mismatch.getTypes())
-                std::cerr<<" _"<<prop;
+            std::cerr<< "Object tail and Object mismatch are: ";
+            for(const Type type_tail : obj_tail.getTypes()) {std::cerr << type_tail << ' ';}
+            for(const auto& prop : obj_mismatch.getTypes()) {std::cerr<<" _"<<prop;}
             PlayState state;
-            if (obj_mismatch.objectHasType(Type::Push))  
+            if (obj_mismatch.objectHasType(Type::Push))  {
                 state = handlePush(obj_tail, obj_mismatch, direction, each);
+                if(state == PlayState::Playing){
+                    m_map3D.resetObject(each);
+                    m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+                    m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+                }
+            }
             else{
                 state = conditions(obj_tail, obj_mismatch);          
                 //////////// movimento effettivo
-                if (state == PlayState::Invalid) continue;
+                if (m_state_of_game == PlayState::Lose) return;
+                else if (m_state_of_game == PlayState::Won) return;
+                else if (state == PlayState::Playing) { 
                 m_map3D.accessm_grid()[0][pos_mismatch.second][pos_mismatch.first] = m_map3D.getm_grid()[0][each.second][each.first];
                 m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
 
@@ -368,8 +409,47 @@ void Game::adjustRemovingRules(){
                 m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
 
                 m_map3D.accessm_objects()[pos_mismatch.second][pos_mismatch.first] = obj_tail;
-                m_map3D.resetObject(each);                
+                m_map3D.resetObject(each);
+                }
             }
+
+            const std::vector<Position>& player_positions {getPlayerPositions()};
+            assert(player_positions.size() > 0 && "movement(): player_positions.size() == 0");
+            for (std::size_t i {}; i<16; ++i){
+                for (std::size_t j{}; j<16; ++j){
+                    std::cerr<<m_map3D.getm_grid()[0][i][j]<<" ";
+                }                
+                std::cerr<<"\n";
+            }
+            std::cerr<<"akfnjdsaknjaofbjabd\n";
+            for (std::size_t i {}; i<16; ++i){
+                for (std::size_t j{}; j<16; ++j){
+                    std::cerr<<m_map3D.getm_grid()[1][i][j]<<" ";
+                }                
+                std::cerr<<"\n";
+            }
+            std::cerr<<"OBEJKFCSDJTKJSADAS------------\n";
+            for (std::size_t i {}; i<16; ++i){
+                for (std::size_t j{}; j<16; ++j){
+                    std::cerr<<m_map3D.getm_objects()[i][j].getTypes()[0]<<" ";
+                }
+                std::cerr<<"\n";
+            }
+            assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
+            std::cerr << "tail_pos.size() == "<< tail_pos.size() << " positions: ";
+
+            if (m_RM.block_moved) {
+                for (const auto& pos : m_map3D.getPositions(Type::Block)) {
+                    std::cerr << "Blocks at new pos: (" << pos.first << ", " << pos.second << ")\n";
+                }
+                std::cerr << "A block has been moved\n";
+                std::cerr << "movement() before parseRules(): m_RM has m_rules of size: " << m_RM.getm_rules().size() << '\n';
+
+                parseRules();
+                m_RM.block_moved=false;
+            }
+                //movimento effettivo ////////////
+
             if (state == PlayState::Playing) {
                 player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
                 m_map3D.redraw(clock);
@@ -381,11 +461,6 @@ void Game::adjustRemovingRules(){
                 sf::sleep(sf::milliseconds(10));
                 //movimento visivo ////////////
 
-                if (m_RM.block_moved) {
-                    parseRules();
-                    m_RM.block_moved=false;
-                }
-                    //movimento effettivo ////////////
                     //////////// movimento visivo
             } else if(state == PlayState::Invalid) {
                 player_sprite = m_map3D.tileSprites[baba_idle_index];
@@ -400,33 +475,9 @@ void Game::adjustRemovingRules(){
             //movimento visivo ////////////
         }
         std::cerr<<" movement complete\n";
-        std::vector<Position>& player_positions {getPlayerPositions()};
-        assert(player_positions.size() > 0 && "movement(): player_positions.size() == 0");
-        for (std::size_t i {}; i<16; ++i){
-            for (std::size_t j{}; j<16; ++j){
-                std::cerr<<m_map3D.getm_grid()[0][i][j]<<" ";
-            }                
-            std::cerr<<"\n";
-        }
-        std::cerr<<"akfnjdsaknjaofbjabd\n";
-        for (std::size_t i {}; i<16; ++i){
-            for (std::size_t j{}; j<16; ++j){
-                std::cerr<<m_map3D.getm_grid()[1][i][j]<<" ";
-            }                
-            std::cerr<<"\n";
-        }
-        std::cerr<<"OBEJKFCSDJTKJSADAS------------\n";
-        for (std::size_t i {}; i<16; ++i){
-            for (std::size_t j{}; j<16; ++j){
-                std::cerr<<m_map3D.getm_objects()[i][j].getTypes()[0]<<" ";
-            }
-            std::cerr<<"\n";
-        }
-        assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
-            std::cerr << "tail_pos.size() == "<< tail_pos.size() << " positions: ";
     }
 
-    void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
+    void Game::update(sf::RenderWindow &window, sf::Clock &clock){
         sf::Event event;
         Direction direction;
         while (window.pollEvent(event))
@@ -434,7 +485,6 @@ void Game::adjustRemovingRules(){
             if (event.type == sf::Event::Closed) window.close();
 
             if (event.type == sf::Event::KeyPressed){
-                m_players = map.getPositions(Type::You);
                 switch(event.key.code){
                     case sf::Keyboard::Escape:
                         window.close();
@@ -464,7 +514,10 @@ void Game::adjustRemovingRules(){
                         break;
                 }
                 if (m_state_of_game == PlayState::Lose) {
-                    std::cerr << "Hai perso\n";
+                    std::cerr << "Hai perso :(\n";
+                    window.close();}
+                if (m_state_of_game == PlayState::Won) {
+                    std::cerr << "Hai vinto! :)\n";
                     window.close();}
             }
         }

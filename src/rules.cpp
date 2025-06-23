@@ -35,7 +35,7 @@ namespace Baba_Is_Us{
         }
     }
 
-    const std::vector<Rule>& RuleManager::getm_rules(){
+    const std::vector<Rule>& RuleManager::getm_rules() const{
         return m_rules;
     }
     

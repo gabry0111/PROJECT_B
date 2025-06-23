@@ -84,14 +84,14 @@ public:
 
     // inizializza ogni Objects di m_objects al tipo della corrispondente cella di new_map_grid
     // da chiamare appena creata un'istanza di Map
-    const std::array<MapGrid2D, MapSize::depth>& getm_grid();
-    std::array<MapGrid2D, MapSize::depth>& accessm_grid();
-    const std::array<std::array<Objects, MapSize::height>, MapSize::width>& getm_objects();
-    std::array<std::array<Objects, MapSize::height>, MapSize::width>& accessm_objects();
+    const std::array<MapGrid2D, MapSize::depth>& getm_grid() const;
+    std::array<MapGrid2D, MapSize::depth>& accessm_grid() ;
+    const std::array<std::array<Objects, MapSize::height>, MapSize::width>& getm_objects() const;
+    std::array<std::array<Objects, MapSize::height>, MapSize::width>& accessm_objects() ;
     void setTextures();
     void setSprites();
     void redraw(sf::Clock &);
-    std::vector<sf::Sprite>& getTileSprites();
+    const std::vector<sf::Sprite>& getTileSprites() const;
     sf::Sprite& accessWhichSpriteIsInPosition(Position&);
     // resetta la mappa (se PlayState::Invalid o se cambia livello)
     // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando poi la funzione apposita che controlla le regole nella mappa

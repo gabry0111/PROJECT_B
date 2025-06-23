@@ -200,16 +200,16 @@ namespace Baba_Is_Us{
         };
     }
 
-    const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() {
+    const std::array<MapGrid2D, MapSize::depth>& Map::getm_grid() const{
         return m_grid;
     }
     std::array<MapGrid2D, MapSize::depth>& Map::accessm_grid() {
         return m_grid;
     }
-    const std::array<std::array<Objects, MapSize::width>, MapSize::height>& Map::getm_objects(){
+    const std::array<std::array<Objects, MapSize::width>, MapSize::height>& Map::getm_objects() const{
         return m_objects;
     }
-    std::array<std::array<Objects,MapSize::width>,MapSize::height>& Map::accessm_objects(){
+    std::array<std::array<Objects,MapSize::width>,MapSize::height>& Map::accessm_objects() {
         return m_objects;
     }
     
@@ -261,7 +261,7 @@ namespace Baba_Is_Us{
         }
     }
 
-    std::vector<sf::Sprite>& Map::getTileSprites(){
+    const std::vector<sf::Sprite>& Map::getTileSprites() const{
         return tileSprites;
     }
     

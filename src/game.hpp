@@ -18,10 +18,12 @@ namespace Baba_Is_Us{
 
     public :
         Game(std::string_view);
-        std::vector<Position>& getPlayerPositions(); 
-        RuleManager& getRuleManager();
-        Map& getMap();
-        PlayState accessm_state_of_game();
+        const std::vector<Position>& getPlayerPositions(); 
+        const RuleManager& getRuleManager();
+        const Map& getMap();
+        Map& accessMap();
+        const PlayState& getm_state_of_game();
+        PlayState& accessm_state_of_game();
         // helper function una volta che si è assicurati che esistono tre blocchi di fila
         void createRule(const std::vector<Type>&, const std::vector<Type>&, const std::vector<Type>&);
         // chiamata quando una parola logica è mossa, controlla la vecchia posizione della regola e 
@@ -34,7 +36,7 @@ namespace Baba_Is_Us{
         void adjustAddingRules(); // SOLO PER AGGIUNGERE REGOLE
         void adjustRemovingRules();
         std::vector<Position> getTailMovingPosition(Direction);
-        void update(sf::RenderWindow &, Map &, sf::Clock &);
+        void update(sf::RenderWindow &, sf::Clock &);
         void render(sf::RenderWindow &, std::vector<sf::Sprite>);
         // Objects getObject(Position); forse inutile
         // std::optional<PlayState> movementCheck(Direction, Position); inutile fare l'overload, verrà sempre scelto il vector.

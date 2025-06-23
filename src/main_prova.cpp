@@ -26,9 +26,9 @@ int main() {
    
     //setting the sprites
     std::cout<<"Loading textures...\n";
-    game.getMap().setTextures();
+    game.accessMap().setTextures();
     std::cout<<"Converting into sprites...\n";
-    game.getMap().setSprites();
+    game.accessMap().setSprites();
 
     // Animation loop
     sf::Clock clock;
@@ -36,9 +36,9 @@ int main() {
 
     while (window.isOpen()) {
         
-        game.update(window, game.getMap(), clock);
+        game.update(window, clock);
         
-        game.getMap().redraw(clock);
+        game.accessMap().redraw(clock);
 
         game.render(window, game.getMap().tileSprites);
     }
