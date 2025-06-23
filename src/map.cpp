@@ -145,8 +145,11 @@ namespace Baba_Is_Us{
     
     void Map::spriteOverlay(){
         for (std::size_t i{}; i<MapSize::n_tiles; ++i){
-            if ( findLastNoun(m_objects[i/MapSize::width][i%MapSize::height].accessTypes()).has_value() &&  m_grid[1][i/MapSize::width][i%MapSize::height] != +Type::Block){
-                m_grid[0][i/MapSize::width][i%MapSize::height] = static_cast<int> ( *findLastNoun(m_objects[i/MapSize::width][i%MapSize::height].accessTypes()) );
+            Objects& obj = m_objects[i/MapSize::width][i%MapSize::height];
+            if (obj.getTypes()[0] != Type::Block){
+                std::cerr << "spriteOverlay(): int of noun: " << static_cast<int>(findLastNoun(obj.getTypes())) << '\n';
+                m_grid[0][i/MapSize::width][i%MapSize::height] = 
+                    indexToBeDrawn(+intToType( findLastNoun(obj.getTypes()) ));
             }
         }
         std::cerr << "----------------------------\n";

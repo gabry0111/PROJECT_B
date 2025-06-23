@@ -62,17 +62,17 @@ namespace Baba_Is_Us {
     };
 
     
-    inline std::optional<std::size_t> findLastNoun(const std::vector<Type>& types) {
+    inline std::size_t findLastNoun(const std::vector<Type>& types) {
         std::size_t last {};
-        std::size_t i{};
-        for (i = 0; i < types.size(); ++i) {
+        for (std::size_t i{}; i < types.size(); ++i) {
             if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
                 last = i;
             }
         }
-        if (last>1) return last;
-        return std::nullopt; 
+        std::cerr << "findLastNoun(): " << last << ", type = " << types[last] << '\n';
+        return last; 
     }
+
     inline Type iconToAll(Type type) {
         switch(type){
             case Type::Icon_Void:   return Type::Void;
@@ -92,6 +92,7 @@ namespace Baba_Is_Us {
             default: throw(std::runtime_error("iconToAll(): scimpanzini bananini"));
         }
     }
+
     class Map{
     private :
         // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2

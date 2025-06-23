@@ -340,8 +340,7 @@ namespace Baba_Is_Us{
             // quale sprite devi muovere e/o ruotare, tenendo conto del caso descritto?
             std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
             std::size_t index_to_modify {};
-            findLastNoun(types).has_value() ? index_to_modify = +(*findLastNoun(types))
-                                              : index_to_modify = indexToBeDrawn(static_cast<size_t>(m_map3D.getm_grid()[0][each.second][each.first]));
+            index_to_modify = indexToBeDrawn(static_cast<size_t>(m_map3D.getm_grid()[0][each.second][each.first]));
             sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
             
             // solo Baba (in tilePaths con indice da 1 tail 8) ha varianti nelle texture.
