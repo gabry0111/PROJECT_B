@@ -477,7 +477,7 @@ namespace Baba_Is_Us{
         std::cerr<<" movement complete\n";
     }
 
-    void Game::update(sf::RenderWindow &window, sf::Clock &clock){
+    void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
         sf::Event event;
         Direction direction;
         while (window.pollEvent(event))
@@ -485,6 +485,8 @@ namespace Baba_Is_Us{
             if (event.type == sf::Event::Closed) window.close();
 
             if (event.type == sf::Event::KeyPressed){
+                m_players = map.getPositions(Type::You);
+                std::cerr << "m_players.size(): " << m_players.size() << '\n';
                 switch(event.key.code){
                     case sf::Keyboard::Escape:
                         window.close();

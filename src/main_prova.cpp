@@ -36,7 +36,7 @@ int main() {
 
     while (window.isOpen()) {
         
-        game.update(window, clock);
+        game.update(window, game.accessMap(), clock);
         
         game.accessMap().redraw(clock);
 
