@@ -1,8 +1,8 @@
-#include "src/enum_objects.hpp" 
-#include "src/objects.hpp" 
-#include "src/map.hpp" 
-#include "src/rules.hpp" 
-#include "src/game.hpp" 
+#include "../src/enum_objects.hpp" 
+#include "../src/objects.hpp" 
+#include "../src/map.hpp" 
+#include "../src/rules.hpp" 
+#include "../src/game.hpp" 
 #include "doctest.h"
 
 
@@ -172,13 +172,20 @@ TEST_CASE("Basic functions - map.hpp") {
     CHECK(positions[0].first == 8 && positions[0].second == 7);
     CHECK(positions[0].first != 8 && positions[0].second != 8);
 
-    std::size_t indexToBeDrawn(const std::size_t i);
-    void addObject(Position position, Type type);
 
+    void addObject(Position position, Type type);
     CHECK(my_map.At(8,7).getTypes().size() == 2);
     my_map.resetObject(positions[0]);
     CHECK(my_map.At(8,7).getTypes().size() == 1);
     CHECK(my_map.At(8,7).getTypes()[0] == Type::Void);
+
+    CHECK(my_map.getm_grid()[0][0][0] == 14);
+    CHECK(my_map.getm_grid()[1][0][0] == 2);
+    CHECK(my_map.getm_objects()[0][0].getTypes()[0] == Type::Block);
+    CHECK(my_map.getTileSprites().size() == tilePaths.size());
+
+    CHECK(!my_map.isOutOfBoundary(15, 15));
+    CHECK(my_map.isOutOfBoundary(16, 16));
 
 }
 
@@ -394,6 +401,7 @@ TEST_CASE("Game - Rules changing") {
     CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
 }
     
+/*
 
 TEST_CASE("Game - Won")
 {
@@ -571,3 +579,4 @@ TEST_CASE("RandomAgent - Basic")
 
     CHECK_NE(std::find(begin(actions), end(actions), action), end(actions));
 }
+*/

@@ -48,8 +48,8 @@ target_link_libraries(progetto PRIVATE sfml-graphics)
 if (BUILD_TESTING)
 
   # aggiungi l'eseguibile progetto.t
-  # add_executable(baba.tests Tests/baba_is_tests.cpp)
+  add_executable(progetto.t Tests/baba_is_tests.cpp)
   # aggiungi l'eseguibile progetto.t alla lista dei test
-  # add_test(NAME baba.tests COMMAND baba.tests)
+  add_test(progetto.t progetto.t)
 
 endif()
