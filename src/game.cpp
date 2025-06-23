@@ -485,7 +485,6 @@ namespace Baba_Is_Us{
             if (event.type == sf::Event::Closed) window.close();
 
             if (event.type == sf::Event::KeyPressed){
-                m_players = map.getPositions(Type::You);
                 std::cerr << "m_players.size(): " << m_players.size() << '\n';
                 switch(event.key.code){
                     case sf::Keyboard::Escape:
@@ -515,6 +514,8 @@ namespace Baba_Is_Us{
                     default: 
                         break;
                 }
+                m_players = map.getPositions(Type::You);
+                if(m_players.size() == 0) {m_state_of_game = PlayState::Lose;}
                 if (m_state_of_game == PlayState::Lose) {
                     std::cerr << "Hai perso :(\n";
                     window.close();}
