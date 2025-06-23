@@ -1,90 +1,86 @@
-#include "enum_objects.hpp"
 #include "objects.hpp"
+#include "enum_objects.hpp"
 #include "map.hpp"
-#include <vector>
-#include <cassert>
 #include <algorithm>
+#include <cassert>
+#include <vector>
 
+namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto
 
-namespace Baba_Is_Us { //sarà il namespace di ogni file di questo progetto 
-
-constexpr bool Objects::operator==(const Objects& obj) const {
-    return (m_object == obj.m_object);
+constexpr bool Objects::operator==(const Objects &obj) const {
+  return (m_object == obj.m_object);
 }
 
-bool Objects::objectHasType(const Type type) const{
-    assert(type != Type::NOUN_TYPE 
-        && type != Type::ICON_NOUN_TYPE 
-        && type != Type::VERB_TYPE 
-        && type != Type::PROPERTY_TYPE 
-        && "Objects::objectHasType() not given a valid type"); // kinda inutile
-    if(type == Type::NOUN_TYPE || type == Type::ICON_NOUN_TYPE || type == Type::VERB_TYPE || type == Type::PROPERTY_TYPE)
-        {throw std::runtime_error("objectHasType() not given a valid type");}
-    return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
+bool Objects::objectHasType(const Type type) const {
+  assert(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
+         type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
+         "Objects::objectHasType() not given a valid type"); // kinda inutile
+  if (type == Type::NOUN_TYPE || type == Type::ICON_NOUN_TYPE ||
+      type == Type::VERB_TYPE || type == Type::PROPERTY_TYPE) {
+    throw std::runtime_error("objectHasType() not given a valid type");
+  }
+  return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
-std::vector<Type>& Objects::accessTypes(){
-    return m_object;
-}
-std::vector<Type> Objects::getTypes() const{
-    std::vector<Type> types{};
-    for (const auto& type : m_object)
-    {
-        types.emplace_back(type);
-    }
-    return types;
+std::vector<Type> &Objects::accessTypes() { return m_object; }
+std::vector<Type> Objects::getTypes() const {
+  std::vector<Type> types{};
+  for (const auto &type : m_object) {
+    types.emplace_back(type);
+  }
+  return types;
 }
 
-//implicitamente convertibile in falso se non contiene un valore; altrimenti inizializza un'istanza
+// implicitamente convertibile in falso se non contiene un valore; altrimenti
+// inizializza un'istanza
 /*
-constexpr std::optional<Type> Objects::createObject(const std::vector<Type>& object_vect) {
-    assert(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE && "CreatePrintableObject not given a NOUN_TYPE");
-    if(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE)
-        return noun;
-    return nullptr;
+constexpr std::optional<Type> Objects::createObject(const std::vector<Type>&
+object_vect) { assert(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE &&
+"CreatePrintableObject not given a NOUN_TYPE"); if(+noun <= +Type::Wall && +noun
+> +Type::NOUN_TYPE) return noun; return nullptr;
 }
 */
 
 void Objects::addType(const Type word) {
-    bool is_valid_type = (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
-                          word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
+  bool is_valid_type =
+      (word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
+       word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE);
 
-    assert(is_valid_type && "add() not given a valid type");
+  assert(is_valid_type && "add() not given a valid type");
 
-    // aggiungi se valido e non già presente
-    if (is_valid_type && std::find(m_object.begin(), m_object.end(), word) == m_object.end()) {
-        m_object.emplace_back(word);
-    }
+  // aggiungi se valido e non già presente
+  if (is_valid_type &&
+      std::find(m_object.begin(), m_object.end(), word) == m_object.end()) {
+    m_object.emplace_back(word);
+  }
 }
 
-
 void Objects::removeType(const Type type) {
-    std::cerr << "removeType(): type passed is: " <<  type << '\n';
-    auto iter {std::find(m_object.begin(), m_object.end(), type)};
-    bool is_valid{type != Type::NOUN_TYPE 
-        && type != Type::ICON_NOUN_TYPE 
-        && type != Type::VERB_TYPE 
-        && type != Type::PROPERTY_TYPE 
-        && iter != m_object.end()};
-    assert(is_valid && "remove() not given a valid type or type not present");
-    if(is_valid) m_object.erase(iter);
+  std::cerr << "removeType(): type passed is: " << type << '\n';
+  auto iter{std::find(m_object.begin(), m_object.end(), type)};
+  bool is_valid{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
+                type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
+                iter != m_object.end()};
+  assert(is_valid && "remove() not given a valid type or type not present");
+  if (is_valid)
+    m_object.erase(iter);
 }
 
 void Objects::resetObject() {
-    m_object.clear();
-    m_object.push_back(Type::Void);
-    assert(m_object[0] == intToType(0) && "resetObject() doesn't work like intended");
-    
+  m_object.clear();
+  m_object.push_back(Type::Void);
+  assert(m_object[0] == intToType(0) &&
+         "resetObject() doesn't work like intended");
 }
 
-} //namespace Baba_Is_Us
+} // namespace Baba_Is_Us
 /*
 using namespace Baba_Is_Us;
 int main() {
     std::vector<Type> words{Type::Baba, Type::Is, Type::You};
     Objects baba {createObject(words)};
-    baba.getTypes().has_value() ? std::cerr << +(baba.getTypes())->at(0) << " Riuscito \n": std::cerr << "baba non ha NOUN_TYPE \n";
-    Type type{toType(+(baba.getTypes()->at(0)))};
-    assert(type == Type::Baba && "Sbagliato");
-    return 0;
+    baba.getTypes().has_value() ? std::cerr << +(baba.getTypes())->at(0) << "
+Riuscito \n": std::cerr << "baba non ha NOUN_TYPE \n"; Type
+type{toType(+(baba.getTypes()->at(0)))}; assert(type == Type::Baba &&
+"Sbagliato"); return 0;
 }
 */
