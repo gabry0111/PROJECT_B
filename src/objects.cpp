@@ -22,7 +22,9 @@ bool Objects::objectHasType(const Type type) const{
         {throw std::runtime_error("objectHasType() not given a valid type");}
     return std::find(m_object.begin(), m_object.end(), type) != m_object.end();
 }
-
+std::vector<Type>& Objects::accessTypes(){
+    return m_object;
+}
 std::vector<Type> Objects::getTypes() const{
     std::vector<Type> types{};
     for (const auto& type : m_object)

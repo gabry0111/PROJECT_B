@@ -42,7 +42,7 @@ namespace Baba_Is_Us{
     ///////////////////////////////////     Chapter: HandlingRules     ///////////////////////////////////
     // Per ogni regola di m_rules, aggiunge il PROPERTY_TYPE della regola tail tutti gli oggetti indicati dalla regola
     void Game::adjustAddingRules() {
-    
+        std::cerr<<" - - in adjustAddingRules - - ";
         std::vector<Rule> rules {m_RM.getm_rules()};
         assert (rules.size() > 0);
         for (const Rule& each_rule : m_RM.getm_rules()) { // per ogni singola regola
@@ -66,6 +66,7 @@ namespace Baba_Is_Us{
                         //    std::cerr <<"Types: " << types << '\n';
                     } 
                 } else { // se è una NOUN_TYPE, aggiungi tutte le property di quel NOUN_TYPE
+                    obj.addType(prop_or_noun_type);
                     for (const Rule& iter_rules : m_RM.getm_rules()) {
                         if(std::find(iter_rules.getm_rule().begin(), iter_rules.getm_rule().end()
                                       , prop_or_noun_type) != iter_rules.getm_rule().end()) {
@@ -91,25 +92,28 @@ namespace Baba_Is_Us{
         std::cerr << "\n word2: "; for (Type iter : word2) {std::cerr << iter << ' ';}
         std::cerr << "\n word3: "; for (Type iter : word3) {std::cerr << iter << ' ';}
         std::cerr << '\n'; 
-        
         assert(!word2.empty() && !word3.empty() && "createRule()"); // una protezione in più
-        if(+word1[1] > +Type::NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e NOUN / PROPERTY_TYPE
-        && +word1[1] < +Type::ICON_NOUN_TYPE
-        && +word2[1] > +Type::VERB_TYPE 
-        && +word2[1] < +Type::PROPERTY_TYPE 
-        && (+word3[1] > +Type::PROPERTY_TYPE
-        || (+word3[1] > +Type::NOUN_TYPE && +word3[1] < +Type::ICON_NOUN_TYPE)) ) {
+
+        Type type1 {iconToAll(word1[1])};
+        Type type2 {iconToAll(word2[1])};
+        Type type3 {iconToAll(word3[1])};
+        if(+type1 > +Type::NOUN_TYPE  // se 3 parole di fila sono NOUN_TYPE, VERB_TYPE e NOUN / PROPERTY_TYPE
+        && +type1 < +Type::ICON_NOUN_TYPE
+        && +type2 > +Type::VERB_TYPE 
+        && +type2 < +Type::PROPERTY_TYPE 
+        && (+type3 > +Type::PROPERTY_TYPE
+        || (+type3 > +Type::NOUN_TYPE && +type3 < +Type::ICON_NOUN_TYPE)) ) {
             bool already_exists = std::any_of(m_RM.getm_rules().begin(), m_RM.getm_rules().end(),[&](const Rule& rule) {
-                return rule.getm_rule()[0] == word1[1] &&
-                    rule.getm_rule()[1] == word2[1] &&
-                    rule.getm_rule()[2] == word3[1]; });
+                return rule.getm_rule()[0] == type1 &&
+                    rule.getm_rule()[1] == type2 &&
+                    rule.getm_rule()[2] == type3; });
             if (!already_exists) {
-                Rule new_rule {word1[1], word2[1], word3[1]};
+                Rule new_rule {type1, type2, type3};
                 m_RM.addRule(new_rule);
-                std::cerr << "Rule added: " << word1[1] << " " << word2[1] << " " << word3[1] << '\n';
+                std::cerr << "Rule added: " << type1 << " " << type2 << " " << type3 << '\n';
             }
             else {
-                std::cerr << "Rule already exists: " << word1[1] << " " << word2[1] << " " << word3[1] << '\n';
+                std::cerr << "Rule already exists: " << type1 << " " << type2 << " " << type3 << '\n';
             }
         }
     }
@@ -133,7 +137,7 @@ namespace Baba_Is_Us{
             }
         }
     }
-    
+   
     void Game::parseRules() {
         std::cerr << "m_RM has m_rules of size: " << m_RM.getm_rules().size() << '\n';
         if(!m_RM.getm_rules().empty()){
@@ -172,7 +176,6 @@ namespace Baba_Is_Us{
                     createRule(word1, word2, word3);
             }
         }
-
         //Controlla se c'è la regola .. is you, altrimenti il gioco si ferma
         if(m_RM.getm_rules().size() == 0 || !m_RM.findPlayerType().has_value()) {
             std::cerr << " m_RM.getm_rules().size() == " << m_RM.getm_rules().size() << '\n';
@@ -181,6 +184,7 @@ namespace Baba_Is_Us{
         }
         std::cerr << m_RM.getm_rules().size() <<" rules parsed\n";
         adjustAddingRules();
+        m_map3D.spriteOverlay();
         std::cerr << "Exiting parseRules()\n";
         /*
         for(Type type : m_map3D.At(0,1).getTypes()) {
@@ -207,34 +211,25 @@ namespace Baba_Is_Us{
                     break;
                 case Type::Gear:
                     obj.addType(Type::Shut); // gear is used for creating mechanisms that open doors -> transfers the property Shut or Open
-                    obj.addType(Type::Push);
+                    obj.addType(Type::Stop);
                     break;
                 case Type::Key:
                     obj.addType(Type::Open);
                     obj.addType(Type::Push);
                     break;
-                case Type::Pendulum:
-                    obj.addType(Type::Swing);
+                case Type::Lever:
+                    obj.addType(Type::Push);
+                    obj.addType(Type::Shut);
                     break;
+                case Type::Pendulum:
+                    break;
+
                 default: break;
             }
         }
     }
     /////////////////////////////////// Chapter: Handling Movement and KeyPressing ///////////////////////////////////
     // servirà per un altro controllo che nessun oggetto abbia tre NOUN_TYPE
-    std::optional<std::size_t> findSecondNoun(const std::vector<Type>& types) {
-        int count {};
-        for (std::size_t i = 0; i < types.size(); ++i) {
-            if (types[i] > Type::Void && types[i] < Type::ICON_NOUN_TYPE) { 
-                ++count;
-                if (count == 2) {
-                    return i;
-                }
-            }
-        }
-        assert (count > 0 && count < 3  &&"findSecondNoun() non funziona"); // N.B: t==0 sarebbe il primo NOUN_TYPE
-        return std::nullopt; 
-    }
     Position getShift(Direction dir) {
         switch (dir) {                                                      
             case Direction::Up:    return {0, -1};                          
@@ -295,9 +290,9 @@ namespace Baba_Is_Us{
 
         for (Type mism_type : target.getTypes()){
             if (mism_type == Type::Void) return PlayState::Playing;
+            if (mism_type == Type::Push) break;
             else if (mism_type == Type::Stop || mism_type == Type::Shut) return PlayState::Invalid;
             else if (mism_type == Type::Block) m_RM.block_moved=true; 
-            if (mism_type == Type::Push) break;
         }
         if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second)) return PlayState::Invalid;
         std::cerr<<"balls ";
@@ -345,7 +340,7 @@ namespace Baba_Is_Us{
             // quale sprite devi muovere e/o ruotare, tenendo conto del caso descritto?
             std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
             std::size_t index_to_modify {};
-            findSecondNoun(types).has_value() ? index_to_modify = +(*findSecondNoun(types))
+            findLastNoun(types).has_value() ? index_to_modify = +(*findLastNoun(types))
                                               : index_to_modify = indexToBeDrawn(static_cast<size_t>(m_map3D.getm_grid()[0][each.second][each.first]));
             sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
             
@@ -467,7 +462,8 @@ namespace Baba_Is_Us{
                 player_sprite.move(static_cast<float>(dx) * -11, static_cast<float>(dy) * -11);
                 m_map3D.redraw(clock);
                 render(window, m_map3D.tileSprites);
-            }
+            } else if (state == PlayState::Won) m_state_of_game = PlayState::Won;
+
             player_sprite = m_map3D.tileSprites[baba_idle_index];
             player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
             m_map3D.redraw(clock);
@@ -476,7 +472,11 @@ namespace Baba_Is_Us{
         }
         std::cerr<<" movement complete\n";
     }
-
+    void Game::interact(sf::RenderWindow& window, sf::Clock& clock){
+        for (const auto& player_pos : getPlayerPositions()){
+            std::cerr<< "/ interact \\ \n";
+        }
+    }
     void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
         sf::Event event;
         Direction direction;
@@ -508,6 +508,7 @@ namespace Baba_Is_Us{
                         movement(window, clock, direction);
                         break;
                     case sf::Keyboard::Space: 
+                        interact(window, clock);
                         //check se ha un oggetto in mano
                         //lancia oggetto
                         break;
@@ -534,6 +535,7 @@ namespace Baba_Is_Us{
         int y;
         int count{};
         for (const auto& rows : m_map3D.getm_grid()[0]){
+
             for (const auto &i : rows){
                 
                 assert (i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE 
@@ -619,7 +621,7 @@ namespace Baba_Is_Us{
                 case Type::Melt:    return handleMelt(tail, mismatch);
                 case Type::Shut:    return handleShut(tail, mismatch);
                 case Type::Stop:    return handleStop(tail);
-                case Type::Launch:
+
                 case Type::Push:    throw(std::runtime_error("conditions(): mism_type = Type::Push "));
                 case Type::Move:
                 case Type::Open:    
