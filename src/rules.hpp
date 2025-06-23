@@ -51,9 +51,10 @@ public :
 // idea: un singolo oggetto che gestisce tutte le regole
 class RuleManager{
 private :
-    std::vector<Rule> m_rules;
+    std::vector<Rule> m_rules {};
 
 public :
+    bool block_moved {false};
     RuleManager() = default;
     void addRule(const Rule& rule); // può forse diventare constexpr (dipende da std::tuple)
     void removeRule(const Rule& rule); // come addRule()

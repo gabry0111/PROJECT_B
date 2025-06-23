@@ -32,6 +32,7 @@ namespace Baba_Is_Us{
         void constantProperties();
         // le seguenti adjust..() NON CONTROLLANO se un blocco ha creato o tolto una regola
         void adjustAddingRules(); // SOLO PER AGGIUNGERE REGOLE
+        void adjustRemovingRules();
         std::vector<Position> getTailMovingPosition(Direction);
         void update(sf::RenderWindow &, Map &, sf::Clock &);
         void render(sf::RenderWindow &, std::vector<sf::Sprite>);

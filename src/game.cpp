@@ -35,6 +35,7 @@ namespace Baba_Is_Us{
     ///////////////////////////////////     Chapter: HandlingRules     ///////////////////////////////////
     // Per ogni regola di m_rules, aggiunge il PROPERTY_TYPE della regola tail tutti gli oggetti indicati dalla regola
     void Game::adjustAddingRules() {
+    
         std::vector<Rule> rules {m_RM.getm_rules()};
         assert (rules.size() > 0);
         for (const Rule& each_rule : m_RM.getm_rules()) { // per ogni singola regola
@@ -100,8 +101,16 @@ namespace Baba_Is_Us{
             }
         }
     }
-
+void Game::adjustRemovingRules(){
+    for (const auto rule: m_RM.getm_rules()){
+        for (const auto& pos : m_map3D.getPositions(rule.getm_rule()[0])){
+            m_map3D.At(pos.first, pos.second).removeType(rule.getm_rule()[2]);
+        }
+    }
+}
     void Game::parseRules() {
+        if(m_RM.getm_rules().size() != 0)
+            adjustRemovingRules();
         m_RM.clearRules();
         std::cerr << "In parseRules()\n";
         std::vector<Position> block_pos {m_map3D.getPositions(Type::Block)};
@@ -253,12 +262,13 @@ namespace Baba_Is_Us{
         Position pos_mism {start.first + shift.first, start.second + shift.second};
         Position pos_next_mism {pos_mism.first + shift.first, pos_mism.second + shift.second};
 
-        if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second)) return PlayState::Invalid;
         for (Type mism_type : target.getTypes()){
             if (mism_type == Type::Void) return PlayState::Playing;
-            else if (mism_type == Type::Stop || mism_type == Type::Shut) return PlayState::Invalid; 
+            else if (mism_type == Type::Stop || mism_type == Type::Shut) return PlayState::Invalid;
+            else if (mism_type == Type::Block) m_RM.block_moved=true; 
             else if (mism_type == Type::Push) break;
         }
+        if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second)) return PlayState::Invalid;
         std::cerr<<"balls ";
         if (handlePush(target, m_map3D.At(pos_next_mism.first, pos_next_mism.second), direction, pos_mism) == PlayState::Invalid)
             return PlayState::Invalid;
@@ -342,6 +352,8 @@ namespace Baba_Is_Us{
             // andrebbe invertito il check
             if( obj_mismatch.objectHasType(Type::Block) && m_map3D.isOutOfBoundary(pos_mismatch.first + dx, pos_mismatch.second + dy)) {continue;} 
             std::cerr<<"Object mismatch "<<obj_mismatch.getTypes()[0]<<"\n";
+            for(const auto& prop : obj_mismatch.getTypes())
+                std::cerr<<" _"<<prop;
             PlayState state;
             if (obj_mismatch.objectHasType(Type::Push))  
                 state = handlePush(obj_tail, obj_mismatch, direction, each);
@@ -358,7 +370,6 @@ namespace Baba_Is_Us{
                 m_map3D.accessm_objects()[pos_mismatch.second][pos_mismatch.first] = obj_tail;
                 m_map3D.resetObject(each);                
             }
-
             if (state == PlayState::Playing) {
                 player_sprite.move(static_cast<float>(dx * 11), static_cast<float>(dy * 11));
                 m_map3D.redraw(clock);
@@ -369,7 +380,11 @@ namespace Baba_Is_Us{
                 render(window, m_map3D.tileSprites);
                 sf::sleep(sf::milliseconds(10));
                 //movimento visivo ////////////
-                if (obj_mismatch.objectHasType(Type::Block)) {parseRules();}
+
+                if (m_RM.block_moved) {
+                    parseRules();
+                    m_RM.block_moved=false;
+                }
                     //movimento effettivo ////////////
                     //////////// movimento visivo
             } else if(state == PlayState::Invalid) {
@@ -407,6 +422,8 @@ namespace Baba_Is_Us{
             }
             std::cerr<<"\n";
         }
+        assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
+            std::cerr << "tail_pos.size() == "<< tail_pos.size() << " positions: ";
     }
 
     void Game::update(sf::RenderWindow &window, Map &map, sf::Clock &clock){
