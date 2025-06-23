@@ -36,7 +36,7 @@ namespace Baba_Is_Us{
         void adjustAddingRules(); // SOLO PER AGGIUNGERE REGOLE
         void adjustRemovingRules();
         std::vector<Position> getTailMovingPosition(Direction);
-        void update(sf::RenderWindow &, sf::Clock &);
+        void update(sf::RenderWindow &, Map &, sf::Clock &);
         void render(sf::RenderWindow &, std::vector<sf::Sprite>);
         // Objects getObject(Position); forse inutile
         // std::optional<PlayState> movementCheck(Direction, Position); inutile fare l'overload, verrà sempre scelto il vector.
