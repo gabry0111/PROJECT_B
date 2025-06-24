@@ -59,11 +59,7 @@ public:
   const std::vector<Rule> &getm_rules() const;
   std::vector<Rule> &accessm_rules();
   void clearRules(); // forse non serve
-  // dato un'insieme di regole, servirà per avere un vettore con le tuple che
-  // hanno la regola type in modo da confrontare se un'azione è possibile.
-  // N.B: se m_rules cambia, diventano dangling references
-  constexpr std::vector<Rule> getWhichRuleHasType(Type type) const;
-  // std::size_t GetNumRules() const; è inutile. guarda dove viene usato...
+
   std::optional<Type> findPlayerType()
       const; // può diventare constexpr (dipende da objectHasType())
 };

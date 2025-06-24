@@ -41,17 +41,6 @@ void RuleManager::clearRules() {
   assert(m_rules.size() == 0);
 }
 
-constexpr std::vector<Rule> RuleManager::getWhichRuleHasType(Type type) const {
-  std::vector<Rule> rules_with_rule;
-
-  for (const auto &rule : m_rules) {
-    if (rule.hasType(type)) {
-      rules_with_rule.emplace_back(rule);
-    }
-  }
-  return rules_with_rule;
-}
-
 std::optional<Type> RuleManager::findPlayerType() const {
   for (const auto &each_rule : m_rules) {
     if (each_rule.m_rule[2] == Type::You) {
