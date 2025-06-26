@@ -10,6 +10,8 @@
 using namespace Baba_Is_Us;
 
 int main() {
+  auto p = new int[16];
+  delete [] p;
   std::vector<sf::Texture>
       textures{};                 // tutte le textures da caricare nel livello
   std::vector<int> frameCounts{}; // grandezze /16 delle textures = numero di
@@ -24,7 +26,7 @@ int main() {
 
   std::cout << "Initializing game engine... (please please work)\n";
   // game engine: handles window and game state every frame
-  Game game("../../assets/levels/level1.txt"); // ??? non so se funziona
+  Game game("assets/levels/level1.txt"); // ??? non so se funziona
   std::cout << "Current working directory: " << std::filesystem::current_path()
             << "\n";
   std::cout << "Oui\n";
