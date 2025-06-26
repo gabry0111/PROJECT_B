@@ -92,10 +92,20 @@ constexpr std::string_view getTypeName(Type type) {
     return "Baba";
   case Type::Block:
     return "Block";
+  case Type::Door:
+    return "Door";
   case Type::Flag:
     return "Flag";
+  case Type::Gear:
+    return "Gear";
+  case Type::Key:
+    return "Key";
   case Type::Lava:
     return "Lava";
+  case Type::Lever:
+    return "Lever";
+  case Type::Pendulum:
+    return "Pendulum";
   case Type::Rock:
     return "Rock";
   case Type::Wall:

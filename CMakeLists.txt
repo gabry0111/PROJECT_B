@@ -51,5 +51,6 @@ if (BUILD_TESTING)
   add_executable(baba.t tests/baba_is_tests.cpp src/objects.cpp src/map.cpp src/game.cpp src/rules.cpp)
   # aggiungi l'eseguibile progetto.t alla lista dei test
   add_test(NAME baba.t COMMAND baba.t)
+  target_link_libraries(baba.t PRIVATE sfml-graphics)
 
 endif()
