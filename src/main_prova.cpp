@@ -10,6 +10,8 @@
 using namespace Baba_Is_Us;
 
 int main() {
+  auto p = new int[16];
+  delete [] p;
   std::vector<sf::Texture>
       textures{};                 // tutte le textures da caricare nel livello
   std::vector<int> frameCounts{}; // grandezze /16 delle textures = numero di
