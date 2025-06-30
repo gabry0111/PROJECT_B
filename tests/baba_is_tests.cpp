@@ -22,7 +22,7 @@ TEST_CASE("Basic functions - objects.hpp") {
       std::vector<Type> types_block{my_map.At(0, 0).getTypes()};
       CHECK(types_block.size() == 3);
       CHECK(types_block[0] == Type::Block);
-      CHECK(types_block[1] == Type::Baba);
+      CHECK(types_block[1] == Type::Icon_Baba);
       CHECK(types_block[2] == Type::Push);
 
       std::vector<Type> types_void{my_map.At(8, 8).getTypes()};
@@ -40,68 +40,85 @@ TEST_CASE("Basic functions - objects.hpp") {
       CHECK(types_flag[1] == Type::Win);
 
       game.accessMap().accessm_objects()[0][0].addType(Type::Push);
-      CHECK(types_block.size() == 4);
+      CHECK(types_block.size() == 3);
       CHECK(types_block[0] == Type::Block);
-      CHECK(types_block[1] == Type::Baba);
+      CHECK(types_block[1] == Type::Icon_Baba);
       CHECK(types_block[2] == Type::Push);
 
       game.accessMap().accessm_objects()[8][8].addType(Type::Push);
+      types_void = my_map.At(8, 8).getTypes();
       CHECK(types_void.size() == 2);
       CHECK(types_void[0] == Type::Void);
       CHECK(types_void[1] == Type::Push);
 
       game.accessMap().accessm_objects()[7][8].addType(Type::Push);
-      CHECK(types_void.size() == 3);
-      CHECK(types_void[0] == Type::Baba);
-      CHECK(types_void[1] == Type::You);
-      CHECK(types_void[2] == Type::Push);
+      types_baba = my_map.At(8, 7).getTypes();
+      CHECK(types_baba.size() == 3);
+      CHECK(types_baba[0] == Type::Baba);
+      CHECK(types_baba[1] == Type::You);
+      CHECK(types_baba[2] == Type::Push);
 
       game.accessMap().accessm_objects()[3][9].addType(Type::Push);
-      CHECK(types_void.size() == 3);
-      CHECK(types_void[0] == Type::Flag);
-      CHECK(types_void[1] == Type::Win);
-      CHECK(types_void[2] == Type::Push);
+      types_flag = my_map.At(9, 3).getTypes();
+      CHECK(types_flag.size() == 3);
+      CHECK(types_flag[0] == Type::Flag);
+      CHECK(types_flag[1] == Type::Win);
+      CHECK(types_flag[2] == Type::Push);
 
       game.accessMap().accessm_objects()[0][0].removeType(Type::Push);
       CHECK(types_block.size() == 3);
       CHECK(types_block[0] == Type::Block);
-      CHECK(types_block[1] == Type::Baba);
+      CHECK(types_block[1] == Type::Icon_Baba);
       CHECK(types_block[2] == Type::Push);
 
       game.accessMap().accessm_objects()[8][8].removeType(Type::Push);
+      types_void = my_map.At(8, 8).getTypes();
       CHECK(types_void.size() == 1);
       CHECK(types_void[0] == Type::Void);
 
       game.accessMap().accessm_objects()[7][8].removeType(Type::Push);
+      types_baba = my_map.At(8, 7).getTypes();
       CHECK(types_baba.size() == 2);
       CHECK(types_baba[0] == Type::Baba);
       CHECK(types_baba[1] == Type::You);
 
       game.accessMap().accessm_objects()[3][9].removeType(Type::Push);
+      types_flag = my_map.At(9, 3).getTypes();
       CHECK(types_flag.size() == 2);
       CHECK(types_flag[0] == Type::Flag);
       CHECK(types_flag[1] == Type::Win);
 
+      
       game.accessMap().accessm_objects()[0][0].resetObject();
-      CHECK(types_flag.size() == 0);
-
-      game.accessMap().accessm_objects()[8][8].resetObject();
-      CHECK(types_flag.size() == 0);
-
-      game.accessMap().accessm_objects()[7][8].resetObject();
-      CHECK(types_flag.size() == 0);
+      types_block = my_map.At(0, 0).getTypes();
+      CHECK(types_block.size() == 1);
 
       game.accessMap().accessm_objects()[3][9].resetObject();
-      CHECK(types_flag.size() == 0);
+      types_flag = my_map.At(9, 3).getTypes();
+      CHECK(types_flag.size() == 1);
+
+      game.accessMap().accessm_objects()[8][8].resetObject();
+      types_void = my_map.At(8, 8).getTypes();
+      CHECK(types_void.size() == 1);
+
+      game.accessMap().accessm_objects()[7][8].resetObject();
+      types_baba = my_map.At(8, 7).getTypes();
+      CHECK(types_baba.size() == 1);
+
 }
 
 TEST_CASE("Basic functions - rules.hpp") {
-      Game game("assets/levels/level_test1.txt");
+      Game game("assets/levels/level_test2_Playstate.txt");
       Map &my_map{game.accessMap()};
       CHECK(my_map.At(0, 0).getTypes()[0] == Type::Block);
-      CHECK(my_map.At(8, 8).getTypes()[0] == Type::Void);
-      CHECK(my_map.At(8, 7).getTypes()[0] == Type::Baba);
+      CHECK(my_map.At(8, 8).getTypes()[0] == Type::Wall);
+      CHECK(my_map.At(8, 12).getTypes()[0] == Type::Baba);
       CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
+
+      sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
+      game.accessMap().setTextures();
+      game.accessMap().setSprites();
+      sf::Clock clock;
 
       RuleManager rm{game.getRuleManager()};
       std::vector<Rule> &rules{rm.accessm_rules()};
@@ -125,32 +142,46 @@ TEST_CASE("Basic functions - rules.hpp") {
       CHECK(rules[0].getm_rule()[0] == Type::Baba);
       CHECK(rules[0].getm_rule()[1] == Type::Is);
       CHECK(rules[0].getm_rule()[2] == Type::You);
-      CHECK(rules[1].getm_rule()[1] == Type::Lava);
+
+      CHECK(rules[1].getm_rule()[0] == Type::Lava);
       CHECK(rules[1].getm_rule()[1] == Type::Is);
       CHECK(rules[1].getm_rule()[2] == Type::Hot);
-      CHECK(rules[2].getm_rule()[2] == Type::Wall);
+
+      CHECK(rules[2].getm_rule()[0] == Type::Wall);
       CHECK(rules[2].getm_rule()[1] == Type::Is);
       CHECK(rules[2].getm_rule()[2] == Type::Stop);
-      CHECK(rules[3].getm_rule()[3] == Type::Rock);
+
+      CHECK(rules[3].getm_rule()[0] == Type::Rock);
       CHECK(rules[3].getm_rule()[1] == Type::Is);
       CHECK(rules[3].getm_rule()[2] == Type::Defeat);
-      CHECK(rules[4].getm_rule()[4] == Type::Flag);
+
+      CHECK(rules[4].getm_rule()[0] == Type::Flag);
       CHECK(rules[4].getm_rule()[1] == Type::Is);
       CHECK(rules[4].getm_rule()[2] == Type::Win);
 
+      //check by modifying addRule()
+     
       Rule new_rule{Type::Flag, Type::Is, Type::Hot};
       rm.addRule(new_rule);
+
       CHECK(rm.getm_rules().size() == 6);
-      CHECK(my_map.At(9, 3).getTypes().size() == 3);
-      CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
-      CHECK(my_map.At(9, 3).getTypes()[1] == Type::Win);
-      CHECK(my_map.At(9, 3).getTypes()[2] == Type::Hot);
+      CHECK(rm.getm_rules()[5].getm_rule()[0] == Type::Flag);
+      CHECK(rm.getm_rules()[5].getm_rule()[1] == Type::Is);
+      CHECK(rm.getm_rules()[5].getm_rule()[2] == Type::Hot);
+      
 
       rm.removeRule(new_rule);
       CHECK(rm.getm_rules().size() == 5);
       CHECK(my_map.At(9, 3).getTypes().size() == 2);
       CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
       CHECK(my_map.At(9, 3).getTypes()[1] == Type::Win);
+
+      //check by modifying the map
+      game.movement(window, clock, Direction::Down);
+      CHECK(my_map.At(9, 3).getTypes().size() == 2);
+      CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
+      CHECK(my_map.At(9, 3).getTypes()[1] == Type::Hot);
+      CHECK(!my_map.At(9, 3).objectHasType(Type::Win));
 
 
       CHECK(*rm.findPlayerType() == Type::Baba);
@@ -172,7 +203,7 @@ TEST_CASE("Basic functions - map.hpp") {
   CHECK(positions.size() == 1);
   CHECK(positions[0].first == 8);
   CHECK(positions[0].second == 7);
-  CHECK(positions[0].first != 8);
+  CHECK(positions[0].first != 7);
   CHECK(positions[0].second != 8);
 
   void addObject(Position position, Type type);
@@ -184,6 +215,8 @@ TEST_CASE("Basic functions - map.hpp") {
   CHECK(my_map.getm_grid()[0][0][0] == 14);
   CHECK(my_map.getm_grid()[1][0][0] == 2);
   CHECK(my_map.getm_objects()[0][0].getTypes()[0] == Type::Block);
+  my_map.setTextures();
+  my_map.setSprites();
   CHECK(my_map.getTileSprites().size() == tilePaths.size());
 
   CHECK(!my_map.isOutOfBoundary(15, 15));
@@ -220,7 +253,7 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(you_positions[0].first == 8);
   CHECK(you_positions[0].second == 7);
 
-  //////// iniziamo il movimento:
+
   sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
   game.accessMap().setTextures();
   game.accessMap().setSprites();
@@ -228,7 +261,7 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
 
   // gli oggetti non si spostano in alto se baba non li tocca
   game.movement(window, clock, Direction::Up);
-  CHECK(my_map.At(8, 6).objectHasType(Type::Baba));
+  CHECK(my_map.At(8, 6).objectHasType(Type::Baba)); 
   CHECK(my_map.At(8, 7).objectHasType(Type::Void));
   CHECK(my_map.At(8, 4).objectHasType(Type::Lava));
   CHECK(my_map.At(8, 6).objectHasType(intToType(+Type::Baba)));
@@ -252,12 +285,12 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(8, 6).objectHasType(intToType(+Type::Void)));
   CHECK(my_map.At(8, 4).objectHasType(intToType(+Type::Lava)));
 
-  CHECK(my_map.getm_grid()[0][6][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[0][7][8] == +Type::Void);
+  CHECK(my_map.getm_grid()[0][5][8] == +Type::Baba);
+  CHECK(my_map.getm_grid()[0][6][8] == +Type::Void);
   CHECK(my_map.getm_grid()[0][4][8] == +Type::Lava);
 
-  CHECK(my_map.getm_grid()[1][6][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[1][7][8] == +Type::Void);
+  CHECK(my_map.getm_grid()[1][5][8] == +Type::Baba);
+  CHECK(my_map.getm_grid()[1][6][8] == +Type::Void);
   CHECK(my_map.getm_grid()[1][4][8] == +Type::Lava);
 
   // gli oggetti non si spostano in basso se baba non li tocca
@@ -277,20 +310,20 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.getm_grid()[1][7][8] == +Type::Void);
   CHECK(my_map.getm_grid()[1][4][8] == +Type::Lava);
 
-  // i !!! BLOCCHI !!! non si spostano a dx se baba non li tocca
+
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
   CHECK(my_map.At(11, 6).objectHasType(Type::Baba));
   CHECK(my_map.At(11, 6).objectHasType(Type::You));
   CHECK(my_map.At(2, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Lava));
+  CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Icon_Lava));
   CHECK(my_map.At(2, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(3, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Is));
+  CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
   CHECK(my_map.At(3, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Hot));
+  CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
   CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
 
   CHECK(my_map.getm_grid()[0][6][2] == +Type::Icon_Lava);
@@ -307,19 +340,19 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.getm_grid()[1][6][4] ==
         +my_map.getm_objects()[6][4].getTypes()[0]);
 
-  // i !!! BLOCCHI !!! non si spostano a dx se baba non li tocca
+
   game.movement(window, clock, Direction::Left);
   game.movement(window, clock, Direction::Left);
   CHECK(my_map.At(9, 6).objectHasType(Type::Baba));
   CHECK(my_map.At(9, 6).objectHasType(Type::You));
   CHECK(my_map.At(2, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Lava));
+  CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Icon_Lava));
   CHECK(my_map.At(2, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(3, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Is));
+  CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
   CHECK(my_map.At(3, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Hot));
+  CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
   CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
 
   CHECK(my_map.getm_grid()[0][6][2] == +Type::Icon_Lava);
@@ -383,201 +416,21 @@ auto is_noun_or_prop = [&my_map](Type type) -> bool{
   // gli oggetti non si spostano in basso se baba non li tocca
   game.movement(window, clock, Direction::Down);
   CHECK(my_map.At(8, 6).objectHasType(Type::Baba));
-  CHECK(my_map.At(8, 5).objectHasType(Type::Void));
+  CHECK(my_map.At(8, 7).objectHasType(Type::Void));
   CHECK(my_map.At(8, 4).objectHasType(Type::Lava));
 
   // i blocchi non si spostano a dx se baba non li tocca
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(11, 6).objectHasType(Type::Icon_Baba));
+  CHECK(my_map.At(11, 6).objectHasType(Type::Baba));
   CHECK(my_map.At(2, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Lava));
+  CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Icon_Lava));
   CHECK(my_map.At(2, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(3, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Is));
+  CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
   CHECK(my_map.At(3, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
-  CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Hot));
+  CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
   CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
 }
-
-/*
-
-TEST_CASE("Game - Won")
-{
-    Game game(MAPS_DIR "off_limits_bug.txt");
-
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::DOWN);
-    CHECK(game.GetPlayState() == PlayState::WON);
-}
-
-TEST_CASE("Game - Lost")
-{
-    Game game(MAPS_DIR "simple_map.txt");
-
-    CHECK(game.getMap().At(0, 2).objectHasType(Type::Icon_Baba));
-    CHECK(game.getRuleManager().GetNumRules() == 1);
-    CHECK(game.GetPlayState() == PlayState::PLAYING);
-
-    game.MovePlayer(Direction::UP);
-    CHECK(game.getRuleManager().GetNumRules() == 0);
-    CHECK(game.GetPlayState() == PlayState::LOST);
-}
-
-TEST_CASE("Game - Sink")
-{
-    Game game(MAPS_DIR "out_of_reach.txt");
-
-    CHECK(game.getMap().At(9, 3).objectHasType(Type::Icon_Baba));
-    CHECK(game.getRuleManager().GetNumRules() == 5);
-    CHECK(game.GetPlayerIcon() == Type::Icon_Baba);
-
-    game.MovePlayer(Direction::UP);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::DOWN);
-    game.MovePlayer(Direction::LEFT);
-    game.MovePlayer(Direction::LEFT);
-    game.MovePlayer(Direction::UP);
-    game.MovePlayer(Direction::LEFT);
-    game.MovePlayer(Direction::DOWN);
-    game.MovePlayer(Direction::DOWN);
-    game.MovePlayer(Direction::DOWN);
-
-    CHECK(game.getMap().At(10, 5).objectHasType(Type::Icon_Baba));
-    CHECK(game.getMap().At(10, 6).objectHasType(Type::ICON_ROCK));
-
-    game.MovePlayer(Direction::DOWN);
-
-    CHECK(game.getMap().At(10, 6).objectHasType(Type::Icon_Baba));
-    CHECK_FALSE(game.getMap().At(10, 7).objectHasType(Type::ICON_ROCK));
-
-    game.MovePlayer(Direction::DOWN);
-    CHECK(game.GetPlayState() == PlayState::LOST);
-}
-
-TEST_CASE("Game - Defeat")
-{
-    Game game(MAPS_DIR "off_limits_bug.txt");
-
-    CHECK(game.getMap().At(12, 1).objectHasType(Type::ICON_SKULL));
-
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-
-    CHECK(game.getMap().At(12, 1).objectHasType(Type::ICON_SKULL));
-}
-
-TEST_CASE("Map - Basic")
-{
-    Map map(5, 5);
-
-    map.AddObject(4, 3, Type::BABA);
-    CHECK(map.At(3, 3).objectHasType(Type::ICON_EMPTY));
-    CHECK(map.At(4, 3).objectHasType(Type::BABA));
-}
-
-TEST_CASE("RuleManager - Basic")
-{
-    RuleManager ruleManager;
-
-    const Rule rule1{ Object(std::vector<Type>{ Type::BABA }),
-                      Object(std::vector<Type>{ Type::IS }),
-                      Object(std::vector<Type>{ Type::YOU }) };
-    const Rule rule2{ Object(std::vector<Type>{ Type::KEKE }),
-                      Object(std::vector<Type>{ Type::IS }),
-                      Object(std::vector<Type>{ Type::STOP }) };
-
-    ruleManager.AddRule(rule1);
-    CHECK(ruleManager.GetNumRules() == 1);
-
-    ruleManager.AddRule(rule2);
-    CHECK(ruleManager.GetNumRules() == 2);
-
-    ruleManager.RemoveRule(rule2);
-    CHECK(ruleManager.GetNumRules() == 1);
-}
-
-TEST_CASE("Map - Icon Vanishing")
-{
-    Game game(MAPS_DIR "off_limits_bug.txt");
-
-    CHECK(game.getMap().At(14, 1).objectHasType(Type::ICON_WALL));
-
-    game.MovePlayer(Direction::RIGHT);
-
-    CHECK(game.getMap().At(14, 1).objectHasType(Type::ICON_WALL));
-}
-
-TEST_CASE("Map - Icon Spread")
-{
-    Game game(MAPS_DIR "off_limits_bug.txt");
-
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::RIGHT);
-    game.MovePlayer(Direction::LEFT);
-    game.MovePlayer(Direction::LEFT);
-
-    CHECK(game.getMap().At(21, 3).objectHasType(Type::ICON_WALL));
-    CHECK(game.getMap().At(21, 4).objectHasType(Type::ICON_WALL));
-    CHECK(game.getMap().At(21, 5).objectHasType(Type::ICON_WALL));
-    CHECK(game.getMap().At(22, 3).objectHasType(Type::ICON_EMPTY));
-    CHECK(game.getMap().At(22, 4).objectHasType(Type::ICON_EMPTY));
-    CHECK(game.getMap().At(22, 5).objectHasType(Type::ICON_FLOWER));
-    CHECK(game.getMap().At(23, 3).objectHasType(Type::ICON_EMPTY));
-    CHECK(game.getMap().At(23, 4).objectHasType(Type::ICON_EMPTY));
-    CHECK(game.getMap().At(23, 5).objectHasType(Type::ICON_EMPTY));
-}
-
-TEST_CASE("Preprocess - Basic")
-{
-    Game game(MAPS_DIR "baba_is_you.txt");
-
-    const std::vector<float> tensor = Preprocess::StateToTensor(game);
-    CHECK_EQ(tensor.size(), Preprocess::TENSOR_DIM * game.getMap().GetWidth() *
-                                game.getMap().GetHeight());
-
-    const auto ToIndex = [](std::size_t x, std::size_t y, std::size_t c) {
-        return (c * 11 * 9) + (y * 11) + x;
-    };
-
-    CHECK_EQ(tensor[ToIndex(0, 0, 0)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(1, 0, 1)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(2, 0, 2)], 1.0f);
-
-    CHECK_EQ(tensor[ToIndex(0, 0, 14)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(1, 0, 14)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(2, 0, 14)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(3, 0, 14)], 0.0f);
-
-    CHECK_EQ(tensor[ToIndex(0, 0, 15)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(1, 0, 15)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(2, 0, 15)], 1.0f);
-    CHECK_EQ(tensor[ToIndex(3, 0, 15)], 0.0f);
-}
-
-TEST_CASE("RandomAgent - Basic")
-{
-    const Game game(MAPS_DIR "baba_is_you.txt");
-
-    RandomAgent agent;
-
-    std::vector<Direction> actions = { Direction::UP, Direction::DOWN,
-                                       Direction::LEFT, Direction::RIGHT,
-                                       Direction::NONE };
-    const Direction action = agent.GetAction(game);
-
-    CHECK_NE(std::find(begin(actions), end(actions), action), end(actions));
-}
-*/

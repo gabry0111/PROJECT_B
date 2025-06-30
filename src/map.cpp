@@ -56,39 +56,12 @@ Map::Map(std::string_view filename) {
   spriteOverlay();
 
   std::cout << "\nno gay\n";
-  for (auto &col : m_objects) {
-    for (auto &row : col) {
-      std::cerr << +row.getTypes()[0];
-      if (row.getTypes()[0] == Type::Block)
-        std::cerr << " (" << +row.getTypes()[1] << ',' << row.getTypes()[1]
-                  << ")   ";
-      else
-        std::cerr << ' ';
-    }
-    std::cerr << '\n';
-  }
-  std::cerr << "----------------------------\n";
-  for (auto &col : m_grid[0]) {
-    for (auto &row : col) {
-      std::cerr << row << ' ';
-    }
-    std::cerr << '\n';
-  }
-  std::cerr << "----------------------------\n";
-  for (auto &col : m_grid[1]) {
-    for (auto &row : col) {
-      std::cerr << intToType(row) << ' ';
-    }
-    std::cerr << '\n';
-  };
 }
 
 void Map::spriteOverlay() {
   for (std::size_t i{}; i < MapSize::n_tiles; ++i) {
     Objects &obj = m_objects[i / MapSize::width][i % MapSize::height];
     if (obj.getTypes()[0] != Type::Block) {
-      std::cerr << "spriteOverlay(): int of noun: "
-                << static_cast<int>(findLastNoun(obj.getTypes())) << '\n';
       m_grid[0][i / MapSize::width][i % MapSize::height] =
           static_cast<int>(findLastNoun(obj.getTypes()));
     }

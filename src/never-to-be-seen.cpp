@@ -466,3 +466,67 @@ int main()
     return 0;
 }
     */
+   /*
+assert(getPlayerPositions().size() > 0 &&
+          "movement(): player_positions.size() == 0");
+    
+    for (std::size_t i{}; i < 16; ++i) {
+      for (std::size_t j{}; j < 16; ++j) {
+        std::cerr << m_map3D.getm_grid()[0][i][j] << " ";
+      }
+      std::cerr << "\n";
+    }
+    std::cerr << "akfnjdsaknjaofbjabd\n";
+    for (std::size_t i{}; i < 16; ++i) {
+      for (std::size_t j{}; j < 16; ++j) {
+        std::cerr << m_map3D.getm_grid()[1][i][j] << " ";
+      }
+      std::cerr << "\n";
+    }
+    std::cerr << "OBEJKFCSDJTKJSADAS------------\n";
+    for (std::size_t i{}; i < 16; ++i) {
+      for (std::size_t j{}; j < 16; ++j) {
+        std::cerr << m_map3D.getm_objects()[i][j].getTypes()[0] << " ";
+      }
+      std::cerr << "\n";
+    }
+    */
+    
+/*
+
+    assert(getPlayerPositions().size() > 0 &&
+          "movement(): player_positions.size() == 0");
+    
+    for (std::size_t i{}; i < 16; ++i) {
+      for (std::size_t j{}; j < 16; ++j) {
+        std::cerr << m_map3D.getm_grid()[0][i][j] << " ";
+      }
+      std::cerr << "\n";
+    }
+    std::cerr << "akfnjdsaknjaofbjabd\n";
+    for (std::size_t i{}; i < 16; ++i) {
+      for (std::size_t j{}; j < 16; ++j) {
+        std::cerr << m_map3D.getm_grid()[1][i][j] << " ";
+      }
+      std::cerr << "\n";
+    }
+    std::cerr << "OBEJKFCSDJTKJSADAS------------\n";
+    for (std::size_t i{}; i < 16; ++i) {
+      for (std::size_t j{}; j < 16; ++j) {
+        std::cerr << m_map3D.getm_objects()[i][j].getTypes()[0] << " ";
+      }
+      std::cerr << "\n";
+    }
+    
+    
+    assert(tail_pos.size() > 0 && "movement(): tail_pos.size() == 0");
+    std::cerr << "tail_pos.size() == " << tail_pos.size() << " positions: ";
+    for (const auto &pos : m_map3D.getPositions(Type::Block)) {
+        std::cerr << "Blocks at new pos: (" << pos.first << ", " << pos.second
+                  << ")\n";
+      }
+      std::cerr << "A block has been moved\n";
+      std::cerr << "movement() before parseRules(): m_RM has m_rules of size: "
+                << m_RM.getm_rules().size() << '\n';
+
+*/

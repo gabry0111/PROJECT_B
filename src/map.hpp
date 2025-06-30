@@ -180,7 +180,6 @@ inline std::size_t indexToBeDrawn(const int i) {
                 last = i;
             }
         }
-        std::cerr << "findLastNoun(): " << last << ", type = " << types[last] << '\n';
         return static_cast<std::size_t>(+(types[last])); 
     }
 
