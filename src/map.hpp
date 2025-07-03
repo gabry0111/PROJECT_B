@@ -12,58 +12,53 @@ using Position = std::pair<std::size_t, std::size_t>;
 namespace MapSize {
 constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
 constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
-constexpr int depth = 2;   // Number of layers in the map
-constexpr int n_tiles = width * height; // Total number of tiles
+constexpr int depth = 2; 
+constexpr int n_tiles = width * height; 
 
 constexpr int TILE_SIZE = 32;
 constexpr int FRAMES_PER_ANIMATION = 3;
 constexpr int FRAME_TIME_MS = 150;
+}
 
-} // namespace MapSize
 using MapGrid2D = std::array<std::array<int, MapSize::height>, MapSize::width>;
 
 namespace Baba_Is_Us {
 
-// va implementato un modo per cui il compilatore prenda il file dalla BUILD
-// così da semplificare l'azione che prende il percorso (di tipo std::string)
-inline std::array<std::string, 33> tilePaths{
-    "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0
-    "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1
-    "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",  // 2
-    "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 3
-    "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",  // 4
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",         // 5
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",       // 6
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",      // 7
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",       // 8
-    "assets/png_PROGETTO/gifs/DOOR_spritesheet.png",            // 9
+inline std::array<std::string, 31> tilePaths{
+    "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0 
+    "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1 
+    "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2 
+    "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",  // 3 
+    "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",  // 4 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",         // 5 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",      // 6 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",       // 7 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",       // 8 
+    "assets/png_PROGETTO/gifs/DOOR_spritesheet.png",            // 9 
     "assets/png_PROGETTO/gifs/FLAG_spritesheet.png",            // 10
     "assets/png_PROGETTO/gifs/GEAR_spritesheet.png",            // 11
     "assets/png_PROGETTO/gifs/KEY_spritesheet.png",             // 12
     "assets/png_PROGETTO/gifs/LAVA_spritesheet.png",            // 13
-    "assets/png_PROGETTO/gifs/LEVER_LEFT_spritesheet.png",      // 14
-    "assets/png_PROGETTO/gifs/LEVER_RIGHT_spritesheet.png",     // 15
-    "assets/png_PROGETTO/gifs/PENDULUM_spritesheet.png",        // 16
-    "assets/png_PROGETTO/gifs/ROCK_spritesheet.png",            // 17
-    "assets/png_PROGETTO/gifs/WALL_spritesheet.png",            // 18
-    "assets/png_PROGETTO/text/BABA_text_spritesheet.png",       // 19
-    "assets/png_PROGETTO/text/DEFEAT_text_spritesheet.png",     // 20
-    "assets/png_PROGETTO/text/FLAG_text_spritesheet.png",       // 21
-    "assets/png_PROGETTO/text/HOT_text_spritesheet.png",        // 22
-    "assets/png_PROGETTO/text/IS_text_spritesheet.png",         // 23
-    "assets/png_PROGETTO/text/LAVA_text_spritesheet.png",       // 24
-    "assets/png_PROGETTO/text/MELT_text_spritesheet.png",       // 25
-    "assets/png_PROGETTO/text/PUSH_text_spritesheet.png",       // 26
-    "assets/png_PROGETTO/text/ROCK_text_spritesheet.png",       // 27
-    "assets/png_PROGETTO/text/SHUT_text_spritesheet.png",       // 28
-    "assets/png_PROGETTO/text/STOP_text_spritesheet.png",       // 29
-    "assets/png_PROGETTO/text/WALL_text_spritesheet.png",       // 30
-    "assets/png_PROGETTO/text/WIN_text_spritesheet.png",        // 31
-    "assets/png_PROGETTO/text/YOU_text_spritesheet.png"         // 32
+    "assets/png_PROGETTO/gifs/LEVER_spritesheet.png",           // 14
+    "assets/png_PROGETTO/gifs/ROCK_spritesheet.png",            // 15
+    "assets/png_PROGETTO/gifs/WALL_spritesheet.png",            // 16
+    "assets/png_PROGETTO/text/BABA_text_spritesheet.png",       // 17
+    "assets/png_PROGETTO/text/DEFEAT_text_spritesheet.png",     // 18
+    "assets/png_PROGETTO/text/FLAG_text_spritesheet.png",       // 19
+    "assets/png_PROGETTO/text/HOT_text_spritesheet.png",        // 20
+    "assets/png_PROGETTO/text/IS_text_spritesheet.png",         // 21
+    "assets/png_PROGETTO/text/LAVA_text_spritesheet.png",       // 22
+    "assets/png_PROGETTO/text/MELT_text_spritesheet.png",       // 23
+    "assets/png_PROGETTO/text/PUSH_text_spritesheet.png",       // 24
+    "assets/png_PROGETTO/text/ROCK_text_spritesheet.png",       // 25
+    "assets/png_PROGETTO/text/SHUT_text_spritesheet.png",       // 26
+    "assets/png_PROGETTO/text/STOP_text_spritesheet.png",       // 27
+    "assets/png_PROGETTO/text/WALL_text_spritesheet.png",       // 28
+    "assets/png_PROGETTO/text/WIN_text_spritesheet.png",        // 29
+    "assets/png_PROGETTO/text/YOU_text_spritesheet.png"         // 30
 };
 
-// associamo gli int sottostanti a enum Type, dati in level.txt, a un path di
-// tilePaths
+// associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di tilePath
 inline std::size_t indexToBeDrawn(const int i) {
   std::size_t nth{};
   std::string substring;
@@ -73,7 +68,6 @@ inline std::size_t indexToBeDrawn(const int i) {
       if (tilePaths[iter].find(sub) != std::string::npos)
         return iter;
     }
-    std::cerr << "Failed to find substring: " << sub << " in tilePaths\n";
     return tilePaths_size;
   };
 
@@ -100,88 +94,69 @@ inline std::size_t indexToBeDrawn(const int i) {
     substring = "gifs/LAVA";
     break;
   case 8:
-    substring = "gifs/LEVER_LEFT";
+    substring = "gifs/LEVER";
     break;
   case 9:
-    substring = "gifs/PENDULUM";
-    break;
-  case 10:
     substring = "gifs/ROCK";
     break;
-  case 11:
+  case 10:
     substring = "gifs/WALL";
     break;
 
-  case 14:
+  case 13:
     substring = "text/BABA";
     break;
-  case 15:
+  case 14:
     substring = "text/DEFEAT";
     break;
-  case 16:
+  case 15:
     substring = "text/FLAG";
     break;
-  case 17:
+  case 16:
     substring = "text/HOT";
     break;
-  case 18:
+  case 17:
     substring = "text/IS";
     break;
-  case 19:
+  case 18:
     substring = "text/LAVA";
     break;
-  case 20:
+  case 19:
     substring = "text/MELT";
     break;
-  case 21:
+  case 20:
     substring = "text/PUSH";
     break;
-  case 22:
+  case 21:
     substring = "text/ROCK";
     break;
-  case 23:
+  case 22:
     substring = "text/STOP";
     break;
-  case 24:
+  case 23:
     substring = "text/WALL";
     break;
-  case 25:
+  case 24:
     substring = "text/WIN";
     break;
-  case 26:
+  case 25:
     substring = "text/YOU";
     break;
+      default : break;
+  }
+  if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
+  else {return (nth = searchIndex(substring));}
+}
 
-  case 28:
-
-            case 30:
-            case 31:
-            case 32:
-            case 33:
-            case 34:
-            case 35:
-            case 36:
-            case 37:
-            case 38:
-            case 39:
-            case 40:
-            case 41:
-            case 42:
-            default : break;
+inline std::size_t findLastNoun(const std::vector<Type>& types) {
+    std::size_t last {};
+    for (std::size_t i{}; i < types.size(); ++i) {
+        if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
+            last = i;
         }
-        if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
-        else {return (nth = searchIndex(substring));}
     }
-
-    inline std::size_t findLastNoun(const std::vector<Type>& types) {
-        std::size_t last {};
-        for (std::size_t i{}; i < types.size(); ++i) {
-            if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
-                last = i;
-            }
-        }
-        return static_cast<std::size_t>(+(types[last])); 
-    }
+    return static_cast<std::size_t>(+(types[last])); 
+}
 
 inline Type iconToAll(Type type) {
   switch (type) {
@@ -214,7 +189,7 @@ inline Type iconToAll(Type type) {
   case Type::Icon_You:
     return Type::You;
   default:
-    throw(std::runtime_error("iconToAll(): scimpanzini bananini"));
+    throw(std::runtime_error("iconToAll(): not given an Icon Type"));
   }
 }
 
@@ -222,6 +197,7 @@ class Map {
 private:
   // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2
   std::array<MapGrid2D, MapSize::depth> m_grid;
+
   // N.B: [1][2] accedi a x (width) = 1; y (height) = 2
   std::array<std::array<Objects, MapSize::height>, MapSize::width> m_objects;
 
@@ -234,13 +210,10 @@ public:
   std::vector<sf::Sprite> tileSprites{};
 
   Map() = default;
-  // alloca lo spazio di m_objects per (MapSize::width * MapSize::height)
-  // elementi
   Map(std::string_view);
 
   void spriteOverlay();
-  // inizializza ogni Objects di m_objects al tipo della corrispondente cella di
-  // new_map_grid da chiamare appena creata un'istanza di Map
+  
   const std::array<MapGrid2D, MapSize::depth> &getm_grid() const;
   std::array<MapGrid2D, MapSize::depth> &accessm_grid();
   const std::array<std::array<Objects, MapSize::height>, MapSize::width> &
@@ -252,30 +225,25 @@ public:
   void redraw(sf::Clock &);
   const std::vector<sf::Sprite> &getTileSprites() const;
   sf::Sprite &accessWhichSpriteIsInPosition(Position &);
+
   // resetta la mappa (se PlayState::Invalid o se cambia livello)
   // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando
   // poi la funzione apposita che controlla le regole nella mappa
   void Reset(const std::array<std::array<int, MapSize::width>, MapSize::height>
-                 &); // può diventare constexpr
+                 &); 
 
-  // aggiungi un oggetto (constexpr)
   void addObject(Position position, Type type);
 
-  // rimuovi un oggetto (constexpr)
   void resetObject(Position position);
 
   // Quale oggetto c'è in quella posizione?
   Objects &At(std::size_t x, std::size_t y);
-  const Objects &
-  At(std::size_t x,
-     std::size_t y) const; // NON può diventare constexpr (m_objects è vector)
+  const Objects &At(std::size_t x, std::size_t y) const; 
+  Objects &At(Position);
 
-  // restituisce le posizioni di uno specifico tipo (TRANNE I BLOCCHI)
-  const std::vector<Position>
-      getPositions(Type) const; // non conviene diventare constexpr (dovrebbe
-                                // essere template di array)
+  const std::vector<Position> getPositions(Type) const; 
+  void pathFinder(Position, Direction, std::vector<Position>&, std::vector<Direction>&);
 };
-
 std::size_t indexToBeDrawn(const std::size_t i);
 
 } // namespace Baba_Is_Us

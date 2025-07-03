@@ -18,10 +18,9 @@ tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 
 namespace Baba_Is_Us {
 
-// idea: creare una singola istanza di una regola
 class Rule {
 private:
-  std::array<Type, 3> m_rule; // vedere differenza tra tuple e array
+  std::array<Type, 3> m_rule; 
 public:
   Rule() = delete; // non si può creare una regola vuota
   Rule(Type type1, Type type2, Type type3)
@@ -36,16 +35,14 @@ public:
   }
 
   friend class RuleManager;
-  friend bool
-  operator==(const Rule &rhs,
-             const Rule &lhs); // per algoritmi tipo find(), può forse diventare
-                               // constexpr (dipende da std::tuple)
+  friend bool operator==(const Rule &rhs, const Rule &lhs); 
+  
   bool hasType(
-      Type type) const; // può diventare constexpr (dipende da objectHasType())
+      Type type) const;
   const std::array<Type, 3> &getm_rule() const;
 };
 
-// idea: un singolo oggetto che gestisce tutte le regole
+
 class RuleManager {
 private:
   std::vector<Rule> m_rules{};
@@ -53,15 +50,14 @@ private:
 public:
   bool block_moved{false};
   RuleManager() = default;
-  void addRule(const Rule &rule); // può forse diventare constexpr (dipende da
-                                  // std::tuple)
-  void removeRule(const Rule &rule); // come addRule()
+  void addRule(const Rule &rule); 
+  void removeRule(const Rule &rule); 
+
   const std::vector<Rule> &getm_rules() const;
   std::vector<Rule> &accessm_rules();
-  void clearRules(); // forse non serve
+  void clearRules(); 
 
-  std::optional<Type> findPlayerType()
-      const; // può diventare constexpr (dipende da objectHasType())
+  std::optional<Type> findPlayerType() const; 
 };
 } // namespace Baba_Is_Us
 

@@ -1,6 +1,5 @@
 /* objects.hpp serve per controllare ogni oggetto, a cui sarà applicata una
 regola in altri file. Ogni m_object sarà inizializzato e disegnato in
-
 */
 #ifndef OBJECTS_HPP
 #define OBJECTS_HPP
@@ -8,8 +7,7 @@ regola in altri file. Ogni m_object sarà inizializzato e disegnato in
 #include "enum_objects.hpp"
 #include <algorithm>
 #include <cassert>
-#include <iostream> //da togliere
-#include <optional> //forse da togliere
+#include <optional> 
 #include <vector>
 
 namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto
@@ -19,32 +17,18 @@ private:
   std::vector<Type> m_object{}; // sarà del tipo: NOUN_TYPE e tanti
                                 // PROPERTY_TYPE
 
-  /*
-  Problema: assicurarsi che "noun" (parametro del costruttore) sia valida per
-  stampare l'oggetto a schermo (non sia un aggettivo/proprietà). Creiamo una
-  funzione per assicurarsi al compile time (il corpo del costruttore avviene al
-  runtime) che l'oggetto sia valido per essere stampato a schermo (non sia
-  aggettivo o verbo)
-  */
-
 public:
-  Objects() = default; // per le celle vuote
+  Objects() = default;
   Objects(std::vector<Type> object_vect) : m_object{object_vect} {}
 
-  // potrà essere usato, una volta identificato quale oggetto ha un certo tipo
-  // con un'altra funzione, per ottenere il NOUN_TYPE di chi ha quel tipo
-  std::vector<Type> getTypes() const; // può diventare constexpr
+  
+  std::vector<Type> getTypes() const; 
   std::vector<Type> &accessTypes();
   constexpr bool operator==(const Objects &object) const;
-  bool objectHasType(
-      const Type type) const; // può forse diventare constexpr (solo al runtime
-                              // a meno di controllare, prima di chiamare la
-                              // funzione, che il tipo sia valido)
-  void addType(const Type word); // può diventare constexpr (solo al runtime)
-  void removeType(Type type);    // come objectHasType()
-  void resetObject(); // resetta Object (che è vector<Type>) a size 0, ma
-                      // capacity invariata; come objectHasType()
-};
+  bool objectHasType(const Type type) const; 
+  void addType(const Type word); 
+  void removeType(Type type); 
+  void resetObject(); };
 } // namespace Baba_Is_Us
 
 #endif

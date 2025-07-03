@@ -55,12 +55,10 @@ void Objects::addType(const Type word) {
 }
 
 void Objects::removeType(const Type type) {
-  std::cerr << "removeType(): type passed is: " << type << '\n';
   auto iter{std::find(m_object.begin(), m_object.end(), type)};
   bool is_valid{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
                 type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
                 iter != m_object.end()};
-  assert(is_valid && "remove() not given a valid type or type not present");
   if (is_valid)
     m_object.erase(iter);
 }
