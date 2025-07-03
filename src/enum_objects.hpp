@@ -81,37 +81,23 @@ constexpr auto operator-(T a) noexcept
 integral types"); return static_cast<Type>(a);
 }
 */
-
 constexpr std::string_view getTypeName(Type type) {
-  switch (type) {
-  case Type::NOUN_TYPE:
-    return "NOUN_TYPE";
-  case Type::Void:
-    return "Void";
-  case Type::Baba:
-    return "Baba";
-  case Type::Block:
-    return "Block";
-  case Type::Door:
-    return "Door";
-  case Type::Flag:
-    return "Flag";
-  case Type::Gear:
-    return "Gear";
-  case Type::Key:
-    return "Key";
-  case Type::Lava:
-    return "Lava";
-  case Type::Lever:
-    return "Lever";
-  case Type::Pendulum:
-    return "Pendulum";
-  case Type::Rock:
-    return "Rock";
-  case Type::Wall:
-    return "Wall";
-  case Type::ICON_NOUN_TYPE:
-    return "ICON_NOUN_TYPE";
+  //clang-format off
+  switch (type) { 
+  case Type::NOUN_TYPE: return "NOUN_TYPE";
+  case Type::Void:      return "Void";
+  case Type::Baba:      return "Baba";
+  case Type::Block:     return "Block";
+  case Type::Door:      return "Door";
+  case Type::Flag:      return "Flag";
+  case Type::Gear:      return "Gear";
+  case Type::Key:       return "Key";
+  case Type::Lava:      return "Lava";
+  case Type::Lever:     return "Lever";
+  case Type::Pendulum:  return "Pendulum";
+  case Type::Rock:      return "Rock";
+  case Type::Wall:      return "Wall";
+  case Type::ICON_NOUN_TYPE:return "ICON_NOUN_TYPE";
   case Type::Icon_Void:
     return "Icon_Void";
   case Type::Icon_Baba:
@@ -168,8 +154,9 @@ constexpr std::string_view getTypeName(Type type) {
     return "You";
   default:
     return "No type";
-  }
+  } // clang-format on
 }
+
 
 inline std::ostream &operator<<(std::ostream &out, Type type) {
   return out << getTypeName(type);

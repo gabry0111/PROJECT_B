@@ -58,8 +58,8 @@ Classi o Struct
 Alcune regole del gioco: N.B.: non devono tirare eccezioni, semplicemente non fanno nulla
 Azioni permesse dalle frasi logiche:
 - una frase deve essere una retta (NO prima orizzontale, poi verticale), ma una parola può essere condivisa da più frasi (SI due frasi a croce)
-- ??? una frase può contenere SOLO un noun (baba is wall) ???
-- se l'azione nel Main Loop è muovere un blocco(che costruisce una frase logica): riassegnare 
+- una frase può contenere 2 noun (baba is wall) 
+- Push funziona su tutto, tranne se un oggetto è melt
 
 Main Loop: ad ogni iterazione:
 - getKeyPressed();
