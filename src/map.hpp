@@ -113,15 +113,9 @@ inline std::size_t indexToBeDrawn(const int i) {
   case 22:
     substring = "text/STOP";
     break;
-  case 23:
-    substring = "text/WALL";
-    break;
-  case 24:
-    substring = "text/WIN";
-    break;
-  case 25:
-    substring = "text/YOU";
-    break;
+  case 23:  substring = "text/WALL";  break;
+  case 24:  substring = "text/WIN"; break;
+  case 25:  substring = "text/YOU"; break;
   default : break;
   } //clang-format on
   if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
@@ -208,9 +202,8 @@ class Map {
   Objects &At(Position);
 
   const std::vector<Position> getPositions(Type) const; 
-  void pathFinder(Position, Direction, std::vector<Position>&, std::vector<Direction>&);
+  void pathFinder(Position, Direction, const std::array<Direction, 4>&, bool);
 };
-std::size_t indexToBeDrawn(const std::size_t i);
 
 }  // namespace Baba_Is_Us
 #endif

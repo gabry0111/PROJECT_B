@@ -185,7 +185,7 @@ Position getShift(Direction dir) {
   case Direction::Down:   return {0, 1};
   case Direction::Left:   return {-1, 0};
   case Direction::Right:  return {1, 0};
-  default:                break;
+  default:                throw(std::runtime_error("getShift(): not given a valid direction"));
   } //clang-format on
 }
 // N.B: data una fila verticale di oggetti attaccati e la direzione Up,
@@ -222,7 +222,6 @@ std::optional<Position> getMismatch(const MapGrid2D &grid, Direction dir, Positi
   while (x < MapSize::width && y < MapSize::height) {
     if (grid[y][x] != value) {
       result = {x, y};
-      std::cerr << "Mismatch is in position: " << x << y << '\n';
       return result;
     }
 
@@ -237,13 +236,14 @@ PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, 
   Position pos_mism{start.first + shift.first, start.second + shift.second};
   Position pos_next_mism{pos_mism.first + shift.first, pos_mism.second + shift.second};
 
-  if (target.objectHasType(Type::Void))
+  if (target.objectHasType(Type::Void)) // per fermare la scansione degli oggetti
     return PlayState::Playing;
 
   if (target.objectHasType(Type::Block))
     m_RM.block_moved = true;
   
   PlayState state = conditions(tail, target);
+  std::cerr << "State == " << +state << '\n';
   
   if (tail.objectHasType(Type::Void)){
     m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
@@ -310,6 +310,10 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
       continue;
     Position pos_mismatch =
         *getMismatch(m_map3D.getm_grid()[1], direction, each);
+    std::cerr << "Mismatch is in position: " << pos_mismatch.first << pos_mismatch.second << " and has types: ";
+      for(auto& type : m_map3D.At(pos_mismatch).getTypes()) {
+        std::cerr << type << '\n';
+      }
 
     std::size_t delta_x = pos_mismatch.first - each.first;
     std::size_t delta_y = pos_mismatch.second - each.second;
@@ -427,19 +431,22 @@ void Game::interact(){
     Position left {pos.first -1, pos.second};
 
     // i vector directions e adjacents fanno corrispondere direzione e casella adiacente
-    std::vector<Position> adjacents {up, right, down, left};
-    std::vector<Direction> directions {Direction::Up, Direction::Right, Direction::Down, Direction::Left};
+    const std::array<Position, 4> adjacents {up, right, down, left};
+    const std::array<Direction, 4> directions {Direction::Up, Direction::Right, Direction::Down, Direction::Left};
 
     for (const auto each : directions){
       if (m_map3D.isOutOfBoundary(adjacents[static_cast<std::size_t>(+each)].first, adjacents[static_cast<std::size_t>(+each)].second)){
         continue;
       }
-      Objects& current {m_map3D.At(adjacents[static_cast<std::size_t>(+each)])};
+      Objects& target {m_map3D.At(adjacents[static_cast<std::size_t>(+each)])};
 
-      if (current.objectHasType(Type::Lever) && !current.objectHasType(Type::Switch)){
-        current.addType(Type::Switch);
-
-        m_map3D.pathFinder(adjacents[static_cast<std::size_t>(+each)], each, adjacents, directions);
+      if (target.objectHasType(Type::Lever) && !target.objectHasType(Type::Switch)){
+        target.addType(Type::Switch);
+        std::cerr << "interact(): lever_pos: " << adjacents[static_cast<std::size_t>(+each)].first << adjacents[static_cast<std::size_t>(+each)].second << ' ';
+        m_map3D.pathFinder(adjacents[static_cast<std::size_t>(+each)], each, directions, true);
+      } else if (target.objectHasType(Type::Lever) && target.objectHasType(Type::Switch)) {
+        target.removeType(Type::Switch);
+        m_map3D.pathFinder(adjacents[static_cast<std::size_t>(+each)], each, directions, false);
       }
     }
   }
@@ -521,7 +528,7 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
               sprites[nth_sprite_to_be_drawn].setPosition(static_cast<float>(x),
                                                           static_cast<float>(y));
               if (m_map3D.At(count % MapSize::width, count / MapSize::height).objectHasType(Type::Switch)) // flippo lo sprite delle leve che sono state attivate
-                sprites[nth_sprite_to_be_drawn].setTextureRect({MapSize::width, 0, -MapSize::TILE_SIZE, MapSize::TILE_SIZE});
+                sprites[nth_sprite_to_be_drawn].setTextureRect({(m_map3D.nth_frame + 1) * MapSize::TILE_SIZE, 0, -MapSize::TILE_SIZE, MapSize::TILE_SIZE});
               window.draw(sprites[nth_sprite_to_be_drawn]);
             }
         ++count;
@@ -572,7 +579,8 @@ PlayState handleWin(Objects &tail, Objects &mismatch) {
 }
 PlayState Game::conditions(Objects &tail, Objects &mismatch) {
   PlayState result = PlayState::Playing;
-  
+  if(mismatch == tail) return result;
+
   for (Type mism_type : mismatch.getTypes()) { 
   
     if (+mism_type <= +Type::PROPERTY_TYPE) {
@@ -588,11 +596,10 @@ PlayState Game::conditions(Objects &tail, Objects &mismatch) {
         return handleHot(tail);
     case Type::Shut:
       return handleShut(tail, mismatch);
+    case Type::Spin: return PlayState::Invalid;
     case Type::Stop:
       return handleStop(tail);
     case Type::Switch:
-      mismatch.removeType(Type::Switch);
-      break;
     case Type::Push:
     case Type::Move:
     case Type::Open:

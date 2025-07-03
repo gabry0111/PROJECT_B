@@ -24,11 +24,12 @@ public:
   
   std::vector<Type> getTypes() const; 
   std::vector<Type> &accessTypes();
-  constexpr bool operator==(const Objects &object) const;
+  bool operator==(const Objects &object) const;
   bool objectHasType(const Type type) const; 
   void addType(const Type word); 
   void removeType(Type type); 
-  void resetObject(); };
+  void resetObject(); 
+};
 } // namespace Baba_Is_Us
 
 #endif

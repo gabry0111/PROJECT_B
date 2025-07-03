@@ -7,7 +7,7 @@
 
 namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto
 
-constexpr bool Objects::operator==(const Objects &obj) const {
+bool Objects::operator==(const Objects &obj) const {
   return (m_object == obj.m_object);
 }
 
