@@ -34,6 +34,7 @@ int main() {
       "assets/levels/level3.txt", "assets/levels/level4.txt"};
 
   Game game(level_paths[nth_level - 1]);
+
   std::cout << "Current working directory: " << std::filesystem::current_path()
             << "\n";
   std::cout << "Oui\n";
@@ -46,9 +47,8 @@ int main() {
 
   // Animation loop
   sf::Clock clock;
-  std::cerr<<"balls";
+  std::cerr << "balls";
   while (window.isOpen()) {
-
     game.update(window, clock);
 
     game.accessMap().redraw(clock);
