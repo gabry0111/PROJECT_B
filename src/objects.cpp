@@ -1,6 +1,4 @@
 #include "objects.hpp"
-#include "enum_objects.hpp"
-#include "map.hpp"
 #include <algorithm>
 #include <cassert>
 #include <vector>
@@ -14,7 +12,7 @@ bool Objects::operator==(const Objects &obj) const {
 bool Objects::objectHasType(const Type type) const {
   assert(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
          type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
-         "Objects::objectHasType() not given a valid type"); // kinda inutile
+         "Objects::objectHasType() not given a valid type"); 
   if (type == Type::NOUN_TYPE || type == Type::ICON_NOUN_TYPE ||
       type == Type::VERB_TYPE || type == Type::PROPERTY_TYPE) {
     throw std::runtime_error("objectHasType() not given a valid type");
@@ -29,16 +27,6 @@ std::vector<Type> Objects::getTypes() const {
   }
   return types;
 }
-
-// implicitamente convertibile in falso se non contiene un valore; altrimenti
-// inizializza un'istanza
-/*
-constexpr std::optional<Type> Objects::createObject(const std::vector<Type>&
-object_vect) { assert(+noun <= +Type::Wall && +noun > +Type::NOUN_TYPE &&
-"CreatePrintableObject not given a NOUN_TYPE"); if(+noun <= +Type::Wall && +noun
-> +Type::NOUN_TYPE) return noun; return nullptr;
-}
-*/
 
 void Objects::addType(const Type word) {
   bool is_valid_type =
@@ -71,14 +59,3 @@ void Objects::resetObject() {
 }
 
 } // namespace Baba_Is_Us
-/*
-using namespace Baba_Is_Us;
-int main() {
-    std::vector<Type> words{Type::Baba, Type::Is, Type::You};
-    Objects baba {createObject(words)};
-    baba.getTypes().has_value() ? std::cerr << +(baba.getTypes())->at(0) << "
-Riuscito \n": std::cerr << "baba non ha NOUN_TYPE \n"; Type
-type{toType(+(baba.getTypes()->at(0)))}; assert(type == Type::Baba &&
-"Sbagliato"); return 0;
-}
-*/

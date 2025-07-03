@@ -1,6 +1,3 @@
-/* objects.hpp serve per controllare ogni oggetto, a cui sarà applicata una
-regola in altri file. Ogni m_object sarà inizializzato e disegnato in
-*/
 #ifndef OBJECTS_HPP
 #define OBJECTS_HPP
 

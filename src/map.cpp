@@ -4,9 +4,6 @@
 #include <algorithm>
 #include <iostream>
 
-#include "enum_objects.hpp"
-#include "objects.hpp"
-#include "rules.hpp"
 using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us {

@@ -1,12 +1,7 @@
 #include "game.hpp"
-#include "map.hpp"
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <iostream>
-
-#include "enum_objects.hpp"
-#include "objects.hpp"
-#include "rules.hpp"
 
 namespace Baba_Is_Us {
 
@@ -231,7 +226,7 @@ std::optional<Position> getMismatch(const MapGrid2D &grid, Direction dir, Positi
   return std::nullopt;
 }
 
-PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, Position start) { // hehe recursive function :3 ihhihii :D
+PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, Position start) {
   Position shift{getShift(direction)};
   Position pos_mism{start.first + shift.first, start.second + shift.second};
   Position pos_next_mism{pos_mism.first + shift.first, pos_mism.second + shift.second};

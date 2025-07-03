@@ -1,17 +1,12 @@
 /* rules.hpp serve per gestire le regole che esistono nel gioco, e verificando
 che queste esistano, alcune azioni saranno possibili. Saranno oggetti vettori di
 tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
-
-
-- controlla se esiste oggetto con 'You' (per enum PlayState)
-- un metodo per controllare se un vettore regola è uguale a un vetttore m_object
-
 */
 #ifndef RULES_HPP
 #define RULES_HPP
 #include "enum_objects.hpp"
-#include "map.hpp"
 #include "objects.hpp"
+
 #include <array>
 #include <cassert>
 #include <tuple>

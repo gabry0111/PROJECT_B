@@ -1,6 +1,4 @@
 #include "rules.hpp"
-#include "enum_objects.hpp"
-#include "objects.hpp"
 #include <algorithm>
 #include <functional>
 
