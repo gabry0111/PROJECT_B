@@ -6,6 +6,7 @@ tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 #define RULES_HPP
 #include "enum_objects.hpp"
 
+#include <vector>
 #include <array>
 #include <cassert>
 #include <tuple>

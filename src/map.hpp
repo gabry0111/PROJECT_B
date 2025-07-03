@@ -25,7 +25,7 @@ using MapGrid2D = std::array<std::array<int, MapSize::height>, MapSize::width>;
 
 namespace Baba_Is_Us {
 
-inline std::array<std::string, 31> tilePaths{
+inline std::array<std::string, 35> tilePaths{
     "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0
     "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1
     "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2
@@ -45,18 +45,22 @@ inline std::array<std::string, 31> tilePaths{
     "assets/png_PROGETTO/gifs/WALL_spritesheet.png",            // 16
     "assets/png_PROGETTO/text/BABA_text_spritesheet.png",       // 17
     "assets/png_PROGETTO/text/DEFEAT_text_spritesheet.png",     // 18
-    "assets/png_PROGETTO/text/FLAG_text_spritesheet.png",       // 19
-    "assets/png_PROGETTO/text/HOT_text_spritesheet.png",        // 20
-    "assets/png_PROGETTO/text/IS_text_spritesheet.png",         // 21
-    "assets/png_PROGETTO/text/LAVA_text_spritesheet.png",       // 22
-    "assets/png_PROGETTO/text/MELT_text_spritesheet.png",       // 23
-    "assets/png_PROGETTO/text/PUSH_text_spritesheet.png",       // 24
-    "assets/png_PROGETTO/text/ROCK_text_spritesheet.png",       // 25
-    "assets/png_PROGETTO/text/SHUT_text_spritesheet.png",       // 26
-    "assets/png_PROGETTO/text/STOP_text_spritesheet.png",       // 27
-    "assets/png_PROGETTO/text/WALL_text_spritesheet.png",       // 28
-    "assets/png_PROGETTO/text/WIN_text_spritesheet.png",        // 29
-    "assets/png_PROGETTO/text/YOU_text_spritesheet.png"         // 30
+    "assets/png_PROGETTO/text/DOOR_text_spritesheet.png",       // 19
+    "assets/png_PROGETTO/text/FLAG_text_spritesheet.png",       // 20
+    "assets/png_PROGETTO/text/GEAR_text_spritesheet.png",       // 21
+    "assets/png_PROGETTO/text/HOT_text_spritesheet.png",        // 22
+    "assets/png_PROGETTO/text/IS_text_spritesheet.png",         // 23
+    "assets/png_PROGETTO/text/KEY_text_spritesheet.png",        // 24
+    "assets/png_PROGETTO/text/LAVA_text_spritesheet.png",       // 25
+    "assets/png_PROGETTO/text/LEVER_text_spritesheet.png",      // 26
+    "assets/png_PROGETTO/text/MELT_text_spritesheet.png",       // 27
+    "assets/png_PROGETTO/text/PUSH_text_spritesheet.png",       // 28
+    "assets/png_PROGETTO/text/ROCK_text_spritesheet.png",       // 29
+    "assets/png_PROGETTO/text/SHUT_text_spritesheet.png",       // 30
+    "assets/png_PROGETTO/text/STOP_text_spritesheet.png",       // 31
+    "assets/png_PROGETTO/text/WALL_text_spritesheet.png",       // 32
+    "assets/png_PROGETTO/text/WIN_text_spritesheet.png",        // 33
+    "assets/png_PROGETTO/text/YOU_text_spritesheet.png"         // 34
 };
 
 // associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di
