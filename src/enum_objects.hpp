@@ -2,31 +2,24 @@
 #define ENUM_OBJECTS_HPP
 
 #include <iostream>
-#include <type_traits> //per underlying_type
+#include <type_traits> 
 
 namespace Baba_Is_Us {
 
-enum class Type { // DA AGGIUNGERE overload per convertirli in int
-                  // (learncpp.com)
+enum class Type { 
   NOUN_TYPE = -1,
-  Void, // possiamo creare un vector o array così:
-        // std::array<std::array<int,colonne>,righe> e inizializzare tutto a
-        // void; poi aggiungere ciascun elemento
-  // oppure serve per vettore di alcune informazioni (findPlayer() fallisce =>
-  // PlayState::Invalid) (N.B: void negli if = false)
+  Void, 
   Baba,  // aspetto del Player di default
   Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica
          // eccezione al tipico m_object vector<Type> perché sarà del tipo
-         // [0] = Block, [1] (da vedere se sarà così) = ICON_NOUN_TYPE
+         // [0] = Block, [1] = ICON_NOUN_TYPE
   Door,
   Flag,
   Gear,
   Key,
   Lava,
   Lever,
-  Pendulum,
-  Rock, // lanciabile se ha aggettivo launchable, Player deve "calpestarla" per
-        // poterla lanciare(con tasto space premuto e direzione)
+  Rock, 
   Wall,
 
   ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante
@@ -47,20 +40,20 @@ enum class Type { // DA AGGIUNGERE overload per convertirli in int
   Icon_Win,
   Icon_You,
 
-  VERB_TYPE, // Anche per i power-up
+  VERB_TYPE,
   Is,
 
   PROPERTY_TYPE,
   Defeat,
   Hot,
-  Interact, // launchable
+  Interact, 
   Melt,
-  Move, // = Player può camminare sopra quel tipo
-  Open, // door
+  Move, 
+  Open,   // key
   Push,
-  Shut, // door
-  Spin,
-  Switch,
+  Shut,   // door
+  Spin,   // gear
+  Switch, // lever
   Stop,
   Win,
   You,
@@ -73,14 +66,7 @@ template <typename T> constexpr int operator+(T a) noexcept {
                 "Unary plus operator only works on enum types");
   return static_cast<std::underlying_type_t<T>>(a);
 }
-/*
-template <typename T>
-constexpr auto operator-(T a) noexcept
-{
-  static_assert(std::is_integral_v<T> && "Unary minus operator only works on
-integral types"); return static_cast<Type>(a);
-}
-*/
+
 constexpr std::string_view getTypeName(Type type) {
   //clang-format off
   switch (type) { 
@@ -94,7 +80,6 @@ constexpr std::string_view getTypeName(Type type) {
   case Type::Key:       return "Key";
   case Type::Lava:      return "Lava";
   case Type::Lever:     return "Lever";
-  case Type::Pendulum:  return "Pendulum";
   case Type::Rock:      return "Rock";
   case Type::Wall:      return "Wall";
   case Type::ICON_NOUN_TYPE:return "ICON_NOUN_TYPE";
@@ -166,15 +151,15 @@ constexpr Type intToType(int value) { return static_cast<Type>(value); }
 
 enum class PlayState {
   Invalid, // se un'azione non è andata a buon fine
-  Playing, // per una volta lo posso dire: è ovvio
+  Playing, // azione andata a buon fine, stato di default
   Won,     // 'You' ha toccato 'Win'
   Lose,    // se niente è 'You' (=il gioco è fermo per sempre) o 'You' è morto
 };
 
 enum class Direction {
   Up,
-  Down,
   Right,
+  Down,
   Left,
 };
 

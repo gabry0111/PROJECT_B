@@ -38,25 +38,23 @@ int main() {
             << "\n";
   std::cout << "Oui\n";
 
-  sf::RenderWindow window(sf::VideoMode({512, 512}), "Oui");
+  sf::RenderWindow window(sf::VideoMode({512, 512}), "Baba Is Us");
 
   // setting the sprites
-  std::cout << "Loading textures...\n";
   game.accessMap().setTextures();
-  std::cout << "Converting into sprites...\n";
   game.accessMap().setSprites();
 
   // Animation loop
   sf::Clock clock;
-  std::cout << "~ ~ ~ dancin ~ ~ ~\n";
-
+  std::cerr<<"balls";
   while (window.isOpen()) {
-    game.update(window, game.accessMap(), clock);
+
+    game.update(window, clock);
 
     game.accessMap().redraw(clock);
 
     game.render(window, game.getMap().tileSprites);
   }
-  std::cerr << "adieu\n";
+  std::cerr << "Program successfully terminated\n";
   return 0;
 }

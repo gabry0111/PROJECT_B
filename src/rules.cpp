@@ -20,11 +20,7 @@ const std::array<Type, 3> &Rule::getm_rule() const { return m_rule; }
 
 void RuleManager::addRule(const Rule &rule) { m_rules.emplace_back(rule); }
 
-void RuleManager::removeRule(
-    const Rule &rule) { // ??? se il parametro fosse const, "error: no match for
-                        // ‘operator==’ (operand types are ‘Baba_Is_Us::Rule’
-                        // and ‘const Baba_Is_Us::Rule’)"(da std::find)
-  // assert ?
+void RuleManager::removeRule(const Rule &rule) { 
   auto iter{std::find(m_rules.begin(), m_rules.end(), rule)};
   if (iter != m_rules.end()) {
     m_rules.erase(iter);
@@ -33,8 +29,6 @@ void RuleManager::removeRule(
 
 const std::vector<Rule> &RuleManager::getm_rules() const { return m_rules; }
 std::vector<Rule> &RuleManager::accessm_rules() { return m_rules; }
-
-// void RuleManager::movedBlock()
 
 void RuleManager::clearRules() {
   m_rules.clear();
@@ -51,16 +45,5 @@ std::optional<Type> RuleManager::findPlayerType() const {
   }
   return std::nullopt;
 }
-/* In teoria non serve: Objects ha funzione objectHasType, e objectHasProperty è
-usata per controllare in una cella della mappa se l'oggetto ha
-RuleManager.objectHasProperty(Objects, Type::SINK) (che comunque abbiamo
-conditions()).
-
-bool RuleManager::objectHasProperty(const Objects& object, Type property){
-    if (std::find(object.getTypes().begin(), object.getTypes().end(),
-object.objectHasType(property)) != object.getTypes().end()) return true; return
-false;
-}
-*/
 
 } // namespace Baba_Is_Us

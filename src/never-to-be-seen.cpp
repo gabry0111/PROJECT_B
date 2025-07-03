@@ -467,6 +467,72 @@ int main()
 }
     */
    /*
+  std::cout << "aaaaaaaaa\n";
+
+  
+  for (const Rule rule : m_RM.getm_rules()) { 
+    for (const Position &pos : m_map3D.getPositions(rule.getm_rule()[0])) {
+      Objects &obj = m_map3D.At(pos.first, pos.second);
+      const Type &type_to_remove = rule.getm_rule()[2];
+      std::cerr << "Rule is:";
+      for (const Type type_rule : rule.getm_rule()) {
+        std::cerr << " " << type_rule;
+      }
+      if (obj.objectHasType(type_to_remove)) {
+        std::cerr << "-_-_-_ At pos: " << pos.first << pos.second
+                  << " object type[0] == " << obj.getTypes()[0]
+                  << " Removing property type: " << type_to_remove << '\n';
+        std::cerr << "Object has types:";
+        for (const Type type_obj : obj.getTypes()) {
+          std::cerr << " " << type_obj;
+        }
+        obj.removeType(type_to_remove);
+      } else {
+        std::cerr << "At pos: " << pos.first << pos.second
+                  << " Tried to remove type not present: " << type_to_remove
+                  << '\n';
+      }
+    }
+  }
+  std::cerr << "In parseRules()\n";
+
+  std::cerr << "Exiting parseRules()\n";
+  
+  for(Type type : m_map3D.At(0,1).getTypes()) {
+      std::cerr << "Types of object at position (0,1) from .At(): " <<
+  m_map3D.At(0,1).getTypes()[0] << type << '\n';} for(Type type :
+  m_map3D.At(1,0).getTypes()) { std::cerr << "Types of object at position (1,0)
+  from .At(): " << m_map3D.At(1,0).getTypes()[0] << type << '\n';} for(Type type
+  : m_map3D.getm_objects()[0][1].getTypes() ) { std::cerr << "Types of object at
+  position (1,0) from m_objects: " << m_map3D.getm_objects()[0][1].getTypes()[0]
+  << type << '\n';} for(Type type : m_map3D.getm_objects()[1][0].getTypes() ) {
+      std::cerr << "Types of object at position (0,1) from m_objects: " <<
+  m_map3D.getm_objects()[1][0].getTypes()[0] << type << '\n';} std::cerr <<
+  '\n';
+  
+// At(y,x) getPos.. pos{y,x} if(m_obj[y][x]) QUASI GIUSTO, INVERTE BLOCK CON
+// BABA At(y,x) getPos.. pos{x,y} if(m_obj[y][x]) NO C'è BLOCK IS YOU E BABA DA
+// SOLA, SCAMBIATI At(y,x) getPos.. pos{x,y} if(m_obj[x][y]) NO C'è BLOCK IS E
+// BABA YOU, SCAMBIATI (se l'ultimo m_obj resta[y][x] BABA è DA SOLA) At(y,x)
+// getPos.. pos{y,x} if(m_obj[x][y]) NO C'è BLOCK IS YOU E BABA DA SOLA,
+// SCAMBIATI At(x,y) getPos.. pos{y,x} if(m_obj[y][x]) NO At(x,y) getPos..
+// pos{x,y} if(m_obj[y][x]) NO At(x,y) getPos.. pos{y,x} if(m_obj[x][y]) NO
+// At(x,y) getPos.. pos{x,y} if(m_obj[x][y]) NO C'è BLOCK IS YOU E BLOCK IS,
+// SCAMBIATI
+//  Modificato --------------
+// At(y,x) getPos.. pos{y,x} if(m_obj[y][x]) BLOCK IS, BABA YOU SCAMBIATI,
+// VERTICALE <-> ORIZZONTALE At(y,x) getPos.. pos{x,y} if(m_obj[y][x]) BLOCK IS
+// YOU, BABA SCAMBIATI, VERTICALE <-> ORIZZONTALE At(y,x) getPos.. pos{y,x}
+// if(m_obj[x][y]) BLOCK IS YOU, BABA SCAMBIATI, VERTICALE <-> ORIZZONTALE
+// At(y,x) getPos.. pos{x,y} if(m_obj[x][y]) BLOCK IS, BABA YOU SCAMBIATI,
+// VERTICALE <-> ORIZZONTALE At(x,y) getPos.. pos{x,y} if(m_obj[x][y]) BLOCK IS
+// YOU, BLOCK IS (come se Baba diventa Block), VERTICALE <-> ORIZZONTALE At(x,y)
+// getPos.. pos{x,y} if(m_obj[y][x])       IL MIGLIOR TENTATIVO At(x,y) getPos..
+// pos{y,x} if(m_obj[y][x]) At(x,y) getPos.. pos{y,x} if(m_obj[x][y])
+//
+
+  // checkRulesForProperty
+  // aggiungi le proprietà giuste ad ogni oggetto
 assert(getPlayerPositions().size() > 0 &&
           "movement(): player_positions.size() == 0");
     
