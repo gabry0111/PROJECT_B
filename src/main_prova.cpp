@@ -4,16 +4,11 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "enum_objects.hpp"
 #include "game.hpp"
 #include "map.hpp"
-#include "objects.hpp"
 using namespace Baba_Is_Us;
 
 int main() {
-  std::cout << "Current working directory: " << std::filesystem::current_path()
-            << "\n";
-
   std::cout << "There are different levels available, enter which level you "
                "want to play: 1, 2, 3 or 4\n";
   std::size_t nth_level{};
@@ -24,9 +19,9 @@ int main() {
       "assets/levels/level3.txt", "assets/levels/level4.txt"};
 
   sf::RenderWindow window(sf::VideoMode({512, 512}), "Baba Is Us");
-  
+
   Game game(level_paths[nth_level - 1]);
-  
+
   // setting the sprites
   game.accessMap().setTextures();
   game.accessMap().setSprites();

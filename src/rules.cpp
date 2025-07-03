@@ -18,7 +18,7 @@ const std::array<Type, 3> &Rule::getm_rule() const { return m_rule; }
 
 void RuleManager::addRule(const Rule &rule) { m_rules.emplace_back(rule); }
 
-void RuleManager::removeRule(const Rule &rule) { 
+void RuleManager::removeRule(const Rule &rule) {
   auto iter{std::find(m_rules.begin(), m_rules.end(), rule)};
   if (iter != m_rules.end()) {
     m_rules.erase(iter);
@@ -36,7 +36,6 @@ void RuleManager::clearRules() {
 std::optional<Type> RuleManager::findPlayerType() const {
   for (const auto &each_rule : m_rules) {
     if (each_rule.m_rule[2] == Type::You) {
-
       Type type_Player{each_rule.m_rule[0]};
       return type_Player;
     }

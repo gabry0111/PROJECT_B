@@ -12,7 +12,7 @@ bool Objects::operator==(const Objects &obj) const {
 bool Objects::objectHasType(const Type type) const {
   assert(type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
          type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
-         "Objects::objectHasType() not given a valid type"); 
+         "Objects::objectHasType() not given a valid type");
   if (type == Type::NOUN_TYPE || type == Type::ICON_NOUN_TYPE ||
       type == Type::VERB_TYPE || type == Type::PROPERTY_TYPE) {
     throw std::runtime_error("objectHasType() not given a valid type");

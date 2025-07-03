@@ -5,7 +5,6 @@ tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 #ifndef RULES_HPP
 #define RULES_HPP
 #include "enum_objects.hpp"
-#include "objects.hpp"
 
 #include <array>
 #include <cassert>
@@ -15,7 +14,8 @@ namespace Baba_Is_Us {
 
 class Rule {
 private:
-  std::array<Type, 3> m_rule; 
+  std::array<Type, 3> m_rule;
+
 public:
   Rule() = delete; // non si può creare una regola vuota
   Rule(Type type1, Type type2, Type type3)
@@ -30,13 +30,11 @@ public:
   }
 
   friend class RuleManager;
-  friend bool operator==(const Rule &rhs, const Rule &lhs); 
-  
-  bool hasType(
-      Type type) const;
+  friend bool operator==(const Rule &rhs, const Rule &lhs);
+
+  bool hasType(Type type) const;
   const std::array<Type, 3> &getm_rule() const;
 };
-
 
 class RuleManager {
 private:
@@ -45,14 +43,14 @@ private:
 public:
   bool block_moved{false};
   RuleManager() = default;
-  void addRule(const Rule &rule); 
-  void removeRule(const Rule &rule); 
+  void addRule(const Rule &rule);
+  void removeRule(const Rule &rule);
 
   const std::vector<Rule> &getm_rules() const;
   std::vector<Rule> &accessm_rules();
-  void clearRules(); 
+  void clearRules();
 
-  std::optional<Type> findPlayerType() const; 
+  std::optional<Type> findPlayerType() const;
 };
 } // namespace Baba_Is_Us
 

@@ -7,36 +7,35 @@
 
 #include "enum_objects.hpp"
 #include "objects.hpp"
-#include "rules.hpp"
 
 using Position = std::pair<std::size_t, std::size_t>;
 
 namespace MapSize {
 constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
 constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
-constexpr int depth = 2; 
-constexpr int n_tiles = width * height; 
+constexpr int depth = 2;
+constexpr int n_tiles = width * height;
 
 constexpr int TILE_SIZE = 32;
 constexpr int FRAMES_PER_ANIMATION = 3;
 constexpr int FRAME_TIME_MS = 150;
-}
+} // namespace MapSize
 
 using MapGrid2D = std::array<std::array<int, MapSize::height>, MapSize::width>;
 
 namespace Baba_Is_Us {
 
 inline std::array<std::string, 31> tilePaths{
-    "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0 
-    "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1 
-    "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2 
-    "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",  // 3 
-    "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",  // 4 
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",         // 5 
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",      // 6 
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",       // 7 
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",       // 8 
-    "assets/png_PROGETTO/gifs/DOOR_spritesheet.png",            // 9 
+    "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0
+    "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1
+    "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2
+    "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",  // 3
+    "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",  // 4
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",         // 5
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",      // 6
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",       // 7
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",       // 8
+    "assets/png_PROGETTO/gifs/DOOR_spritesheet.png",            // 9
     "assets/png_PROGETTO/gifs/FLAG_spritesheet.png",            // 10
     "assets/png_PROGETTO/gifs/GEAR_spritesheet.png",            // 11
     "assets/png_PROGETTO/gifs/KEY_spritesheet.png",             // 12
@@ -60,14 +59,16 @@ inline std::array<std::string, 31> tilePaths{
     "assets/png_PROGETTO/text/YOU_text_spritesheet.png"         // 30
 };
 
-// associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di tilePath
+// associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di
+// tilePath
 inline std::size_t indexToBeDrawn(const int i) {
   std::size_t nth{};
   std::string substring;
   std::size_t tilePaths_size{tilePaths.size()};
   auto searchIndex = [tilePaths_size](const std::string &sub) -> std::size_t {
     for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
-      if (tilePaths[iter].find(sub) != std::string::npos) return iter;
+      if (tilePaths[iter].find(sub) != std::string::npos)
+        return iter;
     }
     return tilePaths_size;
   };

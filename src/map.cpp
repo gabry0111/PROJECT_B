@@ -10,7 +10,7 @@ namespace Baba_Is_Us {
 
 Map::Map(std::string_view filename) {
   std::ifstream map_file{
-      filename.data()};  // comincia dall'inizio di file.txt bidimensionale
+      filename.data()}; // comincia dall'inizio di file.txt bidimensionale
   if (!map_file) {
     throw(std::runtime_error("Level invalid\n"));
   }
@@ -30,7 +30,7 @@ Map::Map(std::string_view filename) {
            value != +Type::Block && value != +Type::Icon_Void &&
            "in Map(), level.txt there's an invalid value");
 
-    if (value < +Type::ICON_NOUN_TYPE) {  // NOUN_TYPE (+ Void)
+    if (value < +Type::ICON_NOUN_TYPE) { // NOUN_TYPE (+ Void)
       m_grid[1][iii / MapSize::width][iii % MapSize::width] = value;
       m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
 
@@ -39,7 +39,7 @@ Map::Map(std::string_view filename) {
     }
 
     else if (value > +Type::Icon_Void &&
-             value < +Type::VERB_TYPE) {  // Sono Blocks (non esiste Icon_Void)
+             value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
       m_grid[1][iii / MapSize::width][iii % MapSize::width] = +Type::Block;
       m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
 
@@ -47,9 +47,8 @@ Map::Map(std::string_view filename) {
       current.emplace_back(intToType(value));
       m_objects[iii / MapSize::width][iii % MapSize::width] = current;
     } else
-      throw(
-          std::runtime_error("Map(): in level.txt not given a valid value "
-                             "under +Type::VERB_TYPE"));
+      throw(std::runtime_error("Map(): in level.txt not given a valid value "
+                               "under +Type::VERB_TYPE"));
   }
   spriteOverlay();
 }
@@ -61,13 +60,6 @@ void Map::spriteOverlay() {
       m_grid[0][i / MapSize::width][i % MapSize::height] =
           static_cast<int>(findLastNoun(obj.getTypes()));
     }
-  }
-  std::cerr << "----------------------------\n";
-  for (auto &col : m_grid[0]) {
-    for (auto &row : col) {
-      std::cerr << row << ' ';
-    }
-    std::cerr << '\n';
   }
 }
 const std::array<MapGrid2D, MapSize::depth> &Map::getm_grid() const {
@@ -86,7 +78,7 @@ Map::accessm_objects() {
 void Map::setTextures() {
   for (auto &path : tilePaths) {
     sf::Texture texture;
-    if (!texture.loadFromFile(path)) {  // il bastardo non vuole string_view
+    if (!texture.loadFromFile(path)) {
       throw(std::runtime_error("Failed to load file\n"));
       continue;
     }
@@ -103,8 +95,8 @@ void Map::setSprites() {
     sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
 
     // gli indici saranno sempre nell'ordine di tilePaths
-    tileSprites.emplace_back(sprite);  // alla fine avrà tilePaths.size()
-                                       // elementi, ognuno con una sprite
+    tileSprites.emplace_back(sprite); // alla fine avrà tilePaths.size()
+                                      // elementi, ognuno con una sprite
   }
 }
 
@@ -198,7 +190,7 @@ void Map::resetObject(Position position) {
 void Map::pathFinder(Position start, Direction dir,
                      const std::array<Direction, 4> &directions,
                      bool to_activate) {
-  std::cerr << "Start_pos: " << start.first << start.second << '\n';
+
   if (isOutOfBoundary(start.first, start.second)) {
     return;
   }
@@ -211,34 +203,28 @@ void Map::pathFinder(Position start, Direction dir,
 
   // convertiamo la direzione di provenienza (dir) nella direzione da non
   // controllare
-  const Direction dir_to_avoid{static_cast<Direction>((+dir + 2) % 4)};  // formula divina
-  std::cerr << "Direction to avoid: " << +dir_to_avoid << '\n';
+  const Direction dir_to_avoid{
+      static_cast<Direction>((+dir + 2) % 4)}; // formula divina
 
   for (const auto each : directions) {
-    if (each == dir_to_avoid) continue;
-    Position target_pos {adjacents[static_cast<std::size_t>(+each)]};
+    if (each == dir_to_avoid)
+      continue;
+    Position target_pos{adjacents[static_cast<std::size_t>(+each)]};
     Objects &target_obj{At(target_pos)};
-    
 
     if (target_obj.objectHasType(Type::Gear) &&
-        !target_obj.objectHasType(Type::Spin) &&
-        to_activate == true) {
+        !target_obj.objectHasType(Type::Spin) && to_activate == true) {
       target_obj.addType(Type::Spin);
-      pathFinder(target_pos, each,
-                 directions, true);
-    } else if(target_obj.objectHasType(Type::Spin) &&
-            to_activate == false) {
+      pathFinder(target_pos, each, directions, true);
+    } else if (target_obj.objectHasType(Type::Spin) && to_activate == false) {
       target_obj.removeType(Type::Spin);
-      pathFinder(target_pos, each,
-                 directions, false);
+      pathFinder(target_pos, each, directions, false);
     } else if (target_obj.objectHasType(Type::Shut)) {
       target_obj.resetObject();
       m_grid[0][target_pos.second][target_pos.first] = +Type::Void;
       m_grid[1][target_pos.second][target_pos.first] = +Type::Void;
       break;
-
     }
-
   }
 }
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
