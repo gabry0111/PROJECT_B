@@ -79,8 +79,8 @@ inline std::size_t indexToBeDrawn(const int i) {
     case 5: substring = "gifs/GEAR";                    break;
     case 6: substring = "gifs/KEY";                     break;
     case 7: substring = "gifs/LAVA";                    break;
-    case 8: substring = "gifs/LEVER_LEFT";              break;
-    case 9: substring = "gifs/ROCK";                   break;
+    case 8: substring = "gifs/LEVER";                   break;
+    case 9: substring = "gifs/ROCK";                    break;
     case 10: substring = "gifs/WALL";                   break;
 
   case 13:

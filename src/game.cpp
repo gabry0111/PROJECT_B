@@ -431,7 +431,7 @@ void Game::interact(){
     std::vector<Direction> directions {Direction::Up, Direction::Right, Direction::Down, Direction::Left};
 
     for (const auto each : directions){
-      if (m_map3D.isOutOfBoundary(adjacents[+each].first, adjacents[+each].second)){
+      if (m_map3D.isOutOfBoundary(adjacents[static_cast<std::size_t>(+each)].first, adjacents[static_cast<std::size_t>(+each)].second)){
         continue;
       }
       Objects& current {m_map3D.At(adjacents[static_cast<std::size_t>(+each)])};

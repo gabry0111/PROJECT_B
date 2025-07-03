@@ -26,7 +26,7 @@ int main() {
 
   std::cout << "There are different levels available, enter which level you "
                "want to play: 1, 2, 3 or 4\n";
-  int nth_level{};
+  std::size_t nth_level{};
   std::cin >> nth_level;
   assert(nth_level > 0 && nth_level < 5);
   constexpr std::array<std::string_view, 4> level_paths{
