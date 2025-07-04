@@ -45,7 +45,7 @@ public:
   
   void interact();
   void movement(sf::RenderWindow &, sf::Clock &, Direction);
-  PlayState handlePush(Objects &, Objects &, Direction, Position);
+  PlayState processMove(Objects &, Objects &, Direction, Position);
   PlayState conditions(Objects &, Objects &);
 };
 
