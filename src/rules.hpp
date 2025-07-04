@@ -11,6 +11,8 @@ tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 
 namespace Baba_Is_Us {
 
+PlayState conditions(Objects &, Objects &);
+
 class Rule {
 private:
   std::array<Type, 3> m_rule;
