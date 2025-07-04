@@ -11,8 +11,7 @@ namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto
 
 class Objects {
 private:
-  std::vector<Type> m_object{}; // sarà del tipo: NOUN_TYPE e tanti
-                                // PROPERTY_TYPE
+  std::vector<Type> m_object{}; // sarà del tipo: un NOUN_TYPE e tanti PROPERTY_TYPE
 
 public:
   Objects() = default;

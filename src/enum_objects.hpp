@@ -70,11 +70,10 @@ template <typename T> constexpr int operator+(T a) noexcept {
 }
 
 // associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di tilePath.
-// sostituibile con una (mappa?)
 inline std::size_t indexToBeDrawn(const int i) {
   switch (i) {
     case 0:  return 0;
-    case 1:  return 6; // fisso il default di Baba a BABA_right.png
+    case 1:  return 6; // fisso il default sprite di Baba a BABA_right.png
     case 3:  
     case 4:  
     case 5:  
@@ -112,7 +111,7 @@ enum class PlayState {
   Invalid, // se un'azione non è andata a buon fine
   Playing, // azione andata a buon fine, stato di default
   Won,     // 'You' ha toccato 'Win'
-  Lose,    // se niente è 'You' (=il gioco è fermo per sempre) o 'You' è morto
+  Lose,    // se niente è 'You' (=il gioco è fermo per sempre) o 'You' ha toccato 'Defeat'
 };
 
 enum class Direction {
