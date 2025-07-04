@@ -489,10 +489,8 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
             std::cerr << "Hai vinto! :)\n";
             window.close();}
     }
-  }  
-
-
-}    
+  }
+}
     
     /////////////////////////////////// Chapter: Handling Displaying ///////////////////////////////////
     void Game::render(sf::RenderWindow &window, std::array<sf::Sprite, tilePaths.size()>& sprites){

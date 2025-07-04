@@ -63,14 +63,7 @@ inline std::ostream &operator<<(std::ostream &out, Type type) {
 
 /*
  ///// in handlePush()
-  if (tail.objectHasType(Type::Void)){
-    m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
-    m_map3D.accessm_grid()[1][start.second][start.first] = +Type::Void;
-  }
-  if (target.objectHasType(Type::Void)){
-    m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] = +Type::Void;
-    m_map3D.accessm_grid()[1][pos_mism.second][pos_mism.first] = +Type::Void;
-  }
+  
   
   //// in movement()
   

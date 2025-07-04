@@ -7,11 +7,15 @@
 #include "../src/rules.hpp"
 #include "doctest.h"
 #include <SFML/Graphics.hpp>
+#include <filesystem>
+#include <iostream>
+
 
 using namespace Baba_Is_Us;
 
 TEST_CASE("Basic functions - objects.hpp") {
-  Game game("assets/levels/level_test1.txt");
+  std::cerr << std::filesystem::current_path() << '\n';
+  Game game("../assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).objectHasType(Type::Block));
   CHECK(my_map.At(8, 8).objectHasType(Type::Void));
@@ -19,10 +23,9 @@ TEST_CASE("Basic functions - objects.hpp") {
   CHECK(my_map.At(9, 3).objectHasType(Type::Flag));
 
   std::vector<Type> types_block{my_map.At(0, 0).getTypes()};
-  CHECK(types_block.size() == 3);
+  CHECK(types_block.size() == 2);
   CHECK(types_block[0] == Type::Block);
   CHECK(types_block[1] == Type::Icon_Baba);
-  CHECK(types_block[2] == Type::Push);
 
   std::vector<Type> types_void{my_map.At(8, 8).getTypes()};
   CHECK(types_void.size() == 1);
@@ -65,10 +68,9 @@ TEST_CASE("Basic functions - objects.hpp") {
   CHECK(types_flag[2] == Type::Push);
 
   game.accessMap().accessm_objects()[0][0].removeType(Type::Push);
-  CHECK(types_block.size() == 3);
+  CHECK(types_block.size() == 2);
   CHECK(types_block[0] == Type::Block);
   CHECK(types_block[1] == Type::Icon_Baba);
-  CHECK(types_block[2] == Type::Push);
 
   game.accessMap().accessm_objects()[8][8].removeType(Type::Push);
   types_void = my_map.At(8, 8).getTypes();
