@@ -13,7 +13,6 @@ using Position = std::pair<std::size_t, std::size_t>;
 namespace MapSize {
 constexpr int width = 16;  // Number of tiles in the X direction = n° of columns
 constexpr int height = 16; // Number of tiles in the Y direction = n° of rows
-constexpr int depth = 2;
 constexpr int n_tiles = width * height;
 
 constexpr int TILE_SIZE = 32;
@@ -24,6 +23,8 @@ constexpr int FRAME_TIME_MS = 150;
 using MapGrid2D = std::array<std::array<int, MapSize::height>, MapSize::width>;
 
 namespace Baba_Is_Us {
+
+using ObjectMap = std::array<std::array<Objects, MapSize::height>, MapSize::width>;
 
 constexpr inline std::array<std::string_view, 35> tilePaths{
     "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0
@@ -65,11 +66,9 @@ constexpr inline std::array<std::string_view, 35> tilePaths{
 
 class Map {
  private:
-  // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2
-  std::array<MapGrid2D, MapSize::depth> m_grid;
+  MapGrid2D m_grid;
 
-  // N.B: [1][2] accedi a x (width) = 1; y (height) = 2
-  std::array<std::array<Objects, MapSize::height>, MapSize::width> m_objects;
+  ObjectMap m_objects;
 
  public:
   bool isOutOfBoundary(std::size_t x, std::size_t y) const;
@@ -83,23 +82,15 @@ class Map {
 
   void spriteOverlay();
   
-  const std::array<MapGrid2D, MapSize::depth> &getm_grid() const;
-  std::array<MapGrid2D, MapSize::depth> &accessm_grid();
-  const std::array<std::array<Objects, MapSize::height>, MapSize::width> &
-  getm_objects() const;
-  std::array<std::array<Objects, MapSize::height>, MapSize::width> &
-  accessm_objects();
+  const MapGrid2D &getm_grid() const;
+  MapGrid2D &accessm_grid();
+  const ObjectMap &getm_objects() const;
+  ObjectMap &accessm_objects();
   void setTextures();
   void setSprites();
   void redraw(sf::Clock &);
   const std::array<sf::Sprite, tilePaths.size()> &getTileSprites() const;
   sf::Sprite &accessWhichSpriteIsInPosition(Position &);
-
-  // resetta la mappa (se PlayState::Invalid o se cambia livello)
-  // N.B: ogni oggetto può avere proprietà che devono essere tolte richiamando
-  // poi la funzione apposita che controlla le regole nella mappa
-  void Reset(const std::array<std::array<int, MapSize::width>, MapSize::height>
-                 &); 
 
   void addObject(Position position, Type type);
 

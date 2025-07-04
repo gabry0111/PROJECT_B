@@ -207,8 +207,7 @@ TEST_CASE("Basic functions - map.hpp") {
   CHECK(my_map.At(8, 7).getTypes().size() == 1);
   CHECK(my_map.At(8, 7).getTypes()[0] == Type::Void);
 
-  CHECK(my_map.getm_grid()[0][0][0] == 14);
-  CHECK(my_map.getm_grid()[1][0][0] == 2);
+  CHECK(my_map.getm_grid()[0][0] == 14);
   CHECK(my_map.getm_objects()[0][0].getTypes()[0] == Type::Block);
   my_map.setTextures();
   my_map.setSprites();
@@ -239,7 +238,7 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   }
   for (const Position &pos : game.getPlayerPositions()) {
     CHECK(my_map.At(pos.first, pos.second).getTypes()[0] == Type::Baba);
-    CHECK(my_map.getm_grid()[0][pos.second][pos.first] == +Type::Baba);
+    CHECK(my_map.getm_grid()[pos.second][pos.first] == +Type::Baba);
   }
 
   std::vector<Position> you_positions = my_map.getPositions(Type::You);
@@ -261,13 +260,10 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(8, 7).objectHasType(intToType(+Type::Void)));
   CHECK(my_map.At(8, 4).objectHasType(intToType(+Type::Lava)));
 
-  CHECK(my_map.getm_grid()[0][6][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[0][7][8] == +Type::Void);
-  CHECK(my_map.getm_grid()[0][4][8] == +Type::Lava);
+  CHECK(my_map.getm_grid()[6][8] == +Type::Baba);
+  CHECK(my_map.getm_grid()[7][8] == +Type::Void);
+  CHECK(my_map.getm_grid()[4][8] == +Type::Lava);
 
-  CHECK(my_map.getm_grid()[1][6][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[1][7][8] == +Type::Void);
-  CHECK(my_map.getm_grid()[1][4][8] == +Type::Lava);
 
   // gli oggetti non si spostano in alto se baba non li tocca
   game.movement(window, clock, Direction::Up);
@@ -278,13 +274,10 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(8, 6).objectHasType(intToType(+Type::Void)));
   CHECK(my_map.At(8, 4).objectHasType(intToType(+Type::Lava)));
 
-  CHECK(my_map.getm_grid()[0][5][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[0][6][8] == +Type::Void);
-  CHECK(my_map.getm_grid()[0][4][8] == +Type::Lava);
+  CHECK(my_map.getm_grid()[5][8] == +Type::Baba);
+  CHECK(my_map.getm_grid()[6][8] == +Type::Void);
+  CHECK(my_map.getm_grid()[4][8] == +Type::Lava);
 
-  CHECK(my_map.getm_grid()[1][5][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[1][6][8] == +Type::Void);
-  CHECK(my_map.getm_grid()[1][4][8] == +Type::Lava);
 
   // gli oggetti non si spostano in basso se baba non li tocca
   game.movement(window, clock, Direction::Down);
@@ -295,13 +288,10 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(8, 5).objectHasType(intToType(+Type::Void)));
   CHECK(my_map.At(8, 4).objectHasType(intToType(+Type::Lava)));
 
-  CHECK(my_map.getm_grid()[0][6][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[0][7][8] == +Type::Void);
-  CHECK(my_map.getm_grid()[0][4][8] == +Type::Lava);
+  CHECK(my_map.getm_grid()[6][8] == +Type::Baba);
+  CHECK(my_map.getm_grid()[7][8] == +Type::Void);
+  CHECK(my_map.getm_grid()[4][8] == +Type::Lava);
 
-  CHECK(my_map.getm_grid()[1][6][8] == +Type::Baba);
-  CHECK(my_map.getm_grid()[1][7][8] == +Type::Void);
-  CHECK(my_map.getm_grid()[1][4][8] == +Type::Lava);
 
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
@@ -318,19 +308,9 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
   CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
 
-  CHECK(my_map.getm_grid()[0][6][2] == +Type::Icon_Lava);
-  CHECK(my_map.getm_grid()[0][6][3] == +Type::Icon_Is);
-  CHECK(my_map.getm_grid()[0][6][4] == +Type::Icon_Hot);
-
-  CHECK(my_map.getm_grid()[1][6][2] == +Type::Block);
-  CHECK(my_map.getm_grid()[1][6][2] ==
-        +my_map.getm_objects()[6][2].getTypes()[0]);
-  CHECK(my_map.getm_grid()[1][6][3] == +Type::Block);
-  CHECK(my_map.getm_grid()[1][6][3] ==
-        +my_map.getm_objects()[6][3].getTypes()[0]);
-  CHECK(my_map.getm_grid()[1][6][4] == +Type::Block);
-  CHECK(my_map.getm_grid()[1][6][4] ==
-        +my_map.getm_objects()[6][4].getTypes()[0]);
+  CHECK(my_map.getm_grid()[6][2] == +Type::Icon_Lava);
+  CHECK(my_map.getm_grid()[6][3] == +Type::Icon_Is);
+  CHECK(my_map.getm_grid()[6][4] == +Type::Icon_Hot);
 
   game.movement(window, clock, Direction::Left);
   game.movement(window, clock, Direction::Left);
@@ -346,19 +326,9 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
   CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
 
-  CHECK(my_map.getm_grid()[0][6][2] == +Type::Icon_Lava);
-  CHECK(my_map.getm_grid()[0][6][3] == +Type::Icon_Is);
-  CHECK(my_map.getm_grid()[0][6][4] == +Type::Icon_Hot);
-
-  CHECK(my_map.getm_grid()[1][6][2] == +Type::Block);
-  CHECK(my_map.getm_grid()[1][6][2] ==
-        +my_map.getm_objects()[6][2].getTypes()[0]);
-  CHECK(my_map.getm_grid()[1][6][3] == +Type::Block);
-  CHECK(my_map.getm_grid()[1][6][3] ==
-        +my_map.getm_objects()[6][3].getTypes()[0]);
-  CHECK(my_map.getm_grid()[1][6][4] == +Type::Block);
-  CHECK(my_map.getm_grid()[1][6][4] ==
-        +my_map.getm_objects()[6][4].getTypes()[0]);
+  CHECK(my_map.getm_grid()[6][2] == +Type::Icon_Lava);
+  CHECK(my_map.getm_grid()[6][3] == +Type::Icon_Is);
+  CHECK(my_map.getm_grid()[6][4] == +Type::Icon_Hot);
 }
 
 TEST_CASE("Game - Rules changing") {

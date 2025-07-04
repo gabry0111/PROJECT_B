@@ -279,15 +279,10 @@ PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, 
   if (handlePush(target, m_map3D.At(pos_next_mism.first, pos_next_mism.second), direction, pos_mism) == PlayState::Invalid)
     return PlayState::Invalid;
   else {
-    m_map3D.accessm_grid()[0][pos_next_mism.second][pos_next_mism.first] =
-        m_map3D.getm_grid()[0][pos_mism.second][pos_mism.first];
-    m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] =
-        m_map3D.getm_grid()[0][start.second][start.first];
-
-    m_map3D.accessm_grid()[1][pos_next_mism.second][pos_next_mism.first] =
-        +target.getTypes()[0];
-    m_map3D.accessm_grid()[1][pos_mism.second][pos_mism.first] =
-        +tail.getTypes()[0];
+    m_map3D.accessm_grid()[pos_next_mism.second][pos_next_mism.first] =
+        m_map3D.getm_grid()[pos_mism.second][pos_mism.first];
+    m_map3D.accessm_grid()[pos_mism.second][pos_mism.first] =
+        m_map3D.getm_grid()[start.second][start.first];
 
     m_map3D.accessm_objects()[pos_next_mism.second][pos_next_mism.first] =
         target;
@@ -309,10 +304,10 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     
     std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
     std::size_t index_player_sprite {};
-    index_player_sprite = indexToBeDrawn(m_map3D.getm_grid()[0][each.second][each.first]);
+    index_player_sprite = indexToBeDrawn(m_map3D.getm_grid()[each.second][each.first]);
     sf::Sprite& player_sprite = m_map3D.tileSprites[index_player_sprite];
     
-    // solo Baba (in tilePaths con indice da 1 tail 8) ha varianti nelle texture.
+    // solo Baba (in tilePaths con indice da 1 a 8) ha varianti nelle texture.
     // Per prima cosa, giriamo la sprite.
     if (index_player_sprite >= 1 && index_player_sprite <= 8){
       player_sprite = m_map3D.tileSprites[player_idle_index];
@@ -366,21 +361,16 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     }
     if (state == PlayState::Playing) {
       if(obj_mismatch.objectHasType(Type::Void)) {
-        m_map3D.accessm_grid()[0][pos_mismatch.second][pos_mismatch.first] =
-              m_map3D.getm_grid()[0][each.second][each.first];
-          m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-
-          m_map3D.accessm_grid()[1][pos_mismatch.second][pos_mismatch.first] =
-              +obj_tail.getTypes()[0];
-          m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+        m_map3D.accessm_grid()[pos_mismatch.second][pos_mismatch.first] =
+              m_map3D.getm_grid()[each.second][each.first];
+          m_map3D.accessm_grid()[each.second][each.first] = +Type::Void;
 
           m_map3D.accessm_objects()[pos_mismatch.second][pos_mismatch.first] =
               obj_tail;
           m_map3D.resetObject(each);
       } else {
         m_map3D.resetObject(each);
-        m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
-        m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+        m_map3D.accessm_grid()[each.second][each.first] = +Type::Void;
       }
     }
     
@@ -500,7 +490,7 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
       std::size_t x;
       std::size_t y;
       std::size_t count{};
-      for (auto& rows : m_map3D.getm_grid()[0]){
+      for (auto& rows : m_map3D.getm_grid()){
 
           for (auto &i : rows){
             
@@ -517,11 +507,12 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
               // posiziona e disegna ogni sprite
               
               x = (count % MapSize::width) * MapSize::TILE_SIZE; 
-              y = (count / MapSize::height) * MapSize::TILE_SIZE; // = 0, 32, 64, ... 255*32
+              y = (count / MapSize::height) * MapSize::TILE_SIZE; // = 0, 32, 64, ... 15*32
 
               sprites[nth_sprite_to_be_drawn].setPosition(static_cast<float>(x),
                                                           static_cast<float>(y));
-              if (m_map3D.At(count % MapSize::width, count / MapSize::height).objectHasType(Type::Switch)) // flippo lo sprite delle leve che sono state attivate
+              // flippo lo sprite delle leve che sono state attivate
+              if (m_map3D.At(count % MapSize::width, count / MapSize::height).objectHasType(Type::Switch)) 
                 sprites[nth_sprite_to_be_drawn].setTextureRect({(m_map3D.nth_frame + 1) * MapSize::TILE_SIZE, 0, -MapSize::TILE_SIZE, MapSize::TILE_SIZE});
               window.draw(sprites[nth_sprite_to_be_drawn]);
             }

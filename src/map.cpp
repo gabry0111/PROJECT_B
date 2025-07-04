@@ -40,9 +40,8 @@ Map::Map(std::string_view filename) {
            value != +Type::Block && value != +Type::Icon_Void &&
            "in Map(), level.txt there's an invalid value");
 
-    if (value < +Type::ICON_NOUN_TYPE) { // NOUN_TYPE (+ Void)
-      m_grid[1][iii / MapSize::width][iii % MapSize::width] = value;
-      m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
+    if (value < +Type::ICON_NOUN_TYPE) { 
+      m_grid[iii / MapSize::width][iii % MapSize::width] = value;
 
       current.emplace_back(intToType(value));
       m_objects[iii / MapSize::width][iii % MapSize::width] = current;
@@ -50,8 +49,7 @@ Map::Map(std::string_view filename) {
 
     else if (value > +Type::Icon_Void &&
              value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
-      m_grid[1][iii / MapSize::width][iii % MapSize::width] = +Type::Block;
-      m_grid[0][iii / MapSize::width][iii % MapSize::width] = value;
+      m_grid[iii / MapSize::width][iii % MapSize::width] = value;
 
       current.emplace_back(Type::Block);
       current.emplace_back(intToType(value));
@@ -67,21 +65,20 @@ void Map::spriteOverlay() {
   for (std::size_t i{}; i < MapSize::n_tiles; ++i) {
     Objects &obj = m_objects[i / MapSize::width][i % MapSize::height];
     if (obj.getTypes()[0] != Type::Block) {
-      m_grid[0][i / MapSize::width][i % MapSize::height] =
+      m_grid[i / MapSize::width][i % MapSize::height] =
           static_cast<int>(findLastNoun(obj.getTypes()));
     }
   }
 }
-const std::array<MapGrid2D, MapSize::depth> &Map::getm_grid() const {
+const MapGrid2D &Map::getm_grid() const {
   return m_grid;
 }
-std::array<MapGrid2D, MapSize::depth> &Map::accessm_grid() { return m_grid; }
-const std::array<std::array<Objects, MapSize::width>, MapSize::height> &
-Map::getm_objects() const {
+MapGrid2D &Map::accessm_grid() { return m_grid; }
+
+const ObjectMap &Map::getm_objects() const {
   return m_objects;
 }
-std::array<std::array<Objects, MapSize::width>, MapSize::height> &
-Map::accessm_objects() {
+ObjectMap &Map::accessm_objects() {
   return m_objects;
 }
 
@@ -136,28 +133,11 @@ const std::array<sf::Sprite, tilePaths.size()> &Map::getTileSprites() const {
 
 sf::Sprite &Map::accessWhichSpriteIsInPosition(Position &position) {
   std::size_t index{static_cast<std::size_t>(
-      getm_grid()[0][position.second][position.first])};
+      getm_grid()[position.second][position.first])};
 
   assert(index < tileSprites.size() &&
          "accessWhichSpriteIsInPosition() has index too high");
   return tileSprites[index];
-}
-
-void Map::Reset(const std::array<std::array<int, MapSize::width>,
-                                 MapSize::height> &map_grid) {
-  if (MapSize::height * MapSize::width != m_grid.size())
-    throw std::runtime_error("Map::Reset(): sizes not equal");
-
-  std::size_t iii{};
-  for (auto &rows : map_grid) {
-    for (auto &eee : rows) {
-      if (+(m_objects[iii / MapSize::width][iii % MapSize::width]
-                .getTypes()[0]) != eee)
-        m_objects[iii / MapSize::width][iii % MapSize::width].getTypes()[0] =
-            static_cast<Type>(eee);
-      ++iii;
-    }
-  }
 }
 
 Objects &Map::At(std::size_t x, std::size_t y) { return m_objects[y][x]; }
@@ -226,8 +206,7 @@ void Map::pathFinder(Position start, Direction dir,
       pathFinder(target_pos, each, directions, false);
     } else if (target_obj.objectHasType(Type::Shut)) {
       target_obj.resetObject();
-      m_grid[0][target_pos.second][target_pos.first] = +Type::Void;
-      m_grid[1][target_pos.second][target_pos.first] = +Type::Void;
+      m_grid[target_pos.second][target_pos.first] = +Type::Void;
       break;
     }
   }
