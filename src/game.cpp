@@ -251,7 +251,7 @@ std::optional<Position> getMismatch(const Map& map, Direction dir, Position star
   return std::nullopt;
 }
 
-PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, Position start) {
+PlayState Game::processMove(Objects &tail, Objects &target, Direction direction, Position start) {
   Position shift{getShift(direction)};
   Position pos_mism{start.first + shift.first, start.second + shift.second};
   Position pos_next_mism{pos_mism.first + shift.first, pos_mism.second + shift.second};
@@ -282,7 +282,7 @@ PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, 
   if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second))
     return PlayState::Invalid;
 
-  if (handlePush(target, m_map3D.At(pos_next_mism.first, pos_next_mism.second), direction, pos_mism) == PlayState::Invalid)
+  if (processMove(target, m_map3D.At(pos_next_mism.first, pos_next_mism.second), direction, pos_mism) == PlayState::Invalid)
     return PlayState::Invalid;
   else {
     m_map3D.accessm_grid()[pos_next_mism.second][pos_next_mism.first] =
@@ -358,7 +358,7 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
         m_map3D.isOutOfBoundary(pos_mismatch.first + dx,
                                 pos_mismatch.second + dy)) {continue;}
 
-    PlayState state {handlePush(obj_tail, obj_mismatch, direction, each)};
+    PlayState state {processMove(obj_tail, obj_mismatch, direction, each)};
     m_players = m_map3D.getPositions(Type::You);
     if (state == PlayState::Won){
       m_state_of_game = PlayState::Won;
