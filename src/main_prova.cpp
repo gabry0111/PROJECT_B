@@ -33,7 +33,7 @@ int main() {
 
     game.accessMap().redraw(clock);
 
-    game.render(window, game.getMap().tileSprites);
+    game.render(window, game.accessMap().tileSprites);
   }
   std::cerr << "Program successfully terminated\n";
   return 0;

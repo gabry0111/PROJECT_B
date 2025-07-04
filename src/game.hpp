@@ -41,7 +41,7 @@ public:
   void adjustRemovingRules();
   std::vector<Position> getTailMovingPosition(Direction);
   void update(sf::RenderWindow &, sf::Clock &);
-  void render(sf::RenderWindow &, std::vector<sf::Sprite>);
+  void render(sf::RenderWindow &, std::array<sf::Sprite, tilePaths.size()>&);
   
   void interact();
   void movement(sf::RenderWindow &, sf::Clock &, Direction);

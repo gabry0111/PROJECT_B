@@ -25,7 +25,7 @@ using MapGrid2D = std::array<std::array<int, MapSize::height>, MapSize::width>;
 
 namespace Baba_Is_Us {
 
-inline std::array<std::string, 35> tilePaths{
+constexpr inline std::array<std::string_view, 35> tilePaths{
     "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0
     "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1
     "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2
@@ -63,102 +63,6 @@ inline std::array<std::string, 35> tilePaths{
     "assets/png_PROGETTO/text/YOU_text_spritesheet.png"         // 34
 };
 
-// associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di
-// tilePath
-inline std::size_t indexToBeDrawn(const int i) {
-  std::size_t nth{};
-  std::string substring;
-  std::size_t tilePaths_size{tilePaths.size()};
-  auto searchIndex = [tilePaths_size](const std::string &sub) -> std::size_t {
-    for (std::size_t iter = 0; iter < tilePaths_size; ++iter) {
-      if (tilePaths[iter].find(sub) != std::string::npos)
-        return iter;
-    }
-    return tilePaths_size;
-  };
-  // clang-format off
-  switch (i) {
-    case 0: substring = "gifs/VOID";                    break;
-    case 1: substring = "gifs/BABA_spritesheet_right";  break; // fisso il default di Baba a BABA_right.png
-    case 3: substring = "gifs/DOOR";                    break;
-    case 4: substring = "gifs/FLAG";                    break;
-    case 5: substring = "gifs/GEAR";                    break;
-    case 6: substring = "gifs/KEY";                     break;
-    case 7: substring = "gifs/LAVA";                    break;
-    case 8: substring = "gifs/LEVER";                   break;
-    case 9: substring = "gifs/ROCK";                    break;
-    case 10: substring = "gifs/WALL";                   break;
-
-  case 13:
-    substring = "text/BABA";
-    break;
-  case 14:
-    substring = "text/DEFEAT";
-    break;
-  case 15:
-    substring = "text/FLAG";
-    break;
-  case 16:
-    substring = "text/HOT";
-    break;
-  case 17:
-    substring = "text/IS";
-    break;
-  case 18:
-    substring = "text/LAVA";
-    break;
-  case 19:
-    substring = "text/MELT";
-    break;
-  case 20:
-    substring = "text/PUSH";
-    break;
-  case 21:
-    substring = "text/ROCK";
-    break;
-  case 22:
-    substring = "text/STOP";
-    break;
-  case 23:  substring = "text/WALL";  break;
-  case 24:  substring = "text/WIN"; break;
-  case 25:  substring = "text/YOU"; break;
-  default : break;
-  } //clang-format on
-  if (substring.size() == 0) throw (std::runtime_error("intToBeDrawn(): index in level.txt too high"));
-  else {return (nth = searchIndex(substring));}
-}
-
-inline std::size_t findLastNoun(const std::vector<Type>& types) {
-  std::size_t last {};
-  for (std::size_t i{}; i < types.size(); ++i) {
-      if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
-          last = i;
-      }
-  }
-  return static_cast<std::size_t>(+(types[last])); 
-}
-
-//clang-format off
-inline Type iconToAll(Type type) {
-  switch (type) {
-    case Type::Icon_Void:   return Type::Void;
-    case Type::Icon_Baba:   return Type::Baba;
-    case Type::Icon_Defeat: return Type::Defeat;
-    case Type::Icon_Flag:   return Type::Flag;
-    case Type::Icon_Hot:    return Type::Hot;
-    case Type::Icon_Is:     return Type::Is;
-    case Type::Icon_Lava:   return Type::Lava;
-    case Type::Icon_Melt:   return Type::Melt;
-    case Type::Icon_Push:   return Type::Push;
-    case Type::Icon_Rock:   return Type::Rock;
-    case Type::Icon_Stop:   return Type::Stop;
-    case Type::Icon_Wall:   return Type::Wall;
-    case Type::Icon_Win:    return Type::Win;
-    case Type::Icon_You:    return Type::You;
-    default:  throw(std::runtime_error("iconToAll(): not given an ICON_TYPE"));
-  } //clang-format on
-}
-
 class Map {
  private:
   // N.B: [0][1][2] accedi a depth = 0; x (width) = 1; y (height) = 2
@@ -170,10 +74,9 @@ class Map {
  public:
   bool isOutOfBoundary(std::size_t x, std::size_t y) const;
 
-  std::vector<sf::Texture> textures{};
-  std::vector<int> frameCounts{};
+  std::array<sf::Texture, tilePaths.size()> textures{};
   int nth_frame{};
-  std::vector<sf::Sprite> tileSprites{};
+  std::array<sf::Sprite, tilePaths.size()> tileSprites{};
 
   Map() = default;
   Map(std::string_view);
@@ -189,7 +92,7 @@ class Map {
   void setTextures();
   void setSprites();
   void redraw(sf::Clock &);
-  const std::vector<sf::Sprite> &getTileSprites() const;
+  const std::array<sf::Sprite, tilePaths.size()> &getTileSprites() const;
   sf::Sprite &accessWhichSpriteIsInPosition(Position &);
 
   // resetta la mappa (se PlayState::Invalid o se cambia livello)

@@ -10,6 +10,7 @@ tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 #include <array>
 #include <cassert>
 #include <tuple>
+#include <optional>
 
 namespace Baba_Is_Us {
 

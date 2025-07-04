@@ -60,6 +60,12 @@ Azioni permesse dalle frasi logiche:
 - una frase deve essere una retta (NO prima orizzontale, poi verticale), ma una parola può essere condivisa da più frasi (SI due frasi a croce)
 - una frase può contenere 2 noun (baba is wall) 
 - Push funziona su tutto, tranne se un oggetto è melt
+- in una fila di ingranaggi accesi da una leva ancora con switch, se aggiungi un ingranaggio alla fila, devi riaccendere la leva
+
+Priorità nelle Property: di seguito dalla più potente alla meno potente
+Defeat vince su: Tutto
+Spin vince su: Push
+Push vince su: Stop, Hot, Melt
 
 Main Loop: ad ogni iterazione:
 - getKeyPressed();

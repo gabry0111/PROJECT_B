@@ -8,6 +8,16 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us {
 
+std::size_t findLastNoun(const std::vector<Type>& types) {
+  std::size_t last {};
+  for (std::size_t i{}; i < types.size(); ++i) {
+      if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
+          last = i;
+      }
+  }
+  return static_cast<std::size_t>(+(types[last])); 
+}
+
 Map::Map(std::string_view filename) {
   std::ifstream map_file{
       filename.data()}; // comincia dall'inizio di file.txt bidimensionale
@@ -76,27 +86,30 @@ Map::accessm_objects() {
 }
 
 void Map::setTextures() {
+  std::size_t iii {};
   for (auto &path : tilePaths) {
     sf::Texture texture;
-    if (!texture.loadFromFile(path)) {
+    if (!texture.loadFromFile(static_cast<std::string>(path))) {
       throw(std::runtime_error("Failed to load file\n"));
       continue;
     }
-    textures.emplace_back(texture);
+    textures[iii] = texture;
+    ++iii;
   }
 }
 
 void Map::setSprites() {
   sf::Sprite sprite;
-
+  std::size_t iii{};
   for (const auto &texture : textures) {
     sprite.setTexture(texture);
 
     sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
 
     // gli indici saranno sempre nell'ordine di tilePaths
-    tileSprites.emplace_back(sprite); // alla fine avrà tilePaths.size()
+    tileSprites[iii] = sprite; // alla fine avrà tilePaths.size()
                                       // elementi, ognuno con una sprite
+    ++iii;
   }
 }
 
@@ -117,7 +130,7 @@ void Map::redraw(sf::Clock &clock) {
   }
 }
 
-const std::vector<sf::Sprite> &Map::getTileSprites() const {
+const std::array<sf::Sprite, tilePaths.size()> &Map::getTileSprites() const {
   return tileSprites;
 }
 
@@ -159,15 +172,7 @@ const std::vector<Position> Map::getPositions(Type type) const {
   std::vector<Position> positions_with_type{};
   for (std::size_t y = 0; y < MapSize::height; ++y) {
     for (std::size_t x = 0; x < MapSize::width; ++x) {
-      if (type == Type::Block) {
-        if ((m_objects[y][x].objectHasType(type))) {
-          Position pos{x, y};
-          positions_with_type.emplace_back(pos);
-        }
-      }
-
-      if ((m_objects[y][x].objectHasType(type)) &&
-          !m_objects[y][x].objectHasType(Type::Block)) {
+      if (m_objects[y][x].objectHasType(type)) {
         Position pos{x, y};
         positions_with_type.emplace_back(pos);
       }

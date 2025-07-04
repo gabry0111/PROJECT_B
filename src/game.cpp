@@ -21,6 +21,31 @@ PlayState &Game::accessm_state_of_game() { return m_state_of_game; }
 
 ///////////////////////////////////  Chapter: HandlingRules  //////////////////////////////////////
 
+Type iconToAll(Type type) {
+  switch (type) { //clang-format off
+    case Type::Icon_Void:   return Type::Void;
+    case Type::Icon_Baba:   return Type::Baba;
+    case Type::Icon_Defeat: return Type::Defeat;
+    case Type::Icon_Door:   return Type::Door;
+    case Type::Icon_Flag:   return Type::Flag;
+    case Type::Icon_Gear:   return Type::Gear;
+    case Type::Icon_Hot:    return Type::Hot;
+    case Type::Icon_Is:     return Type::Is;
+    case Type::Icon_Key:    return Type::Key;
+    case Type::Icon_Lava:   return Type::Lava;
+    case Type::Icon_Lever:  return Type::Lever;
+    case Type::Icon_Melt:   return Type::Melt;
+    case Type::Icon_Push:   return Type::Push;
+    case Type::Icon_Rock:   return Type::Rock;
+    case Type::Icon_Shut:   return Type::Shut;
+    case Type::Icon_Stop:   return Type::Stop;
+    case Type::Icon_Wall:   return Type::Wall;
+    case Type::Icon_Win:    return Type::Win;
+    case Type::Icon_You:    return Type::You;
+    default:  throw(std::runtime_error("iconToAll(): not given an ICON_TYPE"));
+  } //clang-format on
+}
+
 void Game::adjustAddingRules() {
   std::vector<Rule> rules{m_RM.getm_rules()};
   assert(rules.size() > 0);
@@ -78,13 +103,14 @@ void Game::createRule(const std::vector<Type> &word1,
       +type2 < +Type::PROPERTY_TYPE &&
       (+type3 > +Type::PROPERTY_TYPE ||
        (+type3 > +Type::NOUN_TYPE && +type3 < +Type::ICON_NOUN_TYPE))) {
-    bool already_exists =
+    bool already_exists {
         std::any_of(m_RM.getm_rules().begin(), m_RM.getm_rules().end(),
                     [&](const Rule &rule) {
                       return rule.getm_rule()[0] == type1 &&
                              rule.getm_rule()[1] == type2 &&
                              rule.getm_rule()[2] == type3;
-                    });
+                    })
+      };
     if (!already_exists) {
       Rule new_rule{type1, type2, type3};
       m_RM.addRule(new_rule);
@@ -305,10 +331,6 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
       continue;
     Position pos_mismatch =
         *getMismatch(m_map3D.getm_grid()[1], direction, each);
-    std::cerr << "Mismatch is in position: " << pos_mismatch.first << pos_mismatch.second << " and has types: ";
-      for(auto& type : m_map3D.At(pos_mismatch).getTypes()) {
-        std::cerr << type << '\n';
-      }
 
     std::size_t delta_x = pos_mismatch.first - each.first;
     std::size_t delta_y = pos_mismatch.second - each.second;
@@ -338,6 +360,16 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
 
     if (obj_mismatch.objectHasType(Type::Push)) {
       state = handlePush(obj_tail, obj_mismatch, direction, each);
+      m_players = m_map3D.getPositions(Type::You);
+      if (state == PlayState::Won){
+        m_state_of_game = PlayState::Won;
+        return ;
+      }
+      else if (m_players.size() == 0){
+        m_state_of_game = PlayState::Lose;
+        return ;
+      }
+      
       if (state == PlayState::Playing) {
         m_map3D.resetObject(each);
         m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
@@ -360,9 +392,11 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
       
       else if (state == PlayState::Playing) {
         //////////// movimento effettivo
-
+        // la prima posizione non viene aggiornata
         if (obj_mismatch.getTypes()[0] != Type::Void){ 
           state = handlePush(obj_tail, obj_mismatch, direction, each);
+          m_players = m_map3D.getPositions(Type::You);
+
           if (state == PlayState::Playing) {
             m_map3D.resetObject(each);
             m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
@@ -482,7 +516,6 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
                 break;
         }
 
-        if(m_players.size() == 0) {m_state_of_game = PlayState::Lose;}
         if (m_state_of_game == PlayState::Lose) {
             std::cerr << "Hai perso :(\n";
             window.close();}
@@ -496,7 +529,7 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
 }    
     
     /////////////////////////////////// Chapter: Handling Displaying ///////////////////////////////////
-    void Game::render(sf::RenderWindow &window, std::vector<sf::Sprite> sprites){
+    void Game::render(sf::RenderWindow &window, std::array<sf::Sprite, tilePaths.size()>& sprites){
       window.clear();
       std::size_t x;
       std::size_t y;
@@ -540,6 +573,12 @@ PlayState handleDefeat(Objects &tail) {
   }
   return PlayState::Playing;
 }
+PlayState handleWin(Objects &tail, Objects &mismatch) {
+  if (mismatch.objectHasType(Type::Defeat)) {
+    handleDefeat(tail);
+  }
+  return PlayState::Won;
+}
 PlayState handleHot(Objects &tail) {
   if (!tail.objectHasType(Type::Push)) {
     tail.resetObject();
@@ -560,20 +599,24 @@ PlayState handleShut(Objects &tail, Objects &mismatch) {
   tail.resetObject();
   return PlayState::Playing;
 }
+PlayState handleSpin (Objects& tail, Objects& mismatch) {
+  if (mismatch.objectHasType(Type::Win)) {
+    return handleWin(tail, mismatch);
+  }
+  else if (mismatch.objectHasType(Type::Defeat)) {
+    return handleDefeat(tail);
+  }
+  return PlayState::Invalid;
+}
 PlayState handleStop(Objects &tail) {
   if (!tail.objectHasType(Type::Push)) {
     return PlayState::Invalid;
   }
   return PlayState::Playing;
 }
-PlayState handleWin(Objects &tail, Objects &mismatch) {
-  if (mismatch.objectHasType(Type::Defeat)) {
-    handleDefeat(tail);
-  }
-  return PlayState::Won;
-}
+
 PlayState Game::conditions(Objects &tail, Objects &mismatch) {
-  PlayState result = PlayState::Playing;
+  PlayState result {PlayState::Playing};
   if(mismatch == tail) return result;
 
   for (Type mism_type : mismatch.getTypes()) { 
@@ -581,32 +624,29 @@ PlayState Game::conditions(Objects &tail, Objects &mismatch) {
     if (+mism_type <= +Type::PROPERTY_TYPE) {
       continue;
     }
-    switch (mism_type) {
-    case Type::Defeat:
-      return handleDefeat(tail);
-    case Type::Hot:
-      if (tail.objectHasType(Type::Melt))
-        return handleMelt(tail);
-      else
-        return handleHot(tail);
-    case Type::Shut:
-      return handleShut(tail, mismatch);
-    case Type::Spin: return PlayState::Invalid;
-    case Type::Stop:
-      return handleStop(tail);
+    switch (mism_type) { // clang-format off
+    case Type::Defeat:  return handleDefeat(tail);
+    case Type::Hot:     if (tail.objectHasType(Type::Melt)){    
+                          result = handleMelt(tail); 
+                          break;
+                        } else {
+                          result = handleHot(tail);
+                          break;
+                        }
+    case Type::Melt:    break; // Melt influenza solo se chi si muove incontra Hot
+    case Type::Shut:    result = handleShut(tail, mismatch); break;
+    case Type::Spin:    return handleSpin(tail, mismatch);
+    case Type::Stop:    result = handleStop(tail); break;
+
     case Type::Switch:
     case Type::Push:
-    case Type::Move:
     case Type::Open:
-    case Type::You:
-      result = PlayState::Playing;
-      break;
-    case Type::Win:
-      return handleWin(tail, mismatch);
-    default:
-      throw(std::runtime_error("conditions(): default statement"));
-      break;
-    }
+    case Type::You:     break;
+
+    case Type::Win:     return handleWin(tail, mismatch); // verrebbe sovrascritto
+    default:  throw(std::runtime_error("conditions(): default statement")); break;
+    } // clang-format on
+    if (result == PlayState::Invalid) return PlayState::Invalid;
   }
   return result;
 }
