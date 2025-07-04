@@ -503,11 +503,11 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
       if (m_players.size() == 0)
         m_state_of_game = PlayState::Lose;
       if (m_state_of_game == PlayState::Lose) {
-        std::cerr << "Hai perso :(\n";
+        std::cout << "Hai perso :(\n";
         window.close();
       }
       if (m_state_of_game == PlayState::Won) {
-        std::cerr << "Hai vinto! :)\n";
+        std::cout << "Hai vinto! :)\n";
         window.close();
       }
     }
