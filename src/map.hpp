@@ -27,16 +27,16 @@ namespace Baba_Is_Us {
 using ObjectMap = std::array<std::array<Objects, MapSize::height>, MapSize::width>;
 
 constexpr inline std::array<std::string_view, 35> tilePaths{
-    "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0
-    "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1
-    "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2
-    "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",  // 3
-    "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",  // 4
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",         // 5
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",      // 6
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",       // 7
-    "assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",       // 8
-    "assets/png_PROGETTO/gifs/DOOR_spritesheet.png",            // 9
+    "assets/png_PROGETTO/gifs/VOID_spritesheet.png",            // 0 
+    "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",    // 1 
+    "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png", // 2 
+    "assets/png_PROGETTO/gifs/BABA_move_down_spritesheet.png",  // 3 
+    "assets/png_PROGETTO/gifs/BABA_move_left_spritesheet.png",  // 4 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_up.png",         // 5 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_right.png",      // 6 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_down.png",       // 7 
+    "assets/png_PROGETTO/gifs/BABA_spritesheet_left.png",       // 8 
+    "assets/png_PROGETTO/gifs/DOOR_spritesheet.png",            // 9 
     "assets/png_PROGETTO/gifs/FLAG_spritesheet.png",            // 10
     "assets/png_PROGETTO/gifs/GEAR_spritesheet.png",            // 11
     "assets/png_PROGETTO/gifs/KEY_spritesheet.png",             // 12

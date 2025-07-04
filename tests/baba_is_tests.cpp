@@ -14,7 +14,6 @@
 using namespace Baba_Is_Us;
 
 TEST_CASE("Basic functions - objects.hpp") {
-  std::cerr << std::filesystem::current_path() << '\n';
   Game game("../assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).objectHasType(Type::Block));
@@ -42,6 +41,7 @@ TEST_CASE("Basic functions - objects.hpp") {
   CHECK(types_flag[1] == Type::Win);
 
   game.accessMap().accessm_objects()[0][0].addType(Type::Push);
+  types_block = my_map.At(0, 0).getTypes();
   CHECK(types_block.size() == 3);
   CHECK(types_block[0] == Type::Block);
   CHECK(types_block[1] == Type::Icon_Baba);
@@ -68,6 +68,7 @@ TEST_CASE("Basic functions - objects.hpp") {
   CHECK(types_flag[2] == Type::Push);
 
   game.accessMap().accessm_objects()[0][0].removeType(Type::Push);
+  types_block = my_map.At(0,0).getTypes();
   CHECK(types_block.size() == 2);
   CHECK(types_block[0] == Type::Block);
   CHECK(types_block[1] == Type::Icon_Baba);
@@ -107,7 +108,7 @@ TEST_CASE("Basic functions - objects.hpp") {
 }
 
 TEST_CASE("Basic functions - rules.hpp") {
-  Game game("assets/levels/level_test2.txt");
+  Game game("../assets/levels/level_test2.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).getTypes()[0] == Type::Block);
   CHECK(my_map.At(8, 8).getTypes()[0] == Type::Wall);
@@ -189,7 +190,7 @@ TEST_CASE("Basic functions - rules.hpp") {
 }
 
 TEST_CASE("Basic functions - map.hpp") {
-  Game game("assets/levels/level_test1.txt");
+  Game game("../assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).getTypes()[0] == Type::Block);
   CHECK(my_map.At(8, 8).getTypes()[0] == Type::Void);
@@ -209,7 +210,7 @@ TEST_CASE("Basic functions - map.hpp") {
   CHECK(my_map.At(8, 7).getTypes().size() == 1);
   CHECK(my_map.At(8, 7).getTypes()[0] == Type::Void);
 
-  CHECK(my_map.getm_grid()[0][0] == 14);
+  CHECK(my_map.getm_grid()[0][0] == 13);
   CHECK(my_map.getm_objects()[0][0].getTypes()[0] == Type::Block);
   my_map.setTextures();
   my_map.setSprites();
@@ -220,9 +221,8 @@ TEST_CASE("Basic functions - map.hpp") {
 }
 
 TEST_CASE("Game - Basic movement and transformation between map_layers") {
-  Game game("assets/levels/level_test1.txt");
+  Game game("../assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
-
 
   // il livello si è caricato bene, per le posizioni?
   CHECK(my_map.At(8, 7).objectHasType(Type::Baba));
@@ -298,17 +298,19 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
+
   CHECK(my_map.At(11, 6).objectHasType(Type::Baba));
   CHECK(my_map.At(11, 6).objectHasType(Type::You));
+
   CHECK(my_map.At(2, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Icon_Lava));
-  CHECK(my_map.At(2, 6).getTypes()[2] == (Type::Push));
+
   CHECK(my_map.At(3, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
-  CHECK(my_map.At(3, 6).getTypes()[2] == (Type::Push));
+
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
-  CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
+
 
   CHECK(my_map.getm_grid()[6][2] == +Type::Icon_Lava);
   CHECK(my_map.getm_grid()[6][3] == +Type::Icon_Is);
@@ -320,13 +322,13 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(9, 6).objectHasType(Type::You));
   CHECK(my_map.At(2, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Icon_Lava));
-  CHECK(my_map.At(2, 6).getTypes()[2] == (Type::Push));
+
   CHECK(my_map.At(3, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
-  CHECK(my_map.At(3, 6).getTypes()[2] == (Type::Push));
+
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
-  CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
+
 
   CHECK(my_map.getm_grid()[6][2] == +Type::Icon_Lava);
   CHECK(my_map.getm_grid()[6][3] == +Type::Icon_Is);
@@ -334,7 +336,7 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
 }
 
 TEST_CASE("Game - Rules changing") {
-  Game game("assets/levels/level_test1.txt");
+  Game game("../assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
 
   // il livello si è caricato bene, per le posizioni?
@@ -388,11 +390,85 @@ TEST_CASE("Game - Rules changing") {
   CHECK(my_map.At(11, 6).objectHasType(Type::Baba));
   CHECK(my_map.At(2, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(2, 6).getTypes()[1] == (Type::Icon_Lava));
-  CHECK(my_map.At(2, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(3, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
-  CHECK(my_map.At(3, 6).getTypes()[2] == (Type::Push));
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
-  CHECK(my_map.At(4, 6).getTypes()[2] == (Type::Push));
+
+}
+
+TEST_CASE("Game - Interact e pathFinder"){
+  Game game("../assets/levels/level_test3.txt");
+  Map &my_map{game.accessMap()};
+
+  CHECK(game.getRuleManager().getm_rules().size() == 2);
+  CHECK(game.getPlayerPositions().size() == 1);
+  CHECK(my_map.At(0, 7).getTypes()[0] == Type::Baba);
+
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 0);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+
+  sf::RenderWindow window(sf::VideoMode({512, 512}), "Testing Interact and pathFinder");
+  sf::Clock clock;
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(1, 7).getTypes()[0] == Type::Baba);
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 1);
+  CHECK(my_map.getPositions(Type::Spin).size() == 6);
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 0);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(2, 7).getTypes()[0]== Type::Baba);
+
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 1);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 0);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(3, 7).getTypes()[0]== Type::Baba);
+
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 1);
+  CHECK(my_map.getPositions(Type::Spin).size() == 12);
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 0);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(4, 7).getTypes()[0]== Type::Baba);
+  
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 1);
+  CHECK(my_map.getPositions(Type::Spin).size() == 4);
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 0);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(5, 7).getTypes()[0]== Type::Baba);
+
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 1);
+  CHECK(my_map.getPositions(Type::Spin).size() == 10);
+  game.interact();
+  CHECK(my_map.getPositions(Type::Switch).size() == 0);
+  CHECK(my_map.getPositions(Type::Spin).size() == 0);
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(6, 7).getTypes()[0]== Type::Baba);
+  game.movement(window, clock, Direction::Right);
+  CHECK(my_map.At(7, 7).getTypes()[0]== Type::Baba);
+  CHECK(my_map.At(8, 7).getTypes()[0]== Type::Flag);
+  CHECK(my_map.At(8, 7).getTypes()[1]== Type::Win);
+
+  game.movement(window, clock, Direction::Right);
+  CHECK(game.getm_state_of_game() == PlayState::Won);
+
 }

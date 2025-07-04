@@ -30,7 +30,6 @@ Map::Map(std::string_view filename) {
   // (fino a Type::VERB_TYPE)
   for (std::size_t iii = 0; iii < MapSize::height * MapSize::width; ++iii) {
     map_file >> value;
-    std::cerr << value;
     std::vector<Type> current{};
 
     // N.B: value si basa su enum_objects. Non esistono value == Block o
@@ -41,19 +40,19 @@ Map::Map(std::string_view filename) {
            "in Map(), level.txt there's an invalid value");
 
     if (value < +Type::ICON_NOUN_TYPE) { 
-      m_grid[iii / MapSize::width][iii % MapSize::width] = value;
+      m_grid[iii / MapSize::width][iii % MapSize::height] = value;
 
       current.emplace_back(intToType(value));
-      m_objects[iii / MapSize::width][iii % MapSize::width] = current;
+      m_objects[iii / MapSize::width][iii % MapSize::height] = current;
     }
 
     else if (value > +Type::Icon_Void &&
              value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
-      m_grid[iii / MapSize::width][iii % MapSize::width] = value;
+      m_grid[iii / MapSize::width][iii % MapSize::height] = value;
 
       current.emplace_back(Type::Block);
       current.emplace_back(intToType(value));
-      m_objects[iii / MapSize::width][iii % MapSize::width] = current;
+      m_objects[iii / MapSize::width][iii % MapSize::height] = current;
     } else
       throw(std::runtime_error("Map(): in level.txt not given a valid value "
                                "under +Type::VERB_TYPE"));
@@ -175,7 +174,7 @@ void Map::resetObject(Position position) {
 void Map::pathFinder(Position start, Direction dir,
                      const std::array<Direction, 4> &directions,
                      bool to_activate) {
-
+  
   if (isOutOfBoundary(start.first, start.second)) {
     return;
   }
@@ -192,9 +191,13 @@ void Map::pathFinder(Position start, Direction dir,
       static_cast<Direction>((+dir + 2) % 4)}; // formula divina
 
   for (const auto each : directions) {
+
     if (each == dir_to_avoid)
       continue;
     Position target_pos{adjacents[static_cast<std::size_t>(+each)]};
+    if (isOutOfBoundary(target_pos.first, target_pos.second)){
+      continue;
+    }
     Objects &target_obj{At(target_pos)};
 
     if (target_obj.objectHasType(Type::Gear) &&

@@ -52,6 +52,6 @@ if (BUILD_TESTING)
   target_link_libraries(baba.t PRIVATE sfml-graphics)
   # aggiungi l'eseguibile progetto.t alla lista dei test
   add_test(NAME baba.t COMMAND baba.t)
-  target_link_libraries(baba.t PRIVATE sfml-graphics)
+  #target_link_libraries(baba.t PRIVATE sfml-graphics)
 
 endif()

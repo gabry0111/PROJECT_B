@@ -173,27 +173,29 @@ void Game::constantProperties() {
   std::vector<Position> constant_prop_positions{};
   for (std::size_t i{}; i < MapSize::n_tiles; ++i) {
     Objects &obj{m_map3D.At(i / MapSize::height, i % MapSize::width)};
-    switch (obj.getTypes()[0]) {
-    case Type::Block:
-      break;
-    case Type::Door:
-      obj.addType(Type::Shut);
-      obj.addType(Type::Stop);
-      break;
-    case Type::Gear:
-      obj.addType(Type::Push);
-      break;
-    case Type::Key:
-      obj.addType(Type::Open);
-      obj.addType(Type::Push);
-      break;
-    case Type::Lever:
-      obj.addType(Type::Push);
-      break;
+    for (const auto& property : obj.getTypes()){
+      switch (property) {
+      case Type::Block:
+        break;
+      case Type::Door:
+        obj.addType(Type::Shut);
+        obj.addType(Type::Stop);
+        break;
+      case Type::Gear:
+        obj.addType(Type::Push);
+        break;
+      case Type::Key:
+        obj.addType(Type::Open);
+        break;
+      case Type::Lever:
+        obj.addType(Type::Push);
+        break;
 
-    default:
-      break;
+      default:
+        break;
+      }
     }
+    
   }
 }
 
@@ -263,7 +265,6 @@ PlayState Game::processMove(Objects &tail, Objects &target, Direction direction,
     m_RM.block_moved = true;
   
   PlayState state = conditions(tail, target);
-  std::cerr << "State == " << +state << '\n';
 
   if (tail.objectHasType(Type::Void)){
     m_map3D.accessm_grid()[start.second][start.first] = +Type::Void;
@@ -310,7 +311,6 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     std::size_t player_idle_index{static_cast<std::size_t>(+direction + 5)};
     std::size_t index_player_sprite;
     index_player_sprite = indexToBeDrawn(m_map3D.getm_grid()[each.second][each.first]);
-    std::cerr << "index_player_sprite: " << index_player_sprite <<'\n';
     sf::Sprite& player_sprite = m_map3D.tileSprites[index_player_sprite];
     
     // solo Baba (in tilePaths con indice da 1 a 8) ha varianti nelle texture.
@@ -348,11 +348,6 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     }
     Objects &obj_tail = m_map3D.At(each.first, each.second);
     Objects &obj_mismatch = m_map3D.At(pos_mismatch.first, pos_mismatch.second);
-    std::cerr << "Tail has types: "; 
-    for (Type type : obj_tail.getTypes()) {std::cerr << type << '\n' ;}
-    std::cerr << "Mismatch has types: "; 
-    for (Type type : obj_mismatch.getTypes()) {std::cerr << type << '\n';}
-
     
     if (obj_mismatch.objectHasType(Type::Block) &&
         m_map3D.isOutOfBoundary(pos_mismatch.first + dx,
@@ -414,7 +409,6 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     render(window, m_map3D.tileSprites);
   }
   m_players = m_map3D.getPositions(Type::You);
-  std::cerr << "Fine movement(): m_players.size() == " << m_players.size() << '\n';
 }
 
 
@@ -437,7 +431,6 @@ void Game::interact(){
 
       if (target.objectHasType(Type::Lever) && !target.objectHasType(Type::Switch)){
         target.addType(Type::Switch);
-        std::cerr << "interact(): lever_pos: " << adjacents[static_cast<std::size_t>(+each)].first << adjacents[static_cast<std::size_t>(+each)].second << ' ';
         m_map3D.pathFinder(adjacents[static_cast<std::size_t>(+each)], each, directions, true);
       } else if (target.objectHasType(Type::Lever) && target.objectHasType(Type::Switch)) {
         target.removeType(Type::Switch);
@@ -573,7 +566,10 @@ PlayState handleSpin (Objects& tail, Objects& mismatch) {
   }
   return PlayState::Invalid;
 }
-PlayState handleStop(Objects &tail) {
+PlayState handleStop(Objects &tail, Objects &mismatch) {
+  if (mismatch.objectHasType(Type::Shut)){
+    return handleShut(tail, mismatch);
+  }
   if (!tail.objectHasType(Type::Push)) {
     return PlayState::Invalid;
   }
@@ -601,7 +597,7 @@ PlayState Game::conditions(Objects &tail, Objects &mismatch) {
     case Type::Melt:    break; // Melt influenza solo se chi si muove incontra Hot
     case Type::Shut:    result = handleShut(tail, mismatch); break;
     case Type::Spin:    return handleSpin(tail, mismatch);
-    case Type::Stop:    result = handleStop(tail); break;
+    case Type::Stop:    result = handleStop(tail, mismatch); break;
 
     case Type::Switch:
     case Type::Push:
