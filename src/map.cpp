@@ -188,7 +188,7 @@ void Map::pathFinder(Position start, Direction dir,
   // convertiamo la direzione di provenienza (dir) nella direzione da non
   // controllare
   const Direction dir_to_avoid{
-      static_cast<Direction>((+dir + 2) % 4)}; // formula divina
+      static_cast<Direction>((+dir + 2) % 4)};
 
   for (const auto each : directions) {
 
