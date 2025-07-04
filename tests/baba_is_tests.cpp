@@ -1,5 +1,4 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
 #include "../src/enum_objects.hpp"
 #include "../src/game.hpp"
 #include "../src/map.hpp"
@@ -14,7 +13,7 @@
 using namespace Baba_Is_Us;
 
 TEST_CASE("Basic functions - objects.hpp") {
-  Game game("../assets/levels/level_test1.txt");
+  Game game("assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).objectHasType(Type::Block));
   CHECK(my_map.At(8, 8).objectHasType(Type::Void));
@@ -108,7 +107,7 @@ TEST_CASE("Basic functions - objects.hpp") {
 }
 
 TEST_CASE("Basic functions - rules.hpp") {
-  Game game("../assets/levels/level_test2.txt");
+  Game game("assets/levels/level_test2.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).getTypes()[0] == Type::Block);
   CHECK(my_map.At(8, 8).getTypes()[0] == Type::Wall);
@@ -190,7 +189,7 @@ TEST_CASE("Basic functions - rules.hpp") {
 }
 
 TEST_CASE("Basic functions - map.hpp") {
-  Game game("../assets/levels/level_test1.txt");
+  Game game("assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
   CHECK(my_map.At(0, 0).getTypes()[0] == Type::Block);
   CHECK(my_map.At(8, 8).getTypes()[0] == Type::Void);
@@ -221,7 +220,7 @@ TEST_CASE("Basic functions - map.hpp") {
 }
 
 TEST_CASE("Game - Basic movement and transformation between map_layers") {
-  Game game("../assets/levels/level_test1.txt");
+  Game game("assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
 
   // il livello si è caricato bene, per le posizioni?
@@ -336,7 +335,7 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
 }
 
 TEST_CASE("Game - Rules changing") {
-  Game game("../assets/levels/level_test1.txt");
+  Game game("assets/levels/level_test1.txt");
   Map &my_map{game.accessMap()};
 
   // il livello si è caricato bene, per le posizioni?
@@ -398,7 +397,7 @@ TEST_CASE("Game - Rules changing") {
 }
 
 TEST_CASE("Game - Interact e pathFinder"){
-  Game game("../assets/levels/level_test3.txt");
+  Game game("assets/levels/level_test3.txt");
   Map &my_map{game.accessMap()};
 
   CHECK(game.getRuleManager().getm_rules().size() == 2);

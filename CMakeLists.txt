@@ -46,12 +46,11 @@ target_link_libraries(progetto PRIVATE sfml-graphics)
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 if (BUILD_TESTING)
-
+  file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
   # aggiungi l'eseguibile progetto.t
   add_executable(baba.t tests/baba_is_tests.cpp src/objects.cpp src/map.cpp src/game.cpp src/rules.cpp)
   target_link_libraries(baba.t PRIVATE sfml-graphics)
   # aggiungi l'eseguibile progetto.t alla lista dei test
   add_test(NAME baba.t COMMAND baba.t)
-  #target_link_libraries(baba.t PRIVATE sfml-graphics)
 
 endif()
