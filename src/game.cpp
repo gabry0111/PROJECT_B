@@ -175,7 +175,6 @@ void Game::constantProperties() {
     Objects &obj{m_map3D.At(i / MapSize::height, i % MapSize::width)};
     switch (obj.getTypes()[0]) {
     case Type::Block:
-      obj.addType(Type::Push);
       break;
     case Type::Door:
       obj.addType(Type::Shut);
@@ -266,6 +265,13 @@ PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, 
   PlayState state = conditions(tail, target);
   std::cerr << "State == " << +state << '\n';
 
+  if (tail.objectHasType(Type::Void)){
+    m_map3D.accessm_grid()[start.second][start.first] = +Type::Void;
+  }
+  if (target.objectHasType(Type::Void)){
+    m_map3D.accessm_grid()[pos_mism.second][pos_mism.first] = +Type::Void;
+  }
+
   if (state == PlayState::Invalid){
     return PlayState::Invalid;
   }
@@ -297,20 +303,19 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
   std::size_t dy{shift.second};
   std::vector<Position> tail_pos{getTailMovingPosition(direction)};
 
-  std::size_t player_move_index{static_cast<std::size_t>(+direction + 1)};
-  std::size_t player_idle_index{static_cast<std::size_t>(+direction + 5)};
 
   for (auto& each : tail_pos){ 
     
-    std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
-    std::size_t index_player_sprite {};
+    std::size_t player_move_index{static_cast<std::size_t>(+direction + 1)};
+    std::size_t player_idle_index{static_cast<std::size_t>(+direction + 5)};
+    std::size_t index_player_sprite;
     index_player_sprite = indexToBeDrawn(m_map3D.getm_grid()[each.second][each.first]);
+    std::cerr << "index_player_sprite: " << index_player_sprite <<'\n';
     sf::Sprite& player_sprite = m_map3D.tileSprites[index_player_sprite];
     
     // solo Baba (in tilePaths con indice da 1 a 8) ha varianti nelle texture.
     // Per prima cosa, giriamo la sprite.
     if (index_player_sprite >= 1 && index_player_sprite <= 8){
-      player_sprite = m_map3D.tileSprites[player_idle_index];
       player_sprite.setTexture(m_map3D.textures[player_idle_index]);
     } else {
       player_move_index = index_player_sprite;
@@ -343,6 +348,10 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     }
     Objects &obj_tail = m_map3D.At(each.first, each.second);
     Objects &obj_mismatch = m_map3D.At(pos_mismatch.first, pos_mismatch.second);
+    std::cerr << "Tail has types: "; 
+    for (Type type : obj_tail.getTypes()) {std::cerr << type << '\n' ;}
+    std::cerr << "Mismatch has types: "; 
+    for (Type type : obj_mismatch.getTypes()) {std::cerr << type << '\n';}
 
     
     if (obj_mismatch.objectHasType(Type::Block) &&
@@ -405,6 +414,7 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     render(window, m_map3D.tileSprites);
   }
   m_players = m_map3D.getPositions(Type::You);
+  std::cerr << "Fine movement(): m_players.size() == " << m_players.size() << '\n';
 }
 
 
@@ -471,7 +481,7 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
             default: 
                 break;
         }
-
+        if(m_players.size() == 0) m_state_of_game = PlayState::Lose;
         if (m_state_of_game == PlayState::Lose) {
             std::cerr << "Hai perso :(\n";
             window.close();}
