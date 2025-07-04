@@ -61,6 +61,83 @@ inline std::ostream &operator<<(std::ostream &out, Type type) {
 }
 */
 
+/*
+ ///// in handlePush()
+  if (tail.objectHasType(Type::Void)){
+    m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
+    m_map3D.accessm_grid()[1][start.second][start.first] = +Type::Void;
+  }
+  if (target.objectHasType(Type::Void)){
+    m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] = +Type::Void;
+    m_map3D.accessm_grid()[1][pos_mism.second][pos_mism.first] = +Type::Void;
+  }
+  
+  //// in movement()
+  
+    if (obj_mismatch.objectHasType(Type::Push)) {
+      state = handlePush(obj_tail, obj_mismatch, direction, each);
+      m_players = m_map3D.getPositions(Type::You);
+      if (state == PlayState::Won){
+        m_state_of_game = PlayState::Won;
+        return ;
+      }
+      else if (m_players.size() == 0){
+        m_state_of_game = PlayState::Lose;
+        return ;
+      }
+      
+      if (state == PlayState::Playing) {
+        m_map3D.resetObject(each);
+        m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+        m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+      }
+    } 
+    
+    else {
+      state = conditions(obj_tail, obj_mismatch);
+
+      m_players = m_map3D.getPositions(Type::You);
+      if (state == PlayState::Won){
+        m_state_of_game = PlayState::Won;
+        return ;
+      }
+      else if (m_players.size() == 0){
+        m_state_of_game = PlayState::Lose;
+        return ;
+      }
+      
+      else if (state == PlayState::Playing) {
+        //////////// movimento effettivo
+        // la prima posizione non viene aggiornata
+        if (obj_mismatch.getTypes()[0] != Type::Void){ 
+          state = handlePush(obj_tail, obj_mismatch, direction, each);
+          m_players = m_map3D.getPositions(Type::You);
+
+          if (state == PlayState::Playing) {
+            m_map3D.resetObject(each);
+            m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+            m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+          }
+        }
+        else{
+          m_map3D.accessm_grid()[0][pos_mismatch.second][pos_mismatch.first] =
+              m_map3D.getm_grid()[0][each.second][each.first];
+          m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
+
+          m_map3D.accessm_grid()[1][pos_mismatch.second][pos_mismatch.first] =
+              +obj_tail.getTypes()[0];
+          m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+
+          m_map3D.accessm_objects()[pos_mismatch.second][pos_mismatch.first] =
+              obj_tail;
+          m_map3D.resetObject(each);
+          }
+      }
+    }
+    
+*/
+
+
 
 /*
 class TileMap : public sf::Drawable, public sf::Transformable {

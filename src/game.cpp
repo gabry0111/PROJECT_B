@@ -233,15 +233,15 @@ std::vector<Position> Game::getTailMovingPosition(Direction direction) {
   return pos_to_be_moved;
 }
 // fallisce solo se è OutOfBoundary
-std::optional<Position> getMismatch(const MapGrid2D &grid, Direction dir, Position start) {
+std::optional<Position> getMismatch(const Map& map, Direction dir, Position start) {
   std::optional<Position> result{};
   Position shift{getShift(dir)};
   std::size_t x{start.first};
   std::size_t y{start.second};
-  int value = grid[y][x];
+  int value = +map.getm_objects()[y][x].getTypes()[0];
   
   while (x < MapSize::width && y < MapSize::height) {
-    if (grid[y][x] != value) {
+    if (+map.getm_objects()[y][x].getTypes()[0] != value) {
       result = {x, y};
       return result;
     }
@@ -265,18 +265,12 @@ PlayState Game::handlePush(Objects &tail, Objects &target, Direction direction, 
   
   PlayState state = conditions(tail, target);
   std::cerr << "State == " << +state << '\n';
-  
-  if (tail.objectHasType(Type::Void)){
-    m_map3D.accessm_grid()[0][start.second][start.first] = +Type::Void;
-    m_map3D.accessm_grid()[1][start.second][start.first] = +Type::Void;
-  }
-  if (target.objectHasType(Type::Void)){
-    m_map3D.accessm_grid()[0][pos_mism.second][pos_mism.first] = +Type::Void;
-    m_map3D.accessm_grid()[1][pos_mism.second][pos_mism.first] = +Type::Void;
-  }
 
   if (state == PlayState::Invalid){
-    return state;
+    return PlayState::Invalid;
+  }
+  if (state == PlayState::Won) {
+    return PlayState::Won;
   }
 
   if (m_map3D.isOutOfBoundary(pos_next_mism.first, pos_next_mism.second))
@@ -327,10 +321,10 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     m_map3D.redraw(clock);
     render(window, m_map3D.tileSprites);
 
-    if (!getMismatch(m_map3D.getm_grid()[1], direction, each))
+    if (!getMismatch(m_map3D, direction, each))
       continue;
     Position pos_mismatch =
-        *getMismatch(m_map3D.getm_grid()[1], direction, each);
+        *getMismatch(m_map3D, direction, each);
 
     std::size_t delta_x = pos_mismatch.first - each.first;
     std::size_t delta_y = pos_mismatch.second - each.second;
@@ -339,7 +333,7 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     }
 
     //////////// movimento visivo
-    if (!getMismatch(m_map3D.getm_grid()[1], direction, each).has_value()) {
+    if (!getMismatch(m_map3D, direction, each).has_value()) {
       continue;
     } else {
       player_sprite = m_map3D.tileSprites[baba_move_index];
@@ -356,55 +350,20 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     if (obj_mismatch.objectHasType(Type::Block) &&
         m_map3D.isOutOfBoundary(pos_mismatch.first + dx,
                                 pos_mismatch.second + dy)) {continue;}
-    PlayState state;
 
-    if (obj_mismatch.objectHasType(Type::Push)) {
-      state = handlePush(obj_tail, obj_mismatch, direction, each);
-      m_players = m_map3D.getPositions(Type::You);
-      if (state == PlayState::Won){
-        m_state_of_game = PlayState::Won;
-        return ;
-      }
-      else if (m_players.size() == 0){
-        m_state_of_game = PlayState::Lose;
-        return ;
-      }
-      
-      if (state == PlayState::Playing) {
-        m_map3D.resetObject(each);
-        m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
-        m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-      }
-    } 
-    
-    else {
-      state = conditions(obj_tail, obj_mismatch);
-
-      m_players = m_map3D.getPositions(Type::You);
-      if (state == PlayState::Won){
-        m_state_of_game = PlayState::Won;
-        return ;
-      }
-      else if (m_players.size() == 0){
-        m_state_of_game = PlayState::Lose;
-        return ;
-      }
-      
-      else if (state == PlayState::Playing) {
-        //////////// movimento effettivo
-        // la prima posizione non viene aggiornata
-        if (obj_mismatch.getTypes()[0] != Type::Void){ 
-          state = handlePush(obj_tail, obj_mismatch, direction, each);
-          m_players = m_map3D.getPositions(Type::You);
-
-          if (state == PlayState::Playing) {
-            m_map3D.resetObject(each);
-            m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
-            m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
-          }
-        }
-        else{
-          m_map3D.accessm_grid()[0][pos_mismatch.second][pos_mismatch.first] =
+    PlayState state {handlePush(obj_tail, obj_mismatch, direction, each)};
+    m_players = m_map3D.getPositions(Type::You);
+    if (state == PlayState::Won){
+      m_state_of_game = PlayState::Won;
+      return ;
+    }
+    else if (m_players.size() == 0){
+      m_state_of_game = PlayState::Lose;
+      return ;
+    }
+    if (state == PlayState::Playing) {
+      if(obj_mismatch.objectHasType(Type::Void)) {
+        m_map3D.accessm_grid()[0][pos_mismatch.second][pos_mismatch.first] =
               m_map3D.getm_grid()[0][each.second][each.first];
           m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
 
@@ -415,9 +374,13 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
           m_map3D.accessm_objects()[pos_mismatch.second][pos_mismatch.first] =
               obj_tail;
           m_map3D.resetObject(each);
-          }
+      } else {
+        m_map3D.resetObject(each);
+        m_map3D.accessm_grid()[1][each.second][each.first] = +Type::Void;
+        m_map3D.accessm_grid()[0][each.second][each.first] = +Type::Void;
       }
     }
+    
     if (m_RM.block_moved) {
       parseRules();
       m_RM.block_moved = false;
