@@ -6,8 +6,6 @@
 #include "../src/rules.hpp"
 #include "doctest.h"
 #include <SFML/Graphics.hpp>
-#include <filesystem>
-#include <iostream>
 
 
 using namespace Baba_Is_Us;

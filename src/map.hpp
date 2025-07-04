@@ -1,12 +1,12 @@
 #ifndef MAP_HPP
 #define MAP_HPP
-#include <SFML/Graphics.hpp>
-#include <array>
-#include <fstream>
-#include <string_view>
-
 #include "enum_objects.hpp"
 #include "objects.hpp"
+#include "rules.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <fstream>
+#include <string_view>
 
 using Position = std::pair<std::size_t, std::size_t>;
 

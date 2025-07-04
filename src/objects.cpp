@@ -1,6 +1,7 @@
 #include "objects.hpp"
 #include <algorithm>
 #include <cassert>
+#include <optional>
 #include <vector>
 
 namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto

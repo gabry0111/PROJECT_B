@@ -1,8 +1,8 @@
 #include "map.hpp"
 
 #include <SFML/Graphics.hpp>
-#include <algorithm>
-#include <iostream>
+#include <fstream>
+#include <string_view>
 
 using Position = std::pair<std::size_t, std::size_t>;
 

@@ -1,9 +1,11 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include "enum_objects.hpp"
-#include "map.hpp"
 #include "objects.hpp"
 #include "rules.hpp"
+#include "map.hpp"
+
+#include <iostream>
 
 using Position = std::pair<std::size_t, std::size_t>;
 namespace Baba_Is_Us {

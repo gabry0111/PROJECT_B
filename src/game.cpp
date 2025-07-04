@@ -1,6 +1,5 @@
 #include "game.hpp"
-#include <SFML/Graphics.hpp>
-#include <chrono>
+
 #include <iostream>
 
 namespace Baba_Is_Us {

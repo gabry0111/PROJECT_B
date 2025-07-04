@@ -1,6 +1,6 @@
 #include "rules.hpp"
-#include <algorithm>
-#include <optional>
+
+#include <array>
 
 namespace Baba_Is_Us {
 

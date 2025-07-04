@@ -1,11 +1,5 @@
-#include <SFML/Graphics.hpp>
-#include <array>
-#include <filesystem>
-#include <iostream>
-#include <stdexcept>
-
 #include "game.hpp"
-#include "map.hpp"
+
 using namespace Baba_Is_Us;
 
 int main() {

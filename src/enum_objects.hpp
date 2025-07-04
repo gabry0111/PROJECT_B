@@ -1,8 +1,8 @@
 #ifndef ENUM_OBJECTS_HPP
 #define ENUM_OBJECTS_HPP
 
-#include <iostream>
 #include <type_traits> 
+#include <stdexcept> 
 
 namespace Baba_Is_Us {
 
@@ -69,65 +69,6 @@ template <typename T> constexpr int operator+(T a) noexcept {
   return static_cast<std::underlying_type_t<T>>(a);
 }
 
-constexpr inline std::string_view getTypeName(Type type) {
-  //clang-format off
-  switch (type) { 
-  case Type::NOUN_TYPE:       return "NOUN_TYPE";
-  case Type::Void:            return "Void";
-  case Type::Baba:            return "Baba";
-  case Type::Block:           return "Block";
-  case Type::Door:            return "Door";
-  case Type::Flag:            return "Flag";
-  case Type::Gear:            return "Gear";
-  case Type::Key:             return "Key";
-  case Type::Lava:            return "Lava";
-  case Type::Lever:           return "Lever";
-  case Type::Rock:            return "Rock";
-  case Type::Wall:            return "Wall";
-
-  case Type::ICON_NOUN_TYPE:  return "ICON_NOUN_TYPE";
-  case Type::Icon_Void:       return "Icon_Void";
-  case Type::Icon_Baba:       return "Icon_Baba";
-  case Type::Icon_Defeat:     return "Icon_Defeat";
-  case Type::Icon_Door:       return "Icon_Door";
-  case Type::Icon_Flag:       return "Icon_Flag";
-  case Type::Icon_Gear:       return "Icon_Gear";
-  case Type::Icon_Hot:        return "Icon_Hot";
-  case Type::Icon_Is:         return "Icon_Is";
-  case Type::Icon_Key:        return "Icon_Key";
-  case Type::Icon_Lava:       return "Icon_Lava";
-  case Type::Icon_Lever:      return "Icon_Lever";
-  case Type::Icon_Melt:       return "Icon_Melt";
-  case Type::Icon_Push:       return "Icon_Push";
-  case Type::Icon_Rock:       return "Icon_Rock";
-  case Type::Icon_Shut:       return "Icon_Shut";
-  case Type::Icon_Stop:       return "Icon_Stop";
-  case Type::Icon_Wall:       return "Icon_Wall";
-  case Type::Icon_Win:        return "Icon_Win";
-  case Type::Icon_You:        return "Icon_You";
-
-  case Type::VERB_TYPE:       return "VERB_TYPE";
-  case Type::Is:              return "Is";
-
-  case Type::PROPERTY_TYPE:   return "PROPERTY_TYPE";
-  case Type::Defeat:          return "Defeat";
-  case Type::Hot:             return "Hot";
-  case Type::Melt:            return "Melt";
-  case Type::Open:            return "Open";
-  case Type::Push:            return "Push";
-  case Type::Shut:            return "Shut";
-  case Type::Spin:            return "Spin";
-  case Type::Stop:            return "Stop";
-  case Type::Switch:          return "Switch";
-  case Type::Win:             return "Win";
-  case Type::You:             return "You";
-  default:                    return "No type";
-  } // clang-format on
-}
-  
-inline std::ostream &operator<<(std::ostream &out, Type type) {
-  return out << getTypeName(type);
-}
 
 // associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di tilePath.
 inline std::size_t indexToBeDrawn(const int i) {
