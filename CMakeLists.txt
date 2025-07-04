@@ -37,9 +37,9 @@ find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
-add_executable(progetto src/main.cpp src/objects.cpp src/map.cpp src/game.cpp src/rules.cpp)
+add_executable(baba_is_us src/main.cpp src/objects.cpp src/map.cpp src/game.cpp src/rules.cpp)
 # nel caso si usi SFML. analogamente per eventuali altre librerie
-target_link_libraries(progetto PRIVATE sfml-graphics)
+target_link_libraries(baba_is_us PRIVATE sfml-graphics)
 
 # aggiungere eventuali altri eseguibili
 
@@ -48,9 +48,9 @@ target_link_libraries(progetto PRIVATE sfml-graphics)
 if (BUILD_TESTING)
   file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
   # aggiungi l'eseguibile progetto.t
-  add_executable(baba.t tests/baba_is_tests.cpp src/objects.cpp src/map.cpp src/game.cpp src/rules.cpp)
-  target_link_libraries(baba.t PRIVATE sfml-graphics)
+  add_executable(baba_is_us.t tests/baba_is_tests.cpp src/objects.cpp src/map.cpp src/game.cpp src/rules.cpp)
+  target_link_libraries(baba_is_us.t PRIVATE sfml-graphics)
   # aggiungi l'eseguibile progetto.t alla lista dei test
-  add_test(NAME baba.t COMMAND baba.t)
+  add_test(NAME baba_is_us.t COMMAND baba_is_us.t)
 
 endif()
