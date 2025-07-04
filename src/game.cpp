@@ -302,21 +302,24 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
   std::size_t dy{shift.second};
   std::vector<Position> tail_pos{getTailMovingPosition(direction)};
 
-  const std::size_t baba_move_index{static_cast<std::size_t>(+direction + 1)};
-  const std::size_t baba_idle_index{static_cast<std::size_t>(+direction + 5)};
+  std::size_t player_move_index{static_cast<std::size_t>(+direction + 1)};
+  std::size_t player_idle_index{static_cast<std::size_t>(+direction + 5)};
 
   for (auto& each : tail_pos){ 
     
     std::vector<Type> types {m_map3D.getm_objects()[each.second][each.first].getTypes()};
-    std::size_t index_to_modify {};
-    index_to_modify = indexToBeDrawn(m_map3D.getm_grid()[0][each.second][each.first]);
-    sf::Sprite& player_sprite = m_map3D.tileSprites[index_to_modify];
+    std::size_t index_player_sprite {};
+    index_player_sprite = indexToBeDrawn(m_map3D.getm_grid()[0][each.second][each.first]);
+    sf::Sprite& player_sprite = m_map3D.tileSprites[index_player_sprite];
     
     // solo Baba (in tilePaths con indice da 1 tail 8) ha varianti nelle texture.
     // Per prima cosa, giriamo la sprite.
-    if (index_to_modify >= 1 && index_to_modify <= 8){  
-        player_sprite = m_map3D.tileSprites[baba_idle_index];
-        player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
+    if (index_player_sprite >= 1 && index_player_sprite <= 8){
+      player_sprite = m_map3D.tileSprites[player_idle_index];
+      player_sprite.setTexture(m_map3D.textures[player_idle_index]);
+    } else {
+      player_move_index = index_player_sprite;
+      player_idle_index = index_player_sprite;
     }
     m_map3D.redraw(clock);
     render(window, m_map3D.tileSprites);
@@ -336,8 +339,8 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     if (!getMismatch(m_map3D, direction, each).has_value()) {
       continue;
     } else {
-      player_sprite = m_map3D.tileSprites[baba_move_index];
-      player_sprite.setTexture(m_map3D.textures[baba_move_index]);
+      player_sprite = m_map3D.tileSprites[player_move_index];
+      player_sprite.setTexture(m_map3D.textures[player_move_index]);
       player_sprite.move(static_cast<float>(dx * 11),
                         static_cast<float>(dy * 11));
       m_map3D.redraw(clock);
@@ -398,7 +401,7 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
       render(window, m_map3D.tileSprites);
 
     } else if (state == PlayState::Invalid) {
-      player_sprite = m_map3D.tileSprites[baba_idle_index];
+      player_sprite = m_map3D.tileSprites[player_move_index];
       player_sprite.move(static_cast<float>(dx) * -11,
                         static_cast<float>(dy) * -11);
       m_map3D.redraw(clock);
@@ -406,8 +409,8 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock, Direction direct
     } else if (state == PlayState::Won)
       m_state_of_game = PlayState::Won;
 
-    player_sprite = m_map3D.tileSprites[baba_idle_index];
-    player_sprite.setTexture(m_map3D.textures[baba_idle_index]);
+    player_sprite = m_map3D.tileSprites[player_idle_index];
+    player_sprite.setTexture(m_map3D.textures[player_idle_index]);
     m_map3D.redraw(clock);
     render(window, m_map3D.tileSprites);
   }
