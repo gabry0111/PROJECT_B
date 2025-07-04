@@ -8,14 +8,14 @@ using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us {
 
-std::size_t findLastNoun(const std::vector<Type>& types) {
-  std::size_t last {};
+std::size_t findLastNoun(const std::vector<Type> &types) {
+  std::size_t last{};
   for (std::size_t i{}; i < types.size(); ++i) {
-      if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) { 
-          last = i;
-      }
+    if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) {
+      last = i;
+    }
   }
-  return static_cast<std::size_t>(+(types[last])); 
+  return static_cast<std::size_t>(+(types[last]));
 }
 
 Map::Map(std::string_view filename) {
@@ -39,7 +39,7 @@ Map::Map(std::string_view filename) {
            value != +Type::Block && value != +Type::Icon_Void &&
            "in Map(), level.txt there's an invalid value");
 
-    if (value < +Type::ICON_NOUN_TYPE) { 
+    if (value < +Type::ICON_NOUN_TYPE) {
       m_grid[iii / MapSize::width][iii % MapSize::height] = value;
 
       current.emplace_back(intToType(value));
@@ -69,20 +69,14 @@ void Map::spriteOverlay() {
     }
   }
 }
-const MapGrid2D &Map::getm_grid() const {
-  return m_grid;
-}
+const MapGrid2D &Map::getm_grid() const { return m_grid; }
 MapGrid2D &Map::accessm_grid() { return m_grid; }
 
-const ObjectMap &Map::getm_objects() const {
-  return m_objects;
-}
-ObjectMap &Map::accessm_objects() {
-  return m_objects;
-}
+const ObjectMap &Map::getm_objects() const { return m_objects; }
+ObjectMap &Map::accessm_objects() { return m_objects; }
 
 void Map::setTextures() {
-  std::size_t iii {};
+  std::size_t iii{};
   for (auto &path : tilePaths) {
     sf::Texture texture;
     if (!texture.loadFromFile(static_cast<std::string>(path))) {
@@ -104,7 +98,7 @@ void Map::setSprites() {
 
     // gli indici saranno sempre nell'ordine di tilePaths
     tileSprites[iii] = sprite; // alla fine avrà tilePaths.size()
-                                      // elementi, ognuno con una sprite
+                               // elementi, ognuno con una sprite
     ++iii;
   }
 }
@@ -131,8 +125,8 @@ const std::array<sf::Sprite, tilePaths.size()> &Map::getTileSprites() const {
 }
 
 sf::Sprite &Map::accessWhichSpriteIsInPosition(Position &position) {
-  std::size_t index{static_cast<std::size_t>(
-      getm_grid()[position.second][position.first])};
+  std::size_t index{
+      static_cast<std::size_t>(getm_grid()[position.second][position.first])};
 
   assert(index < tileSprites.size() &&
          "accessWhichSpriteIsInPosition() has index too high");
@@ -174,7 +168,7 @@ void Map::resetObject(Position position) {
 void Map::pathFinder(Position start, Direction dir,
                      const std::array<Direction, 4> &directions,
                      bool to_activate) {
-  
+
   if (isOutOfBoundary(start.first, start.second)) {
     return;
   }
@@ -187,15 +181,14 @@ void Map::pathFinder(Position start, Direction dir,
 
   // convertiamo la direzione di provenienza (dir) nella direzione da non
   // controllare
-  const Direction dir_to_avoid{
-      static_cast<Direction>((+dir + 2) % 4)};
+  const Direction dir_to_avoid{static_cast<Direction>((+dir + 2) % 4)};
 
   for (const auto each : directions) {
 
     if (each == dir_to_avoid)
       continue;
     Position target_pos{adjacents[static_cast<std::size_t>(+each)]};
-    if (isOutOfBoundary(target_pos.first, target_pos.second)){
+    if (isOutOfBoundary(target_pos.first, target_pos.second)) {
       continue;
     }
     Objects &target_obj{At(target_pos)};

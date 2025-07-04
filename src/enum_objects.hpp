@@ -1,14 +1,14 @@
 #ifndef ENUM_OBJECTS_HPP
 #define ENUM_OBJECTS_HPP
 
-#include <type_traits> 
-#include <stdexcept> 
+#include <stdexcept>
+#include <type_traits>
 
 namespace Baba_Is_Us {
 
-enum class Type { 
+enum class Type {
   NOUN_TYPE = -1,
-  Void, 
+  Void,
   Baba,  // aspetto del Player di default
   Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica
          // eccezione al tipico m_object vector<Type> perché sarà del tipo
@@ -19,7 +19,7 @@ enum class Type {
   Key,
   Lava,
   Lever,
-  Rock, 
+  Rock,
   Wall,
 
   ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante
@@ -52,10 +52,10 @@ enum class Type {
   Defeat,
   Hot,
   Melt,
-  Open,   // key
+  Open, // key
   Push,
-  Shut,   // door
-  Spin,   // gear
+  Shut, // door
+  Spin, // gear
   Stop,
   Switch, // lever
   Win,
@@ -69,40 +69,46 @@ template <typename T> constexpr int operator+(T a) noexcept {
   return static_cast<std::underlying_type_t<T>>(a);
 }
 
-
-// associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di tilePath.
+// associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di
+// tilePath.
 inline std::size_t indexToBeDrawn(const int i) {
   switch (i) {
-    case 0:  return 0;
-    case 1:  return 6; // fisso il default sprite di Baba a BABA_right.png
-    case 3:  
-    case 4:  
-    case 5:  
-    case 6:  
-    case 7:  
-    case 8:  
-    case 9:  
-    case 10: return static_cast<std::size_t> (i + 6);
+  case 0:
+    return 0;
+  case 1:
+    return 6; // fisso il default sprite di Baba a BABA_right.png
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+  case 7:
+  case 8:
+  case 9:
+  case 10:
+    return static_cast<std::size_t>(i + 6);
 
-    case 13: 
-    case 14: 
-    case 15: 
-    case 16: 
-    case 17: 
-    case 18: 
-    case 19: 
-    case 20: 
-    case 21: 
-    case 22: 
-    case 23: 
-    case 24: 
-    case 25: 
-    case 26: 
-    case 27: 
-    case 28: 
-    case 29: 
-    case 30: return static_cast<std::size_t> (i + 4);
-    default: throw(std::runtime_error("indexToBeDrawn(): not given a valid int from map_grid"));
+  case 13:
+  case 14:
+  case 15:
+  case 16:
+  case 17:
+  case 18:
+  case 19:
+  case 20:
+  case 21:
+  case 22:
+  case 23:
+  case 24:
+  case 25:
+  case 26:
+  case 27:
+  case 28:
+  case 29:
+  case 30:
+    return static_cast<std::size_t>(i + 4);
+  default:
+    throw(std::runtime_error(
+        "indexToBeDrawn(): not given a valid int from map_grid"));
   } //clang-format on
 }
 
@@ -112,7 +118,8 @@ enum class PlayState {
   Invalid, // se un'azione non è andata a buon fine
   Playing, // azione andata a buon fine, stato di default
   Won,     // 'You' ha toccato 'Win'
-  Lose,    // se niente è 'You' (=il gioco è fermo per sempre) o 'You' ha toccato 'Defeat'
+  Lose, // se niente è 'You' (=il gioco è fermo per sempre) o 'You' ha toccato
+        // 'Defeat'
 };
 
 enum class Direction {

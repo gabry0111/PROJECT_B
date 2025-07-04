@@ -1,9 +1,9 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include "enum_objects.hpp"
+#include "map.hpp"
 #include "objects.hpp"
 #include "rules.hpp"
-#include "map.hpp"
 
 #include <iostream>
 
@@ -25,26 +25,27 @@ public:
   Map &accessMap();
   const PlayState &getm_state_of_game();
   PlayState &accessm_state_of_game();
-  
+
   void createRule(const std::vector<Type> &, const std::vector<Type> &,
                   const std::vector<Type> &);
 
   // chiamata quando una parola logica è mossa: se era parte di una regola,
-  // modifica m_rules. N.B: le regole si creeranno solo da sx a dx e da alto a basso
+  // modifica m_rules. N.B: le regole si creeranno solo da sx a dx e da alto a
+  // basso
   void parseRules();
 
   // add properties to door, key, gear and lever (constant, don't depend by the
   // rules)
   void constantProperties();
-  
+
   // le seguenti adjust..() NON CONTROLLANO se un blocco ha creato o tolto una
   // regola
-  void adjustAddingRules(); 
+  void adjustAddingRules();
   void adjustRemovingRules();
   std::vector<Position> getTailMovingPosition(Direction);
   void update(sf::RenderWindow &, sf::Clock &);
-  void render(sf::RenderWindow &, std::array<sf::Sprite, tilePaths.size()>&);
-  
+  void render(sf::RenderWindow &, std::array<sf::Sprite, tilePaths.size()> &);
+
   void interact();
   void movement(sf::RenderWindow &, sf::Clock &, Direction);
   PlayState processMove(Objects &, Objects &, Direction, Position);

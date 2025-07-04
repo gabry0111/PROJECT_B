@@ -43,8 +43,8 @@ std::optional<Type> RuleManager::findPlayerType() const {
   return std::nullopt;
 }
 
-
-/////////////////////////////////// Chapter: Handling Interactions //////////////////////////////////////
+/////////////////////////////////// Chapter: Handling Interactions
+/////////////////////////////////////////
 PlayState handleDefeat(Objects &tail) {
   if (tail.objectHasType(Type::You)) {
     tail.resetObject();
@@ -65,7 +65,7 @@ PlayState handleHot(Objects &tail) {
   }
   return PlayState::Playing;
 }
-PlayState handleMelt(Objects &tail) { 
+PlayState handleMelt(Objects &tail) {
   tail.resetObject();
   return PlayState::Invalid;
 }
@@ -78,17 +78,16 @@ PlayState handleShut(Objects &tail, Objects &mismatch) {
   tail.resetObject();
   return PlayState::Playing;
 }
-PlayState handleSpin (Objects& tail, Objects& mismatch) {
+PlayState handleSpin(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Win)) {
     return handleWin(tail, mismatch);
-  }
-  else if (mismatch.objectHasType(Type::Defeat)) {
+  } else if (mismatch.objectHasType(Type::Defeat)) {
     return handleDefeat(tail);
   }
   return PlayState::Invalid;
 }
 PlayState handleStop(Objects &tail, Objects &mismatch) {
-  if (mismatch.objectHasType(Type::Shut)){
+  if (mismatch.objectHasType(Type::Shut)) {
     return handleShut(tail, mismatch);
   }
   if (!tail.objectHasType(Type::Push)) {
@@ -98,11 +97,12 @@ PlayState handleStop(Objects &tail, Objects &mismatch) {
 }
 
 PlayState conditions(Objects &tail, Objects &mismatch) {
-  PlayState result {PlayState::Playing};
-  if(mismatch == tail) return result;
+  PlayState result{PlayState::Playing};
+  if (mismatch == tail)
+    return result;
 
-  for (Type mism_type : mismatch.getTypes()) { 
-  
+  for (Type mism_type : mismatch.getTypes()) {
+
     if (+mism_type <= +Type::PROPERTY_TYPE) {
       continue;
     }
@@ -128,7 +128,8 @@ PlayState conditions(Objects &tail, Objects &mismatch) {
     case Type::Win:     return handleWin(tail, mismatch); // verrebbe sovrascritto
     default:  throw(std::runtime_error("conditions(): default statement")); break;
     } // clang-format on
-    if (result == PlayState::Invalid) return PlayState::Invalid;
+    if (result == PlayState::Invalid)
+      return PlayState::Invalid;
   }
   return result;
 }
