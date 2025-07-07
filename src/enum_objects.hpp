@@ -9,10 +9,10 @@ namespace Baba_Is_Us {
 enum class Type {
   NOUN_TYPE = -1,
   Void,
-  Baba,   // aspetto del Player di default
-  Block,  // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica
-          // eccezione al tipico m_object vector<Type> perché sarà del tipo
-          // [0] = Block, [1] = ICON_NOUN_TYPE
+  Baba,  // aspetto del Player di default
+  Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica
+         // eccezione al tipico m_object vector<Type> perché sarà del tipo
+         // [0] = Block, [1] = ICON_NOUN_TYPE
   Door,
   Flag,
   Gear,
@@ -22,7 +22,9 @@ enum class Type {
   Rock,
   Wall,
 
-  ICON_NOUN_TYPE,  // abbinerà ciascun oggetto Objects alla sua sprite
+  ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE (l'int sottostante
+                  // sarà calcolabile facilmente) abbinerà ciascun oggetto
+                  // Objects alla sua sprite
   Icon_Void,
   Icon_Baba,
   Icon_Defeat,
@@ -50,19 +52,18 @@ enum class Type {
   Defeat,
   Hot,
   Melt,
-  Open,  // key
+  Open, // key
   Push,
-  Shut,  // door
-  Spin,  // gear
+  Shut, // door
+  Spin, // gear
   Stop,
-  Switch,  // lever
+  Switch, // lever
   Win,
   You,
 };
 
 // Overload the unary + operator to convert an enum class to the underlying type
-template <typename T>
-constexpr int operator+(T a) noexcept {
+template <typename T> constexpr int operator+(T a) noexcept {
   static_assert(std::is_enum_v<T> &&
                 "Unary plus operator only works on enum types");
   return static_cast<std::underlying_type_t<T>>(a);
@@ -72,52 +73,53 @@ constexpr int operator+(T a) noexcept {
 // tilePath.
 inline std::size_t indexToBeDrawn(const int i) {
   switch (i) {
-    case 0:
-      return 0;
-    case 1:
-      return 6;  // fisso il default sprite di Baba a BABA_right.png
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-      return static_cast<std::size_t>(i + 6);
+  case 0:
+    return 0;
+  case 1:
+    return 6; // fisso il default sprite di Baba a BABA_right.png
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+  case 7:
+  case 8:
+  case 9:
+  case 10:
+    return static_cast<std::size_t>(i + 6);
 
-    case 13:
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
-    case 22:
-    case 23:
-    case 24:
-    case 25:
-    case 26:
-    case 27:
-    case 28:
-    case 29:
-    case 30:
-      return static_cast<std::size_t>(i + 4);
-    default:
-      throw(std::runtime_error(
-          "indexToBeDrawn(): not given a valid int from map_grid"));
-  }  //clang-format on
+  case 13:
+  case 14:
+  case 15:
+  case 16:
+  case 17:
+  case 18:
+  case 19:
+  case 20:
+  case 21:
+  case 22:
+  case 23:
+  case 24:
+  case 25:
+  case 26:
+  case 27:
+  case 28:
+  case 29:
+  case 30:
+    return static_cast<std::size_t>(i + 4);
+  default:
+    throw(std::runtime_error(
+        "indexToBeDrawn(): not given a valid int from map_grid"));
+  } //clang-format on
 }
 
 constexpr Type intToType(int value) { return static_cast<Type>(value); }
 
 enum class PlayState {
-  Invalid,
-  Playing,
-  Won,
-  Lose,
+  Invalid, // se un'azione non è andata a buon fine
+  Playing, // azione andata a buon fine, stato di default
+  Won,     // 'You' ha toccato 'Win'
+  Lose, // se niente è 'You' (=il gioco è fermo per sempre) o 'You' ha toccato
+        // 'Defeat'
 };
 
 enum class Direction {
@@ -127,6 +129,6 @@ enum class Direction {
   Left,
 };
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
 
 #endif

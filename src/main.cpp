@@ -1,6 +1,5 @@
-#include <iostream>
-
 #include "game.hpp"
+#include <iostream>
 using namespace Baba_Is_Us;
 
 int main() {
@@ -35,7 +34,7 @@ int main() {
 
       game.render(window, game.accessMap().tileSprites);
     }
-  } catch (const std::runtime_error &error) {
+  } catch (std::runtime_error error) {
     std::cout << "Runtime error: " << error.what() << "\n";
     return 1;
   }
