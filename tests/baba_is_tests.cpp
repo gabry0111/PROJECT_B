@@ -1,12 +1,12 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <SFML/Graphics.hpp>
+
 #include "../src/enum_objects.hpp"
 #include "../src/game.hpp"
 #include "../src/map.hpp"
 #include "../src/objects.hpp"
 #include "../src/rules.hpp"
 #include "doctest.h"
-#include <SFML/Graphics.hpp>
-
 
 using namespace Baba_Is_Us;
 
@@ -65,7 +65,7 @@ TEST_CASE("Basic functions - objects.hpp") {
   CHECK(types_flag[2] == Type::Push);
 
   game.accessMap().accessm_objects()[0][0].removeType(Type::Push);
-  types_block = my_map.At(0,0).getTypes();
+  types_block = my_map.At(0, 0).getTypes();
   CHECK(types_block.size() == 2);
   CHECK(types_block[0] == Type::Block);
   CHECK(types_block[1] == Type::Icon_Baba);
@@ -113,12 +113,12 @@ TEST_CASE("Basic functions - rules.hpp") {
   CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
 
   sf::RenderWindow window(sf::VideoMode({512, 512}), "Testing rules.hpp");
-  game.accessMap().setTextures();
-  game.accessMap().setSprites();
+  game.accessMap().placeTextures();
+  game.accessMap().placeSprites();
   sf::Clock clock;
 
   RuleManager rm{game.getRuleManager()};
-  std::vector<Rule> &rules{rm.accessm_rules()};
+  const std::vector<Rule> &rules{rm.getm_rules()};
 
   CHECK(rules[0].hasType(Type::Baba));
   CHECK(rules[0].hasType(Type::Is));
@@ -209,8 +209,8 @@ TEST_CASE("Basic functions - map.hpp") {
 
   CHECK(my_map.getm_grid()[0][0] == 13);
   CHECK(my_map.getm_objects()[0][0].getTypes()[0] == Type::Block);
-  my_map.setTextures();
-  my_map.setSprites();
+  my_map.placeTextures();
+  my_map.placeSprites();
   CHECK(my_map.getTileSprites().size() == tilePaths.size());
 
   CHECK(!my_map.isOutOfBoundary(15, 15));
@@ -240,14 +240,14 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
     CHECK(my_map.getm_grid()[pos.second][pos.first] == +Type::Baba);
   }
 
-  std::vector<Position> you_positions = my_map.getPositions(Type::You);
+  std::vector<Position> you_positions{my_map.getPositions(Type::You)};
   CHECK(you_positions.size() == 1);
   CHECK(you_positions[0].first == 8);
   CHECK(you_positions[0].second == 7);
 
   sf::RenderWindow window(sf::VideoMode({512, 512}), "Testing movement");
-  game.accessMap().setTextures();
-  game.accessMap().setSprites();
+  game.accessMap().placeTextures();
+  game.accessMap().placeSprites();
   sf::Clock clock;
 
   // gli oggetti non si spostano in alto se baba non li tocca
@@ -263,7 +263,6 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.getm_grid()[7][8] == +Type::Void);
   CHECK(my_map.getm_grid()[4][8] == +Type::Lava);
 
-
   // gli oggetti non si spostano in alto se baba non li tocca
   game.movement(window, clock, Direction::Up);
   CHECK(my_map.At(8, 5).objectHasType(Type::Baba));
@@ -277,7 +276,6 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.getm_grid()[6][8] == +Type::Void);
   CHECK(my_map.getm_grid()[4][8] == +Type::Lava);
 
-
   // gli oggetti non si spostano in basso se baba non li tocca
   game.movement(window, clock, Direction::Down);
   CHECK(my_map.At(8, 6).objectHasType(Type::Baba));
@@ -290,7 +288,6 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.getm_grid()[6][8] == +Type::Baba);
   CHECK(my_map.getm_grid()[7][8] == +Type::Void);
   CHECK(my_map.getm_grid()[4][8] == +Type::Lava);
-
 
   game.movement(window, clock, Direction::Right);
   game.movement(window, clock, Direction::Right);
@@ -308,7 +305,6 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
 
-
   CHECK(my_map.getm_grid()[6][2] == +Type::Icon_Lava);
   CHECK(my_map.getm_grid()[6][3] == +Type::Icon_Is);
   CHECK(my_map.getm_grid()[6][4] == +Type::Icon_Hot);
@@ -325,7 +321,6 @@ TEST_CASE("Game - Basic movement and transformation between map_layers") {
 
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
-
 
   CHECK(my_map.getm_grid()[6][2] == +Type::Icon_Lava);
   CHECK(my_map.getm_grid()[6][3] == +Type::Icon_Is);
@@ -362,8 +357,8 @@ TEST_CASE("Game - Rules changing") {
   }
 
   sf::RenderWindow window(sf::VideoMode({512, 512}), "Testing rules changing");
-  game.accessMap().setTextures();
-  game.accessMap().setSprites();
+  game.accessMap().placeTextures();
+  game.accessMap().placeSprites();
   sf::Clock clock;
 
   // gli oggetti non si spostano in alto se baba non li tocca
@@ -391,10 +386,9 @@ TEST_CASE("Game - Rules changing") {
   CHECK(my_map.At(3, 6).getTypes()[1] == (Type::Icon_Is));
   CHECK(my_map.At(4, 6).getTypes()[0] == (Type::Block));
   CHECK(my_map.At(4, 6).getTypes()[1] == (Type::Icon_Hot));
-
 }
 
-TEST_CASE("Game - Interact e pathFinder"){
+TEST_CASE("Game - Interact e pathFinder") {
   Game game("assets/levels/level_test3.txt");
   Map &my_map{game.accessMap()};
 
@@ -406,7 +400,8 @@ TEST_CASE("Game - Interact e pathFinder"){
   CHECK(my_map.getPositions(Type::Switch).size() == 0);
   CHECK(my_map.getPositions(Type::Spin).size() == 0);
 
-  sf::RenderWindow window(sf::VideoMode({512, 512}), "Testing Interact and pathFinder");
+  sf::RenderWindow window(sf::VideoMode({512, 512}),
+                          "Testing Interact and pathFinder");
   sf::Clock clock;
 
   game.movement(window, clock, Direction::Right);
@@ -419,7 +414,7 @@ TEST_CASE("Game - Interact e pathFinder"){
   CHECK(my_map.getPositions(Type::Spin).size() == 0);
 
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(2, 7).getTypes()[0]== Type::Baba);
+  CHECK(my_map.At(2, 7).getTypes()[0] == Type::Baba);
 
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 1);
@@ -429,7 +424,7 @@ TEST_CASE("Game - Interact e pathFinder"){
   CHECK(my_map.getPositions(Type::Spin).size() == 0);
 
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(3, 7).getTypes()[0]== Type::Baba);
+  CHECK(my_map.At(3, 7).getTypes()[0] == Type::Baba);
 
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 1);
@@ -439,8 +434,8 @@ TEST_CASE("Game - Interact e pathFinder"){
   CHECK(my_map.getPositions(Type::Spin).size() == 0);
 
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(4, 7).getTypes()[0]== Type::Baba);
-  
+  CHECK(my_map.At(4, 7).getTypes()[0] == Type::Baba);
+
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 1);
   CHECK(my_map.getPositions(Type::Spin).size() == 4);
@@ -449,7 +444,7 @@ TEST_CASE("Game - Interact e pathFinder"){
   CHECK(my_map.getPositions(Type::Spin).size() == 0);
 
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(5, 7).getTypes()[0]== Type::Baba);
+  CHECK(my_map.At(5, 7).getTypes()[0] == Type::Baba);
 
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 1);
@@ -459,13 +454,12 @@ TEST_CASE("Game - Interact e pathFinder"){
   CHECK(my_map.getPositions(Type::Spin).size() == 0);
 
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(6, 7).getTypes()[0]== Type::Baba);
+  CHECK(my_map.At(6, 7).getTypes()[0] == Type::Baba);
   game.movement(window, clock, Direction::Right);
-  CHECK(my_map.At(7, 7).getTypes()[0]== Type::Baba);
-  CHECK(my_map.At(8, 7).getTypes()[0]== Type::Flag);
-  CHECK(my_map.At(8, 7).getTypes()[1]== Type::Win);
+  CHECK(my_map.At(7, 7).getTypes()[0] == Type::Baba);
+  CHECK(my_map.At(8, 7).getTypes()[0] == Type::Flag);
+  CHECK(my_map.At(8, 7).getTypes()[1] == Type::Win);
 
   game.movement(window, clock, Direction::Right);
   CHECK(game.getm_state_of_game() == PlayState::Won);
-
 }

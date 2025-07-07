@@ -1,14 +1,8 @@
 #include "map.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <fstream>
-#include <string_view>
-
-using Position = std::pair<std::size_t, std::size_t>;
-
 namespace Baba_Is_Us {
 
-std::size_t findLastNoun(const std::vector<Type> &types) {
+const std::size_t findLastNoun(const std::vector<Type> &types) {
   std::size_t last{};
   for (std::size_t i{}; i < types.size(); ++i) {
     if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) {
@@ -18,9 +12,8 @@ std::size_t findLastNoun(const std::vector<Type> &types) {
   return static_cast<std::size_t>(+(types[last]));
 }
 
-Map::Map(std::string_view filename) {
-  std::ifstream map_file{
-      filename.data()}; // comincia dall'inizio di file.txt bidimensionale
+Map::Map(const std::string_view filename) {
+  std::ifstream map_file{filename.data()};
   if (!map_file) {
     throw(std::runtime_error("Level invalid\n"));
   }
@@ -28,12 +21,12 @@ Map::Map(std::string_view filename) {
 
   // Si presuppone che valori in level.txt corrispondano ai Type dell'enum Class
   // (fino a Type::VERB_TYPE)
-  for (std::size_t iii = 0; iii < MapSize::height * MapSize::width; ++iii) {
+  for (std::size_t iii{}; iii < MapSize::height * MapSize::width; ++iii) {
     map_file >> value;
     std::vector<Type> current{};
 
     // N.B: value si basa su enum_objects. Non esistono value == Block o
-    // ==Icon_Void
+    // == Icon_Void
     assert(value != +Type::NOUN_TYPE && value != +Type::ICON_NOUN_TYPE &&
            value != +Type::VERB_TYPE && value != +Type::PROPERTY_TYPE &&
            value != +Type::Block && value != +Type::Icon_Void &&
@@ -46,36 +39,30 @@ Map::Map(std::string_view filename) {
       m_objects[iii / MapSize::width][iii % MapSize::height] = current;
     }
 
-    else if (value > +Type::Icon_Void &&
-             value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
+    else if (value > +Type::Icon_Void && value < +Type::VERB_TYPE) {
       m_grid[iii / MapSize::width][iii % MapSize::height] = value;
-
       current.emplace_back(Type::Block);
       current.emplace_back(intToType(value));
       m_objects[iii / MapSize::width][iii % MapSize::height] = current;
     } else
-      throw(std::runtime_error("Map(): in level.txt not given a valid value "
-                               "under +Type::VERB_TYPE"));
+      throw(
+          std::runtime_error("Map(): in level.txt not given a valid value "
+                             "under +Type::VERB_TYPE"));
   }
   spriteOverlay();
 }
 
 void Map::spriteOverlay() {
   for (std::size_t i{}; i < MapSize::n_tiles; ++i) {
-    Objects &obj = m_objects[i / MapSize::width][i % MapSize::height];
+    const Objects &obj{m_objects[i / MapSize::width][i % MapSize::height]};
     if (obj.getTypes()[0] != Type::Block) {
       m_grid[i / MapSize::width][i % MapSize::height] =
           static_cast<int>(findLastNoun(obj.getTypes()));
     }
   }
 }
-const MapGrid2D &Map::getm_grid() const { return m_grid; }
-MapGrid2D &Map::accessm_grid() { return m_grid; }
 
-const ObjectMap &Map::getm_objects() const { return m_objects; }
-ObjectMap &Map::accessm_objects() { return m_objects; }
-
-void Map::setTextures() {
+void Map::placeTextures() {
   std::size_t iii{};
   for (auto &path : tilePaths) {
     sf::Texture texture;
@@ -88,111 +75,72 @@ void Map::setTextures() {
   }
 }
 
-void Map::setSprites() {
+void Map::placeSprites() {
   sf::Sprite sprite;
   std::size_t iii{};
   for (const auto &texture : textures) {
     sprite.setTexture(texture);
-
     sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
-
-    // gli indici saranno sempre nell'ordine di tilePaths
-    tileSprites[iii] = sprite; // alla fine avrà tilePaths.size()
-                               // elementi, ognuno con una sprite
+    // N.B: gli indici saranno sempre nell'ordine di tilePaths
+    // alla fine avrà tilePaths.size() elementi, ognuno con una sprite diversa
+    tileSprites[iii] = sprite;
     ++iii;
   }
 }
 
 void Map::redraw(sf::Clock &clock) {
   if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
-    // change the current frame of every individual texture
-    // it could be different across textures if we add more detailed
-    // spritesheets or more frames per animation
     // le animazioni sono sempre composte da 3 frame
+    // cambia il frame per ogni texture nel suo successivo
     nth_frame = (nth_frame + 1) % MapSize::FRAMES_PER_ANIMATION;
-
     clock.restart();
   }
-  // resize and draw
   for (std::size_t i{}; i < tileSprites.size(); ++i) {
     tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, 0,
                                    MapSize::TILE_SIZE, MapSize::TILE_SIZE});
   }
 }
 
-const std::array<sf::Sprite, tilePaths.size()> &Map::getTileSprites() const {
-  return tileSprites;
-}
-
-sf::Sprite &Map::accessWhichSpriteIsInPosition(Position &position) {
-  std::size_t index{
-      static_cast<std::size_t>(getm_grid()[position.second][position.first])};
-
-  assert(index < tileSprites.size() &&
-         "accessWhichSpriteIsInPosition() has index too high");
-  return tileSprites[index];
-}
-
-Objects &Map::At(std::size_t x, std::size_t y) { return m_objects[y][x]; }
-const Objects &Map::At(std::size_t x, std::size_t y) const {
-  return m_objects[y][x];
-}
-Objects &Map::At(Position position) {
-  return m_objects[position.second][position.first];
-}
-
-const std::vector<Position> Map::getPositions(Type type) const {
+const std::vector<Position> Map::getPositions(const Type type) const {
   std::vector<Position> positions_with_type{};
-  for (std::size_t y = 0; y < MapSize::height; ++y) {
-    for (std::size_t x = 0; x < MapSize::width; ++x) {
-      if (m_objects[y][x].objectHasType(type)) {
-        Position pos{x, y};
-        positions_with_type.emplace_back(pos);
-      }
+  for (std::size_t y{}; y < MapSize::height; ++y) {
+    for (std::size_t x{}; x < MapSize::width; ++x) {
+      if (m_objects[y][x].objectHasType(type))
+        positions_with_type.emplace_back(x, y);
     }
   }
   return positions_with_type;
 }
 
-bool Map::isOutOfBoundary(std::size_t x, std::size_t y) const {
-  return ((x > MapSize::width - 1) || (y > MapSize::height - 1));
-}
-
-void Map::addObject(Position position, Type type) {
+void Map::addObject(const Position position, const Type type) {
   m_objects[position.first][position.second].addType(type);
 }
-void Map::resetObject(Position position) {
+void Map::resetObject(const Position position) {
   m_objects[position.second][position.first] = {{Type::Void}};
 }
 
-void Map::pathFinder(Position start, Direction dir,
+void Map::pathFinder(const Position start, const Direction dir,
                      const std::array<Direction, 4> &directions,
-                     bool to_activate) {
-
+                     const bool to_activate) {
   if (isOutOfBoundary(start.first, start.second)) {
     return;
   }
-  Position up{start.first, start.second - 1};
-  Position right{start.first + 1, start.second};
-  Position down{start.first, start.second + 1};
-  Position left{start.first - 1, start.second};
-
-  const std::array<Position, 4> adjacents{up, right, down, left};
-
+  const Position &up{start.first, start.second - 1};
+  const Position &right{start.first + 1, start.second};
+  const Position &down{start.first, start.second + 1};
+  const Position &left{start.first - 1, start.second};
+  const std::array<Position, 4> &adjacents{up, right, down, left};
   // convertiamo la direzione di provenienza (dir) nella direzione da non
   // controllare
   const Direction dir_to_avoid{static_cast<Direction>((+dir + 2) % 4)};
 
-  for (const auto each : directions) {
-
-    if (each == dir_to_avoid)
-      continue;
-    Position target_pos{adjacents[static_cast<std::size_t>(+each)]};
+  for (const Direction each : directions) {
+    if (each == dir_to_avoid) continue;
+    const Position &target_pos{adjacents[static_cast<std::size_t>(+each)]};
     if (isOutOfBoundary(target_pos.first, target_pos.second)) {
       continue;
     }
     Objects &target_obj{At(target_pos)};
-
     if (target_obj.objectHasType(Type::Gear) &&
         !target_obj.objectHasType(Type::Spin) && to_activate == true) {
       target_obj.addType(Type::Spin);
@@ -207,4 +155,4 @@ void Map::pathFinder(Position start, Direction dir,
     }
   }
 }
-} // namespace Baba_Is_Us
+}  // namespace Baba_Is_Us

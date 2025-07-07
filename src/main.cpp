@@ -1,5 +1,6 @@
-#include "game.hpp"
 #include <iostream>
+
+#include "game.hpp"
 using namespace Baba_Is_Us;
 
 int main() {
@@ -13,17 +14,17 @@ int main() {
       return 1;
     }
 
-    constexpr std::array<std::string_view, 4> level_paths{
+    constexpr const std::array<std::string_view, 4> level_paths{
         "assets/levels/level1.txt", "assets/levels/level2.txt",
         "assets/levels/level3.txt", "assets/levels/level4.txt"};
 
-    sf::RenderWindow window(sf::VideoMode({512, 512}), "Baba Is Us");
+    sf::RenderWindow window{sf::VideoMode({512, 512}), "Baba Is Us"};
 
     Game game(level_paths[nth_level - 1]);
 
     // setting the sprites
-    game.accessMap().setTextures();
-    game.accessMap().setSprites();
+    game.accessMap().placeTextures();
+    game.accessMap().placeSprites();
 
     // Animation loop
     sf::Clock clock;
@@ -34,7 +35,7 @@ int main() {
 
       game.render(window, game.accessMap().tileSprites);
     }
-  } catch (std::runtime_error error) {
+  } catch (std::runtime_error &error) {
     std::cout << "Runtime error: " << error.what() << "\n";
     return 1;
   }

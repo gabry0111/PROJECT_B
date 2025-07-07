@@ -1,32 +1,38 @@
 #ifndef OBJECTS_HPP
 #define OBJECTS_HPP
 
-#include "enum_objects.hpp"
-
 #include <algorithm>
 #include <cassert>
-#include <optional>
 #include <vector>
 
-namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto
+#include "enum_objects.hpp"
+
+namespace Baba_Is_Us {  // sarà il namespace di ogni file di questo progetto
 
 class Objects {
-private:
-  std::vector<Type>
-      m_object{}; // sarà del tipo: un NOUN_TYPE e tanti PROPERTY_TYPE
+ private:
+  // sarà del tipo: un NOUN_TYPE e tanti PROPERTY_TYPE
+  std::vector<Type> m_object{};
 
-public:
+ public:
   Objects() = default;
-  Objects(std::vector<Type> object_vect) : m_object{object_vect} {}
+  Objects(const std::vector<Type> &object_vect) : m_object{object_vect} {}
 
-  std::vector<Type> getTypes() const;
-  std::vector<Type> &accessTypes();
+  const std::vector<Type> &getTypes() const;
   bool operator==(const Objects &object) const;
   bool objectHasType(const Type type) const;
   void addType(const Type word);
-  void removeType(Type type);
-  void resetObject();
+  void removeType(const Type type);
+  constexpr void resetObject();
 };
-} // namespace Baba_Is_Us
+
+constexpr void Objects::resetObject() {
+  m_object.clear();
+  m_object.push_back(Type::Void);
+  assert(m_object[0] == intToType(0) &&
+         "resetObject() doesn't work like intended");
+}
+
+}  // namespace Baba_Is_Us
 
 #endif
