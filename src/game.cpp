@@ -15,7 +15,7 @@ const std::vector<Position> &Game::getPlayerPositions() const {
 
 ///////////////////////////  Chapter: HandlingRules  ///////////////////////////
 
-constexpr const Type iconToAll(const Type type) {
+constexpr Type iconToAll(const Type type) {
   switch (type) {  // clang-format off
     case Type::Icon_Void:     return Type::Void;
     case Type::Icon_Baba:     return Type::Baba;
@@ -165,7 +165,7 @@ void Game::constantProperties() {
 
 ///////////////// Chapter: Handling Movement and KeyPressing //////////////////
 
-constexpr const Position &getShift(const Direction dir) {
+constexpr const Position getShift(const Direction dir) {
   switch (dir) {  // clang-format off
     case Direction::Up:     return {0, -1};
     case Direction::Down:   return {0, 1};
@@ -176,7 +176,7 @@ constexpr const Position &getShift(const Direction dir) {
 }
 // N.B: data una fila verticale di oggetti attaccati e la direzione Up,
 // l'oggetto Tail è quello più in basso
-const bool isTailOfLine(const Position pos, const Map &map,
+bool isTailOfLine(const Position pos, const Map &map,
                         const Direction dir) {
   const Type type{map.At(pos).getTypes()[0]};
   const std::size_t dx{getShift(dir).first};
@@ -220,7 +220,7 @@ const std::optional<Position> getMismatch(const Map &map, const Direction dir,
   return std::nullopt;
 }
 
-const PlayState Game::processMove(Objects &tail, Objects &target,
+PlayState Game::processMove(Objects &tail, Objects &target,
                                   const Direction direction,
                                   const Position start) {
   const Position &shift{getShift(direction)};
@@ -294,7 +294,7 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock,
     render(window, m_map3D.tileSprites);
 
     if (!getMismatch(m_map3D, direction, each)) continue;
-    const Position &pos_mismatch{*getMismatch(m_map3D, direction, each)};
+    const Position pos_mismatch{*getMismatch(m_map3D, direction, each)};
     const std::size_t delta_x{pos_mismatch.first - each.first};
     const std::size_t delta_y{pos_mismatch.second - each.second};
     if (m_map3D.isOutOfBoundary(each.first + delta_x, each.second + delta_y)) {

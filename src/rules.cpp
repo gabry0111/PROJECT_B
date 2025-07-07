@@ -13,14 +13,14 @@ const std::optional<Type> RuleManager::findPlayerType() const {
   return std::nullopt;
 }
 
-const PlayState handleDefeat(Objects &tail) {
+ PlayState handleDefeat(Objects &tail) {
   if (tail.objectHasType(Type::You)) {
     tail.resetObject();
     return PlayState::Invalid;
   }
   return PlayState::Playing;
 }
-const PlayState handleWin(Objects &tail, Objects &mismatch) {
+ PlayState handleWin(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Defeat)) {
     handleDefeat(tail);
   }
@@ -29,18 +29,18 @@ const PlayState handleWin(Objects &tail, Objects &mismatch) {
   }
   return PlayState::Playing;
 }
-const PlayState handleHot(Objects &tail) {
+ PlayState handleHot(Objects &tail) {
   if (!tail.objectHasType(Type::Push)) {
     tail.resetObject();
     return PlayState::Invalid;
   }
   return PlayState::Playing;
 }
-const PlayState handleMelt(Objects &tail) {
+ PlayState handleMelt(Objects &tail) {
   tail.resetObject();
   return PlayState::Invalid;
 }
-const PlayState handleShut(Objects &tail, Objects &mismatch) {
+ PlayState handleShut(Objects &tail, Objects &mismatch) {
   if (!tail.objectHasType(Type::Open)) {
     tail.resetObject();
     return PlayState::Invalid;
@@ -49,7 +49,7 @@ const PlayState handleShut(Objects &tail, Objects &mismatch) {
   tail.resetObject();
   return PlayState::Playing;
 }
-const PlayState handleSpin(Objects &tail, Objects &mismatch) {
+ PlayState handleSpin(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Win)) {
     return handleWin(tail, mismatch);
   } else if (mismatch.objectHasType(Type::Defeat)) {
@@ -57,7 +57,7 @@ const PlayState handleSpin(Objects &tail, Objects &mismatch) {
   }
   return PlayState::Invalid;
 }
-const PlayState handleStop(Objects &tail, Objects &mismatch) {
+ PlayState handleStop(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Shut)) {
     return handleShut(tail, mismatch);
   }
@@ -67,7 +67,7 @@ const PlayState handleStop(Objects &tail, Objects &mismatch) {
   return PlayState::Playing;
 }
 
-const PlayState conditions(Objects &tail, Objects &mismatch) {
+ PlayState conditions(Objects &tail, Objects &mismatch) {
   PlayState result{PlayState::Playing};
   if (mismatch == tail) return result;
   for (const Type mism_type : mismatch.getTypes()) {

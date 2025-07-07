@@ -66,7 +66,7 @@ constexpr void RuleManager::removeRule(const Rule &rule) {
   }
 }
 
-const PlayState conditions(Objects &, Objects &);
+PlayState conditions(Objects &, Objects &);
 
 }  // namespace Baba_Is_Us
 

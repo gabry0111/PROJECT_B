@@ -71,7 +71,7 @@ constexpr int operator+(T a) noexcept {
 
 // associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di
 // tilePath.
-constexpr const std::size_t indexToBeDrawn(const int i) {
+constexpr std::size_t indexToBeDrawn(const int i) {
   switch (i) {  // clang-format off
   case 0:   return 0;
   case 1:   return 6; // fisso il default sprite di Baba a BABA_right.png

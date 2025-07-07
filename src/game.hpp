@@ -42,7 +42,7 @@ class Game {
   // Map::pathFinder()
   void interact();
   void movement(sf::RenderWindow &, sf::Clock &, const Direction);
-  const PlayState processMove(Objects &, Objects &, const Direction,
+   PlayState processMove(Objects &, Objects &, const Direction,
                               const Position);
 };
 
