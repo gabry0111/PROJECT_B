@@ -21,10 +21,8 @@ public:
   Game(std::string_view);
   const std::vector<Position> &getPlayerPositions();
   const RuleManager &getRuleManager();
-  const Map &getMap();
   Map &accessMap();
   const PlayState &getm_state_of_game();
-  PlayState &accessm_state_of_game();
 
   void createRule(const std::vector<Type> &, const std::vector<Type> &,
                   const std::vector<Type> &);

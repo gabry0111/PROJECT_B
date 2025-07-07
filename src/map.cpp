@@ -1,9 +1,5 @@
 #include "map.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <fstream>
-#include <string_view>
-
 using Position = std::pair<std::size_t, std::size_t>;
 
 namespace Baba_Is_Us {
@@ -20,7 +16,7 @@ std::size_t findLastNoun(const std::vector<Type> &types) {
 
 Map::Map(std::string_view filename) {
   std::ifstream map_file{
-      filename.data()}; // comincia dall'inizio di file.txt bidimensionale
+      filename.data()};  // comincia dall'inizio di file.txt bidimensionale
   if (!map_file) {
     throw(std::runtime_error("Level invalid\n"));
   }
@@ -47,33 +43,29 @@ Map::Map(std::string_view filename) {
     }
 
     else if (value > +Type::Icon_Void &&
-             value < +Type::VERB_TYPE) { // Sono Blocks (non esiste Icon_Void)
+             value < +Type::VERB_TYPE) {  // Sono Blocks (non esiste Icon_Void)
       m_grid[iii / MapSize::width][iii % MapSize::height] = value;
 
       current.emplace_back(Type::Block);
       current.emplace_back(intToType(value));
       m_objects[iii / MapSize::width][iii % MapSize::height] = current;
     } else
-      throw(std::runtime_error("Map(): in level.txt not given a valid value "
-                               "under +Type::VERB_TYPE"));
+      throw(
+          std::runtime_error("Map(): in level.txt not given a valid value "
+                             "under +Type::VERB_TYPE"));
   }
   spriteOverlay();
 }
 
 void Map::spriteOverlay() {
   for (std::size_t i{}; i < MapSize::n_tiles; ++i) {
-    Objects &obj = m_objects[i / MapSize::width][i % MapSize::height];
-    if (obj.getTypes()[0] != Type::Block) {
+    const Objects &obj = m_objects[i / MapSize::width][i % MapSize::height];
+    if (!obj.objectHasType(Type::Block)) {
       m_grid[i / MapSize::width][i % MapSize::height] =
           static_cast<int>(findLastNoun(obj.getTypes()));
     }
   }
 }
-const MapGrid2D &Map::getm_grid() const { return m_grid; }
-MapGrid2D &Map::accessm_grid() { return m_grid; }
-
-const ObjectMap &Map::getm_objects() const { return m_objects; }
-ObjectMap &Map::accessm_objects() { return m_objects; }
 
 void Map::setTextures() {
   std::size_t iii{};
@@ -93,60 +85,33 @@ void Map::setSprites() {
   std::size_t iii{};
   for (const auto &texture : textures) {
     sprite.setTexture(texture);
-
     sprite.setTextureRect({0, 0, MapSize::TILE_SIZE, MapSize::TILE_SIZE});
-
-    // gli indici saranno sempre nell'ordine di tilePaths
-    tileSprites[iii] = sprite; // alla fine avrà tilePaths.size()
-                               // elementi, ognuno con una sprite
+    // N.B: gli indici saranno sempre nell'ordine di tilePaths
+    tileSprites[iii] = sprite;
     ++iii;
   }
 }
 
 void Map::redraw(sf::Clock &clock) {
   if (clock.getElapsedTime().asMilliseconds() >= MapSize::FRAME_TIME_MS) {
-    // change the current frame of every individual texture
-    // it could be different across textures if we add more detailed
-    // spritesheets or more frames per animation
-    // le animazioni sono sempre composte da 3 frame
+    // cambia il frame corrente di ogni texture individuale
     nth_frame = (nth_frame + 1) % MapSize::FRAMES_PER_ANIMATION;
-
     clock.restart();
   }
-  // resize and draw
   for (std::size_t i{}; i < tileSprites.size(); ++i) {
     tileSprites[i].setTextureRect({nth_frame * MapSize::TILE_SIZE, 0,
                                    MapSize::TILE_SIZE, MapSize::TILE_SIZE});
   }
 }
 
-const std::array<sf::Sprite, tilePaths.size()> &Map::getTileSprites() const {
-  return tileSprites;
-}
 
-sf::Sprite &Map::accessWhichSpriteIsInPosition(Position &position) {
-  std::size_t index{
-      static_cast<std::size_t>(getm_grid()[position.second][position.first])};
-
-  assert(index < tileSprites.size() &&
-         "accessWhichSpriteIsInPosition() has index too high");
-  return tileSprites[index];
-}
-
-Objects &Map::At(std::size_t x, std::size_t y) { return m_objects[y][x]; }
-const Objects &Map::At(std::size_t x, std::size_t y) const {
-  return m_objects[y][x];
-}
-Objects &Map::At(Position position) {
-  return m_objects[position.second][position.first];
-}
 
 const std::vector<Position> Map::getPositions(Type type) const {
   std::vector<Position> positions_with_type{};
   for (std::size_t y = 0; y < MapSize::height; ++y) {
     for (std::size_t x = 0; x < MapSize::width; ++x) {
       if (m_objects[y][x].objectHasType(type)) {
-        Position pos{x, y};
+        const Position pos{x, y};
         positions_with_type.emplace_back(pos);
       }
     }
@@ -154,39 +119,32 @@ const std::vector<Position> Map::getPositions(Type type) const {
   return positions_with_type;
 }
 
-bool Map::isOutOfBoundary(std::size_t x, std::size_t y) const {
-  return ((x > MapSize::width - 1) || (y > MapSize::height - 1));
-}
-
 void Map::addObject(Position position, Type type) {
   m_objects[position.first][position.second].addType(type);
 }
-void Map::resetObject(Position position) {
+void Map::resetObject(const Position position) {
   m_objects[position.second][position.first] = {{Type::Void}};
 }
 
 void Map::pathFinder(Position start, Direction dir,
                      const std::array<Direction, 4> &directions,
                      bool to_activate) {
-
   if (isOutOfBoundary(start.first, start.second)) {
     return;
   }
-  Position up{start.first, start.second - 1};
-  Position right{start.first + 1, start.second};
-  Position down{start.first, start.second + 1};
-  Position left{start.first - 1, start.second};
+  const Position up{start.first, start.second - 1};
+  const Position right{start.first + 1, start.second};
+  const Position down{start.first, start.second + 1};
+  const Position left{start.first - 1, start.second};
 
-  const std::array<Position, 4> adjacents{up, right, down, left};
+  const std::array<Position, 4> &adjacents{up, right, down, left};
 
   // convertiamo la direzione di provenienza (dir) nella direzione da non
   // controllare
   const Direction dir_to_avoid{static_cast<Direction>((+dir + 2) % 4)};
 
   for (const auto each : directions) {
-
-    if (each == dir_to_avoid)
-      continue;
+    if (each == dir_to_avoid) continue;
     Position target_pos{adjacents[static_cast<std::size_t>(+each)]};
     if (isOutOfBoundary(target_pos.first, target_pos.second)) {
       continue;
@@ -207,4 +165,4 @@ void Map::pathFinder(Position start, Direction dir,
     }
   }
 }
-} // namespace Baba_Is_Us
+}  // namespace Baba_Is_Us
