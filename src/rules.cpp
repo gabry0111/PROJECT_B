@@ -94,6 +94,7 @@ PlayState conditions(Objects &tail, Objects &mismatch) {
       case Type::Win:     return handleWin(tail, mismatch); // verrebbe sovrascritto se non facciamo return
       default:  throw(std::runtime_error("conditions(): default statement")); break;
       }  // clang-format on
+    if (mismatch.getTypes()[0] == Type::Void) return PlayState::Playing;
     if (result == PlayState::Invalid) return PlayState::Invalid;
   }
   return result;

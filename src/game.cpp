@@ -128,6 +128,7 @@ void Game::createRule(const std::vector<Type> &word1,
   const Type type1{iconToAll(word1[1])};
   const Type type2{iconToAll(word2[1])};
   const Type type3{iconToAll(word3[1])};
+  if (type1==type3) return;
   if (+type1 > +Type::NOUN_TYPE && +type1 < +Type::ICON_NOUN_TYPE &&
       +type2 > +Type::VERB_TYPE && +type2 < +Type::PROPERTY_TYPE &&
       (+type3 > +Type::PROPERTY_TYPE ||
