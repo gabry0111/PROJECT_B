@@ -7,7 +7,7 @@
 
 #include "enum_objects.hpp"
 
-namespace Baba_Is_Us {  // sarà il namespace di ogni file di questo progetto
+namespace Baba_Is_Us {
 
 class Objects {
  private:

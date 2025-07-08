@@ -158,15 +158,14 @@ TEST_CASE("Basic functions - rules.hpp") {
 
   // check by modifying addRule()
 
-  Rule new_rule{Type::Flag, Type::Is, Type::Hot};
-  rm.addRule(new_rule);
+  rm.addRule({Type::Flag, Type::Is, Type::Hot});
 
   CHECK(rm.getm_rules().size() == 6);
   CHECK(rm.getm_rules()[5].getm_rule()[0] == Type::Flag);
   CHECK(rm.getm_rules()[5].getm_rule()[1] == Type::Is);
   CHECK(rm.getm_rules()[5].getm_rule()[2] == Type::Hot);
 
-  rm.removeRule(new_rule);
+  rm.removeRule({Type::Flag, Type::Is, Type::Hot});
   CHECK(rm.getm_rules().size() == 5);
   CHECK(my_map.At(9, 3).getTypes().size() == 2);
   CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
@@ -194,14 +193,13 @@ TEST_CASE("Basic functions - map.hpp") {
   CHECK(my_map.At(8, 7).getTypes()[0] == Type::Baba);
   CHECK(my_map.At(9, 3).getTypes()[0] == Type::Flag);
 
-  const std::vector<Position> positions{my_map.getPositions(Type::You)};
+  const std::vector<Position> &positions{my_map.getPositions(Type::You)};
   CHECK(positions.size() == 1);
   CHECK(positions[0].first == 8);
   CHECK(positions[0].second == 7);
   CHECK(positions[0].first != 7);
   CHECK(positions[0].second != 8);
 
-  void addObject(Position position, Type type);
   CHECK(my_map.At(8, 7).getTypes().size() == 2);
   my_map.resetObject(positions[0]);
   CHECK(my_map.At(8, 7).getTypes().size() == 1);
@@ -392,9 +390,11 @@ TEST_CASE("Game - Interact e pathFinder") {
   Game game("assets/levels/level_test3.txt");
   Map &my_map{game.accessMap()};
 
-  CHECK(game.getRuleManager().getm_rules().size() == 2);
+  CHECK(game.getRuleManager().getm_rules().size() == 3);
   CHECK(game.getPlayerPositions().size() == 1);
   CHECK(my_map.At(0, 7).getTypes()[0] == Type::Baba);
+  CHECK(my_map.At(7, 7).objectHasType(Type::Door));
+  CHECK(my_map.At(7, 7).objectHasType(Type::Shut));
 
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 0);
@@ -449,6 +449,7 @@ TEST_CASE("Game - Interact e pathFinder") {
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 1);
   CHECK(my_map.getPositions(Type::Spin).size() == 10);
+  CHECK(!my_map.At(7, 7).objectHasType(Type::Door));
   game.interact();
   CHECK(my_map.getPositions(Type::Switch).size() == 0);
   CHECK(my_map.getPositions(Type::Spin).size() == 0);

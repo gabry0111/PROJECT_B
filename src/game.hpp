@@ -7,7 +7,6 @@
 #include "objects.hpp"
 #include "rules.hpp"
 
-using Position = std::pair<std::size_t, std::size_t>;
 namespace Baba_Is_Us {
 
 class Game {
@@ -19,7 +18,7 @@ class Game {
 
  public:
   Game() = delete;
-  Game(const std::string_view);
+  Game(std::string_view);
   const std::vector<Position> &getPlayerPositions() const;
   constexpr const RuleManager &getRuleManager() const { return m_RM; }
   constexpr const Map &getMap() const { return m_map3D; }
@@ -42,8 +41,7 @@ class Game {
   // Map::pathFinder()
   void interact();
   void movement(sf::RenderWindow &, sf::Clock &, const Direction);
-   PlayState processMove(Objects &, Objects &, const Direction,
-                              const Position);
+  PlayState processMove(Objects &, Objects &, const Direction, const Position);
 };
 
 }  // namespace Baba_Is_Us

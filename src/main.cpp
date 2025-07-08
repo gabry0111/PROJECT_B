@@ -39,6 +39,5 @@ int main() {
     std::cout << "Runtime error: " << error.what() << "\n";
     return 1;
   }
-  std::cout << "Program successfully terminated\n";
   return 0;
 }

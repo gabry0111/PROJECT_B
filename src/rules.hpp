@@ -1,9 +1,10 @@
+#ifndef RULES_HPP
+#define RULES_HPP
+
 /* rules.hpp serve per gestire le regole che esistono nel gioco, e verificando
 che queste esistano, alcune azioni saranno possibili. Saranno oggetti vettori di
 tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 */
-#ifndef RULES_HPP
-#define RULES_HPP
 #include <array>
 #include <optional>
 

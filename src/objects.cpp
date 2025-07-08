@@ -20,8 +20,9 @@ bool Objects::objectHasType(const Type type) const {
 }
 
 void Objects::addType(const Type word) {
-  bool is_valid_type{word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
-                     word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE};
+  const bool is_valid_type{
+      word != Type::NOUN_TYPE && word != Type::ICON_NOUN_TYPE &&
+      word != Type::VERB_TYPE && word != Type::PROPERTY_TYPE};
 
   assert(is_valid_type && "add() not given a valid type");
 
@@ -33,10 +34,10 @@ void Objects::addType(const Type word) {
 }
 
 void Objects::removeType(const Type type) {
-  auto iter{std::find(m_object.begin(), m_object.end(), type)};
-  bool is_valid{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
-                type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
-                iter != m_object.end()};
+  const auto iter{std::find(m_object.begin(), m_object.end(), type)};
+  const bool is_valid{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
+                      type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
+                      iter != m_object.end()};
   if (is_valid) m_object.erase(iter);
 }
 

@@ -9,8 +9,8 @@
 #include "rules.hpp"
 
 namespace MapSize {
-constexpr int width{16};   // Number of tiles in the X direction = n° of columns
-constexpr int height{16};  // Number of tiles in the Y direction = n° of rows
+constexpr int width{16};
+constexpr int height{16};
 constexpr int n_tiles{width * height};
 
 constexpr int TILE_SIZE{32};
@@ -25,7 +25,7 @@ using ObjectMap = std::array<std::array<Baba_Is_Us::Objects, MapSize::height>,
 
 namespace Baba_Is_Us {
 
-constexpr inline std::array<std::string_view, 35> tilePaths{
+constexpr const std::array<std::string_view, 35> tilePaths{
     "assets/png_PROGETTO/gifs/VOID_spritesheet.png",             // 0
     "assets/png_PROGETTO/gifs/BABA_move_up_spritesheet.png",     // 1
     "assets/png_PROGETTO/gifs/BABA_move_right_spritesheet.png",  // 2
@@ -95,8 +95,7 @@ class Map {
   constexpr Objects &At(const Position position);
   constexpr const Objects &At(const Position position) const;
   const std::vector<Position> getPositions(const Type) const;
-  // è la funzione che gestisce le interazioni tra You, Lever, Gear e Shut con
-  // Game::interact()
+  // gestisce le interazioni tra You, Lever, Gear e Shut con Game::interact()
   void pathFinder(const Position, const Direction,
                   const std::array<Direction, 4> &, const bool);
 };

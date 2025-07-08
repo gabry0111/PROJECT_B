@@ -1,7 +1,5 @@
 #include "rules.hpp"
 
-#include <iostream>
-
 namespace Baba_Is_Us {
 
 const std::vector<Rule> &RuleManager::getm_rules() const { return m_rules; }
@@ -13,14 +11,14 @@ const std::optional<Type> RuleManager::findPlayerType() const {
   return std::nullopt;
 }
 
- PlayState handleDefeat(Objects &tail) {
+PlayState handleDefeat(Objects &tail) {
   if (tail.objectHasType(Type::You)) {
     tail.resetObject();
     return PlayState::Invalid;
   }
   return PlayState::Playing;
 }
- PlayState handleWin(Objects &tail, Objects &mismatch) {
+PlayState handleWin(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Defeat)) {
     handleDefeat(tail);
   }
@@ -29,18 +27,18 @@ const std::optional<Type> RuleManager::findPlayerType() const {
   }
   return PlayState::Playing;
 }
- PlayState handleHot(Objects &tail) {
+PlayState handleHot(Objects &tail) {
   if (!tail.objectHasType(Type::Push)) {
     tail.resetObject();
     return PlayState::Invalid;
   }
   return PlayState::Playing;
 }
- PlayState handleMelt(Objects &tail) {
+PlayState handleMelt(Objects &tail) {
   tail.resetObject();
   return PlayState::Invalid;
 }
- PlayState handleShut(Objects &tail, Objects &mismatch) {
+PlayState handleShut(Objects &tail, Objects &mismatch) {
   if (!tail.objectHasType(Type::Open)) {
     tail.resetObject();
     return PlayState::Invalid;
@@ -49,7 +47,7 @@ const std::optional<Type> RuleManager::findPlayerType() const {
   tail.resetObject();
   return PlayState::Playing;
 }
- PlayState handleSpin(Objects &tail, Objects &mismatch) {
+PlayState handleSpin(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Win)) {
     return handleWin(tail, mismatch);
   } else if (mismatch.objectHasType(Type::Defeat)) {
@@ -57,7 +55,7 @@ const std::optional<Type> RuleManager::findPlayerType() const {
   }
   return PlayState::Invalid;
 }
- PlayState handleStop(Objects &tail, Objects &mismatch) {
+PlayState handleStop(Objects &tail, Objects &mismatch) {
   if (mismatch.objectHasType(Type::Shut)) {
     return handleShut(tail, mismatch);
   }
@@ -67,7 +65,7 @@ const std::optional<Type> RuleManager::findPlayerType() const {
   return PlayState::Playing;
 }
 
- PlayState conditions(Objects &tail, Objects &mismatch) {
+PlayState conditions(Objects &tail, Objects &mismatch) {
   PlayState result{PlayState::Playing};
   if (mismatch == tail) return result;
   for (const Type mism_type : mismatch.getTypes()) {

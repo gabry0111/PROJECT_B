@@ -2,7 +2,7 @@
 
 namespace Baba_Is_Us {
 
-const std::size_t findLastNoun(const std::vector<Type> &types) {
+std::size_t findLastNoun(const std::vector<Type> &types) {
   std::size_t last{};
   for (std::size_t i{}; i < types.size(); ++i) {
     if (+types[i] > +Type::Void && +types[i] < +Type::ICON_NOUN_TYPE) {
@@ -148,7 +148,8 @@ void Map::pathFinder(const Position start, const Direction dir,
     } else if (target_obj.objectHasType(Type::Spin) && to_activate == false) {
       target_obj.removeType(Type::Spin);
       pathFinder(target_pos, each, directions, false);
-    } else if (target_obj.objectHasType(Type::Shut)) {
+    }
+    if (target_obj.objectHasType(Type::Shut)) {
       target_obj.resetObject();
       m_grid[target_pos.second][target_pos.first] = +Type::Void;
       break;

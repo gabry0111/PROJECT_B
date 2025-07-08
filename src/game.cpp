@@ -2,8 +2,7 @@
 
 namespace Baba_Is_Us {
 
-Game::Game(const std::string_view filename)
-    : m_map3D{filename}, m_RM{}, m_players{} {
+Game::Game(std::string_view filename) : m_map3D{filename}, m_RM{}, m_players{} {
   m_RM.clearRules();
   constantProperties();
   parseRules();
@@ -71,6 +70,51 @@ void Game::adjustAddingRules() {
             obj.addType(iter_rules.getm_rule()[2]);
           }
         }
+        if(prop_or_noun_type == Type::Door) {
+          obj.addType(Type::Stop);
+        }
+        if(prop_or_noun_type == Type::Key) {
+          obj.addType(Type::Open);
+        }
+      }
+    }
+  }
+}
+
+void Game::adjustRemovingRules() {
+  const std::vector<Rule> &rules{m_RM.getm_rules()};
+  assert(rules.size() > 0);
+  for (const Rule &each_rule : rules) {
+    const Type noun_type{each_rule.getm_rule()[0]};
+    assert(noun_type != Type::Block &&
+           "adjustAddingRules(): noun_type == Type::Block");
+    const Type prop_or_noun_type{each_rule.getm_rule()[2]};
+    assert(((+prop_or_noun_type > +Type::NOUN_TYPE &&
+             +prop_or_noun_type < +Type::ICON_NOUN_TYPE) ||
+            (+prop_or_noun_type > +Type::PROPERTY_TYPE)) &&
+           "adjustAddingRules(): prop_or_noun_type not one of the two Types");
+    for (const Position &each_pos : m_map3D.getPositions(noun_type)) {
+      Objects &obj{m_map3D.At(each_pos)};
+
+      if (+prop_or_noun_type > +Type::PROPERTY_TYPE) {
+        if (obj.objectHasType(prop_or_noun_type)) {
+          obj.removeType(prop_or_noun_type);
+        }
+      } else {
+        obj.removeType(prop_or_noun_type);
+        for (const Rule &iter_rules : rules) {
+          if (std::find(iter_rules.getm_rule().begin(),
+                        iter_rules.getm_rule().end(),
+                        prop_or_noun_type) != iter_rules.getm_rule().end()) {
+            obj.removeType(iter_rules.getm_rule()[2]);
+          }
+        }
+        if(prop_or_noun_type == Type::Door) {
+          obj.removeType(Type::Stop);
+        }
+        if(prop_or_noun_type == Type::Key) {
+          obj.removeType(Type::Open);
+        }
       }
     }
   }
@@ -94,18 +138,8 @@ void Game::createRule(const std::vector<Type> &word1,
           return rule.getm_rule()[0] == type1 && rule.getm_rule()[1] == type2 &&
                  rule.getm_rule()[2] == type3;
         })};
-    if (!already_exists) m_RM.addRule({type1, type2, type3});
-  }
-}
-
-void Game::adjustRemovingRules() {
-  // tolgo ogni le proprietà date SOLO dalle regole che non siano il primo tipo
-  for (const Rule &rule : m_RM.getm_rules()) {
-    const Type &first_type{rule.getm_rule()[0]};
-    for (const Position &pos : m_map3D.getPositions(rule.getm_rule()[0])) {
-      Objects &obj{m_map3D.At(pos)};
-      for (const Type type : obj.getTypes())
-        if (type != first_type) obj.removeType(type);
+    if (!already_exists) {
+      m_RM.addRule({type1, type2, type3});
     }
   }
 }
@@ -116,13 +150,11 @@ void Game::parseRules() {
   }
   m_RM.clearRules();
   const std::vector<Position> &block_pos{m_map3D.getPositions(Type::Block)};
-
   for (const Position &pos : block_pos) {
     if (!m_map3D.isOutOfBoundary(pos.first, pos.second + 2)) {
       const auto &word1{m_map3D.At(pos.first, pos.second).getTypes()};
       const auto &word2{m_map3D.At(pos.first, pos.second + 1).getTypes()};
       const auto &word3{m_map3D.At(pos.first, pos.second + 2).getTypes()};
-
       if (word2[0] == Type::Block && word3[0] == Type::Block)
         createRule(word1, word2, word3);
     }
@@ -131,12 +163,11 @@ void Game::parseRules() {
       const auto &word1{m_map3D.At(pos.first, pos.second).getTypes()};
       const auto &word2{m_map3D.At(pos.first + 1, pos.second).getTypes()};
       const auto &word3{m_map3D.At(pos.first + 2, pos.second).getTypes()};
-
       if (word2[0] == Type::Block && word3[0] == Type::Block)
         createRule(word1, word2, word3);
     }
   }
-  // Controlla se c'è la regola .. is you, altrimenti il gioco si ferma
+  // Controlla se c'è un oggetto You, altrimenti hai perso
   if (m_RM.getm_rules().size() == 0 || !m_RM.findPlayerType().has_value()) {
     m_state_of_game = PlayState::Lose;
     return;
@@ -147,37 +178,35 @@ void Game::parseRules() {
 
 void Game::constantProperties() {
   for (std::size_t i{}; i < MapSize::n_tiles; ++i) {
-    Objects &obj{m_map3D.At(i % MapSize::height, i / MapSize::width)};
+    Objects &obj{m_map3D.At(i % MapSize::width, i / MapSize::height)};
     std::optional<Type> type_to_add{std::nullopt};
     for (const Type &type : obj.getTypes()) {
       switch (type) {  // clang-format off
         case Type::Door:  type_to_add = Type::Stop;  break;
         case Type::Key:   type_to_add = Type::Open;  break;
         default:                                     break;
-      }  // clang-format on
+      } 
     }
-    if (!type_to_add)
-      continue;
-    else
-      obj.addType(*type_to_add);
-  }
+    if (!type_to_add) continue;
+    else obj.addType(*type_to_add);
+  } // clang-format on
 }
 
 ///////////////// Chapter: Handling Movement and KeyPressing //////////////////
 
-constexpr const Position getShift(const Direction dir) {
+const Position getShift(Direction dir) {
   switch (dir) {  // clang-format off
-    case Direction::Up:     return {0, -1};
-    case Direction::Down:   return {0, 1};
-    case Direction::Left:   return {-1, 0};
-    case Direction::Right:  return {1, 0};
-    default:                throw(std::runtime_error("getShift(): not given a valid direction"));
+  case Direction::Up:     return {0, -1};
+  case Direction::Down:   return {0, 1};
+  case Direction::Left:   return {-1, 0};
+  case Direction::Right:  return {1, 0};
+  default:  throw(std::runtime_error("getShift(): not given a valid direction"));
   }  // clang-format on
 }
+
 // N.B: data una fila verticale di oggetti attaccati e la direzione Up,
 // l'oggetto Tail è quello più in basso
-bool isTailOfLine(const Position pos, const Map &map,
-                        const Direction dir) {
+bool isTailOfLine(const Position pos, const Map &map, const Direction dir) {
   const Type type{map.At(pos).getTypes()[0]};
   const std::size_t dx{getShift(dir).first};
   const std::size_t dy{getShift(dir).second};
@@ -186,7 +215,6 @@ bool isTailOfLine(const Position pos, const Map &map,
   }
   return (type != map.At(pos.first - dx, pos.second - dy).getTypes()[0]);
 }
-
 const std::vector<Position> Game::getTailMovingPosition(
     const Direction direction) const {
   std::vector<Position> pos_to_be_moved{};
@@ -198,15 +226,14 @@ const std::vector<Position> Game::getTailMovingPosition(
   }
   return pos_to_be_moved;
 }
-
 // fallisce solo se è OutOfBoundary
 const std::optional<Position> getMismatch(const Map &map, const Direction dir,
-                                          const Position &start) {
+                                          const Position start) {
   std::optional<Position> result{};
   const Position &shift{getShift(dir)};
   std::size_t x{start.first};
   std::size_t y{start.second};
-  const int value{+map.getm_objects()[y][x].getTypes()[0]};
+  const int value = +map.getm_objects()[y][x].getTypes()[0];
 
   while (x < MapSize::width && y < MapSize::height) {
     if (+map.getm_objects()[y][x].getTypes()[0] != value) {
@@ -221,18 +248,18 @@ const std::optional<Position> getMismatch(const Map &map, const Direction dir,
 }
 
 PlayState Game::processMove(Objects &tail, Objects &target,
-                                  const Direction direction,
-                                  const Position start) {
+                            const Direction direction, const Position start) {
   const Position &shift{getShift(direction)};
   const Position &pos_mism{start.first + shift.first,
                            start.second + shift.second};
   const Position &pos_next_mism{pos_mism.first + shift.first,
                                 pos_mism.second + shift.second};
-  // per fermare la scansione degli oggetti
-  if (target.objectHasType(Type::Void))
+
+  if (target.objectHasType(
+          Type::Void))  // per fermare la scansione degli oggetti
     return PlayState::Playing;
-  else if (target.objectHasType(Type::Block))
-    m_RM.block_moved = true;
+
+  if (target.objectHasType(Type::Block)) m_RM.block_moved = true;
 
   const PlayState state{conditions(tail, target)};
 
@@ -245,7 +272,8 @@ PlayState Game::processMove(Objects &tail, Objects &target,
 
   if (state == PlayState::Invalid) {
     return PlayState::Invalid;
-  } else if (state == PlayState::Won) {
+  }
+  if (state == PlayState::Won) {
     return PlayState::Won;
   }
 
@@ -273,9 +301,8 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock,
   const Position &shift{getShift(direction)};
   const std::size_t dx{shift.first};
   const std::size_t dy{shift.second};
-  const std::vector<Position> &tail_pos{getTailMovingPosition(direction)};
 
-  for (auto &each : tail_pos) {
+  for (const Position &each : getTailMovingPosition(direction)) {
     std::size_t player_move_index{static_cast<std::size_t>(+direction + 1)};
     std::size_t player_idle_index{static_cast<std::size_t>(+direction + 5)};
     std::size_t index_player_sprite{
@@ -375,6 +402,7 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock,
     m_map3D.redraw(clock);
     render(window, m_map3D.tileSprites);
   }
+  m_players = m_map3D.getPositions(Type::You);
 }
 
 void Game::interact() {
@@ -383,11 +411,14 @@ void Game::interact() {
     const Position &right{pos.first + 1, pos.second};
     const Position &down{pos.first, pos.second + 1};
     const Position &left{pos.first - 1, pos.second};
+
+    // i vector directions e adjacents fanno corrispondere direzione e casella
+    // adiacente
     const std::array<Position, 4> &adjacents{up, right, down, left};
     const std::array<Direction, 4> &directions{
         Direction::Up, Direction::Right, Direction::Down, Direction::Left};
 
-    for (const auto each : directions) {
+    for (const Direction each : directions) {
       if (m_map3D.isOutOfBoundary(
               adjacents[static_cast<std::size_t>(+each)].first,
               adjacents[static_cast<std::size_t>(+each)].second)) {
@@ -456,15 +487,16 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
   }
 }
 
-///////////////////////// Chapter: Handling Displaying /////////////////////////
+/////////////////////////////////// Chapter: Handling Displaying
+//////////////////////////////////////
 void Game::render(sf::RenderWindow &window,
                   std::array<sf::Sprite, tilePaths.size()> &sprites) {
   window.clear();
   std::size_t x;
   std::size_t y;
   std::size_t count{};
-  for (auto &rows : m_map3D.getm_grid()) {
-    for (const int i : rows) {
+  for (const auto &rows : m_map3D.getm_grid()) {
+    for (const int &i : rows) {
       assert(i != +Type::NOUN_TYPE && i != +Type::ICON_NOUN_TYPE &&
              i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE &&
              i != +Type::Block && i != +Type::Icon_Void &&
@@ -478,6 +510,7 @@ void Game::render(sf::RenderWindow &window,
       if (nth_sprite_to_be_drawn < tilePaths.size()) {
         x = (count % MapSize::width) * MapSize::TILE_SIZE;
         y = (count / MapSize::height) * MapSize::TILE_SIZE;
+
         sprites[nth_sprite_to_be_drawn].setPosition(static_cast<float>(x),
                                                     static_cast<float>(y));
         // flippo lo sprite delle leve che sono state attivate
