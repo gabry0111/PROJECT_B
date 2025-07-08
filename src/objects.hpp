@@ -10,11 +10,11 @@
 namespace Baba_Is_Us {
 
 class Objects {
- private:
+private:
   // sarà del tipo: un NOUN_TYPE e tanti PROPERTY_TYPE
   std::vector<Type> m_object{};
 
- public:
+public:
   Objects() = default;
   Objects(const std::vector<Type> &object_vect) : m_object{object_vect} {}
 
@@ -33,6 +33,6 @@ constexpr void Objects::resetObject() {
          "resetObject() doesn't work like intended");
 }
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
 
 #endif

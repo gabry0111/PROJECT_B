@@ -14,14 +14,14 @@ tre elementi ciascuno: NOUN_TYPE, VERB_TYPE, PROPERTY_TYPE.
 namespace Baba_Is_Us {
 
 class Rule {
- private:
+private:
   std::array<Type, 3> m_rule;
 
- public:
-  Rule() = delete;  // non si può creare una regola vuota
+public:
+  Rule() = delete; // non si può creare una regola vuota
   constexpr Rule(const Type type1, const Type type2, const Type type3)
       : m_rule{type1, type2,
-               type3} {  // ogni regola deve avere un noun, verb e property/noun
+               type3} { // ogni regola deve avere un noun, verb e property/noun
 
     assert(((+type1 > +Type::NOUN_TYPE && +type1 < +Type::ICON_NOUN_TYPE &&
              +type2 > +Type::VERB_TYPE && +type2 < +Type::PROPERTY_TYPE &&
@@ -41,17 +41,18 @@ constexpr bool operator==(const Rule &rhs, const Rule &lhs) {
 }
 
 constexpr bool Rule::hasType(const Type type) const {
-  if (m_rule[0] == type || m_rule[1] == type || m_rule[2] == type) return true;
+  if (m_rule[0] == type || m_rule[1] == type || m_rule[2] == type)
+    return true;
   return false;
 }
 
 constexpr const std::array<Type, 3> &Rule::getm_rule() const { return m_rule; }
 
 class RuleManager {
- private:
+private:
   std::vector<Rule> m_rules{};
 
- public:
+public:
   bool block_moved{false};
   constexpr void addRule(const Rule &rule) { m_rules.emplace_back(rule); }
   constexpr void removeRule(const Rule &rule);
@@ -69,6 +70,6 @@ constexpr void RuleManager::removeRule(const Rule &rule) {
 
 PlayState conditions(Objects &, Objects &);
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
 
 #endif

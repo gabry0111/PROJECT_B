@@ -10,13 +10,13 @@
 namespace Baba_Is_Us {
 
 class Game {
- private:
+private:
   Map m_map3D;
   RuleManager m_RM;
   std::vector<Position> m_players;
   PlayState m_state_of_game{PlayState::Playing};
 
- public:
+public:
   Game() = delete;
   Game(std::string_view);
   const std::vector<Position> &getPlayerPositions() const;
@@ -44,6 +44,6 @@ class Game {
   PlayState processMove(Objects &, Objects &, const Direction, const Position);
 };
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
 
 #endif

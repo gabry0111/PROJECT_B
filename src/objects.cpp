@@ -1,6 +1,6 @@
 #include "objects.hpp"
 
-namespace Baba_Is_Us {  // sarà il namespace di ogni file di questo progetto
+namespace Baba_Is_Us { // sarà il namespace di ogni file di questo progetto
 
 const std::vector<Type> &Objects::getTypes() const { return m_object; }
 
@@ -38,7 +38,8 @@ void Objects::removeType(const Type type) {
   const bool is_valid{type != Type::NOUN_TYPE && type != Type::ICON_NOUN_TYPE &&
                       type != Type::VERB_TYPE && type != Type::PROPERTY_TYPE &&
                       iter != m_object.end()};
-  if (is_valid) m_object.erase(iter);
+  if (is_valid)
+    m_object.erase(iter);
 }
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us

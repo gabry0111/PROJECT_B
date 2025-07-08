@@ -9,10 +9,10 @@ namespace Baba_Is_Us {
 enum class Type {
   NOUN_TYPE = -1,
   Void,
-  Baba,   // Player di default
-  Block,  // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica
-          // eccezione al tipico m_object vector<Type> perché sarà del tipo
-          // [0] = Block, [1] = ICON_NOUN_TYPE
+  Baba,  // Player di default
+  Block, // per scriverci le parole (Baba, Is, Hot...) sopra. Sarà l'unica
+         // eccezione al tipico m_object vector<Type> perché sarà del tipo
+         // [0] = Block, [1] = ICON_NOUN_TYPE
   Door,
   Flag,
   Gear,
@@ -22,8 +22,8 @@ enum class Type {
   Rock,
   Wall,
 
-  ICON_NOUN_TYPE,  // da rispettare l'ordine con NOUN_TYPE
-                   // abbinerà ciascun oggetto Objects alla sua sprite
+  ICON_NOUN_TYPE, // da rispettare l'ordine con NOUN_TYPE
+                  // abbinerà ciascun oggetto Objects alla sua sprite
   Icon_Void,
   Icon_Baba,
   Icon_Defeat,
@@ -62,8 +62,7 @@ enum class Type {
 };
 
 // da learncpp.com
-template <typename T>
-constexpr int operator+(T a) noexcept {
+template <typename T> constexpr int operator+(T a) noexcept {
   static_assert(std::is_enum_v<T> &&
                 "Unary plus operator only works on enum types");
   return static_cast<std::underlying_type_t<T>>(a);
@@ -72,7 +71,7 @@ constexpr int operator+(T a) noexcept {
 // associamo gli int sottostanti da enum Type, dati in level.txt, a un indice di
 // tilePath.
 constexpr std::size_t indexToBeDrawn(const int i) {
-  switch (i) {  // clang-format off
+  switch (i) { // clang-format off
   case 0:   return 0;
   case 1:   return 6; // fisso il default sprite di Baba a BABA_right.png
   case 3:
@@ -103,7 +102,7 @@ constexpr std::size_t indexToBeDrawn(const int i) {
   case 29:
   case 30:  return static_cast<std::size_t>(i + 4);
   default:  throw(std::runtime_error("indexToBeDrawn(): not given a valid int from map_grid"));
-  }  // clang-format on
+  } // clang-format on
 }
 
 constexpr Type intToType(int value) { return static_cast<Type>(value); }
@@ -122,6 +121,6 @@ enum class Direction {
   Left,
 };
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
 
 #endif

@@ -15,7 +15,7 @@ const std::vector<Position> &Game::getPlayerPositions() const {
 ///////////////////////////  Chapter: HandlingRules  ///////////////////////////
 
 constexpr Type iconToAll(const Type type) {
-  switch (type) {  // clang-format off
+  switch (type) { // clang-format off
     case Type::Icon_Void:     return Type::Void;
     case Type::Icon_Baba:     return Type::Baba;
     case Type::Icon_Defeat:   return Type::Defeat;
@@ -36,7 +36,7 @@ constexpr Type iconToAll(const Type type) {
     case Type::Icon_Win:      return Type::Win;
     case Type::Icon_You:      return Type::You;
     default:                  throw(std::runtime_error("iconToAll(): not given an ICON_TYPE"));
-  }  // clang-format on
+  } // clang-format on
 }
 
 void Game::adjustAddingRules() {
@@ -70,10 +70,10 @@ void Game::adjustAddingRules() {
             obj.addType(iter_rules.getm_rule()[2]);
           }
         }
-        if(prop_or_noun_type == Type::Door) {
+        if (prop_or_noun_type == Type::Door) {
           obj.addType(Type::Stop);
         }
-        if(prop_or_noun_type == Type::Key) {
+        if (prop_or_noun_type == Type::Key) {
           obj.addType(Type::Open);
         }
       }
@@ -109,10 +109,10 @@ void Game::adjustRemovingRules() {
             obj.removeType(iter_rules.getm_rule()[2]);
           }
         }
-        if(prop_or_noun_type == Type::Door) {
+        if (prop_or_noun_type == Type::Door) {
           obj.removeType(Type::Stop);
         }
-        if(prop_or_noun_type == Type::Key) {
+        if (prop_or_noun_type == Type::Key) {
           obj.removeType(Type::Open);
         }
       }
@@ -128,7 +128,8 @@ void Game::createRule(const std::vector<Type> &word1,
   const Type type1{iconToAll(word1[1])};
   const Type type2{iconToAll(word2[1])};
   const Type type3{iconToAll(word3[1])};
-  if (type1==type3) return;
+  if (type1 == type3)
+    return;
   if (+type1 > +Type::NOUN_TYPE && +type1 < +Type::ICON_NOUN_TYPE &&
       +type2 > +Type::VERB_TYPE && +type2 < +Type::PROPERTY_TYPE &&
       (+type3 > +Type::PROPERTY_TYPE ||
@@ -182,7 +183,7 @@ void Game::constantProperties() {
     Objects &obj{m_map3D.At(i % MapSize::width, i / MapSize::height)};
     std::optional<Type> type_to_add{std::nullopt};
     for (const Type &type : obj.getTypes()) {
-      switch (type) {  // clang-format off
+      switch (type) { // clang-format off
         case Type::Door:  type_to_add = Type::Stop;  break;
         case Type::Key:   type_to_add = Type::Open;  break;
         default:                                     break;
@@ -196,13 +197,13 @@ void Game::constantProperties() {
 ///////////////// Chapter: Handling Movement and KeyPressing //////////////////
 
 const Position getShift(Direction dir) {
-  switch (dir) {  // clang-format off
+  switch (dir) { // clang-format off
   case Direction::Up:     return {0, -1};
   case Direction::Down:   return {0, 1};
   case Direction::Left:   return {-1, 0};
   case Direction::Right:  return {1, 0};
   default:  throw(std::runtime_error("getShift(): not given a valid direction"));
-  }  // clang-format on
+  } // clang-format on
 }
 
 // N.B: data una fila verticale di oggetti attaccati e la direzione Up,
@@ -216,8 +217,8 @@ bool isTailOfLine(const Position pos, const Map &map, const Direction dir) {
   }
   return (type != map.At(pos.first - dx, pos.second - dy).getTypes()[0]);
 }
-const std::vector<Position> Game::getTailMovingPosition(
-    const Direction direction) const {
+const std::vector<Position>
+Game::getTailMovingPosition(const Direction direction) const {
   std::vector<Position> pos_to_be_moved{};
   assert(m_players.size() > 0);
   for (const Position &pos : m_players) {
@@ -257,10 +258,11 @@ PlayState Game::processMove(Objects &tail, Objects &target,
                                 pos_mism.second + shift.second};
 
   if (target.objectHasType(
-          Type::Void))  // per fermare la scansione degli oggetti
+          Type::Void)) // per fermare la scansione degli oggetti
     return PlayState::Playing;
 
-  if (target.objectHasType(Type::Block)) m_RM.block_moved = true;
+  if (target.objectHasType(Type::Block))
+    m_RM.block_moved = true;
 
   const PlayState state{conditions(tail, target)};
 
@@ -321,7 +323,8 @@ void Game::movement(sf::RenderWindow &window, sf::Clock &clock,
     m_map3D.redraw(clock);
     render(window, m_map3D.tileSprites);
 
-    if (!getMismatch(m_map3D, direction, each)) continue;
+    if (!getMismatch(m_map3D, direction, each))
+      continue;
     const Position pos_mismatch{*getMismatch(m_map3D, direction, each)};
     const std::size_t delta_x{pos_mismatch.first - each.first};
     const std::size_t delta_y{pos_mismatch.second - each.second};
@@ -446,36 +449,38 @@ void Game::update(sf::RenderWindow &window, sf::Clock &clock) {
   sf::Event event;
   Direction direction;
   while (window.pollEvent(event)) {
-    if (event.type == sf::Event::Closed) window.close();
+    if (event.type == sf::Event::Closed)
+      window.close();
 
     if (event.type == sf::Event::KeyPressed) {
       switch (event.key.code) {
-        case sf::Keyboard::Escape:
-          window.close();
-          break;
-        case sf::Keyboard::W:
-          direction = Direction::Up;
-          movement(window, clock, direction);
-          break;
-        case sf::Keyboard::A:
-          direction = Direction::Left;
-          movement(window, clock, direction);
-          break;
-        case sf::Keyboard::S:
-          direction = Direction::Down;
-          movement(window, clock, direction);
-          break;
-        case sf::Keyboard::D:
-          direction = Direction::Right;
-          movement(window, clock, direction);
-          break;
-        case sf::Keyboard::Space:
-          interact();
-          break;
-        default:
-          break;
+      case sf::Keyboard::Escape:
+        window.close();
+        break;
+      case sf::Keyboard::W:
+        direction = Direction::Up;
+        movement(window, clock, direction);
+        break;
+      case sf::Keyboard::A:
+        direction = Direction::Left;
+        movement(window, clock, direction);
+        break;
+      case sf::Keyboard::S:
+        direction = Direction::Down;
+        movement(window, clock, direction);
+        break;
+      case sf::Keyboard::D:
+        direction = Direction::Right;
+        movement(window, clock, direction);
+        break;
+      case sf::Keyboard::Space:
+        interact();
+        break;
+      default:
+        break;
       }
-      if (m_players.size() == 0) m_state_of_game = PlayState::Lose;
+      if (m_players.size() == 0)
+        m_state_of_game = PlayState::Lose;
       if (m_state_of_game == PlayState::Lose) {
         std::cout << "Hai perso :(\n";
         window.close();
@@ -502,7 +507,8 @@ void Game::render(sf::RenderWindow &window,
              i != +Type::VERB_TYPE && i != +Type::PROPERTY_TYPE &&
              i != +Type::Block && i != +Type::Icon_Void &&
              "in render() not given tail valid value in m_grid[0]\n");
-      if (indexToBeDrawn(i) > tilePaths.size()) continue;
+      if (indexToBeDrawn(i) > tilePaths.size())
+        continue;
 
       const std::size_t nth_sprite_to_be_drawn{indexToBeDrawn(i)};
       assert(nth_sprite_to_be_drawn < tilePaths.size() &&
@@ -528,4 +534,4 @@ void Game::render(sf::RenderWindow &window,
   window.display();
 }
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us

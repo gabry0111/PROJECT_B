@@ -45,9 +45,8 @@ Map::Map(const std::string_view filename) {
       current.emplace_back(intToType(value));
       m_objects[iii / MapSize::width][iii % MapSize::height] = current;
     } else
-      throw(
-          std::runtime_error("Map(): in level.txt not given a valid value "
-                             "under +Type::VERB_TYPE"));
+      throw(std::runtime_error("Map(): in level.txt not given a valid value "
+                               "under +Type::VERB_TYPE"));
   }
   spriteOverlay();
 }
@@ -135,7 +134,8 @@ void Map::pathFinder(const Position start, const Direction dir,
   const Direction dir_to_avoid{static_cast<Direction>((+dir + 2) % 4)};
 
   for (const Direction each : directions) {
-    if (each == dir_to_avoid) continue;
+    if (each == dir_to_avoid)
+      continue;
     const Position &target_pos{adjacents[static_cast<std::size_t>(+each)]};
     if (isOutOfBoundary(target_pos.first, target_pos.second)) {
       continue;
@@ -156,4 +156,4 @@ void Map::pathFinder(const Position start, const Direction dir,
     }
   }
 }
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us

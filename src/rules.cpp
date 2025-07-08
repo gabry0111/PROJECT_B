@@ -6,7 +6,8 @@ const std::vector<Rule> &RuleManager::getm_rules() const { return m_rules; }
 
 const std::optional<Type> RuleManager::findPlayerType() const {
   for (const auto &each_rule : m_rules) {
-    if (each_rule.m_rule[2] == Type::You) return each_rule.m_rule[0];
+    if (each_rule.m_rule[2] == Type::You)
+      return each_rule.m_rule[0];
   }
   return std::nullopt;
 }
@@ -67,12 +68,13 @@ PlayState handleStop(Objects &tail, Objects &mismatch) {
 
 PlayState conditions(Objects &tail, Objects &mismatch) {
   PlayState result{PlayState::Playing};
-  if (mismatch == tail) return result;
+  if (mismatch == tail)
+    return result;
   for (const Type mism_type : mismatch.getTypes()) {
     if (+mism_type <= +Type::PROPERTY_TYPE) {
       continue;
     }
-    switch (mism_type) {  // clang-format off
+    switch (mism_type) { // clang-format off
       case Type::Defeat:  return handleDefeat(tail);
       case Type::Hot:     if (tail.objectHasType(Type::Melt)){    
                             result = handleMelt(tail); 
@@ -93,11 +95,13 @@ PlayState conditions(Objects &tail, Objects &mismatch) {
 
       case Type::Win:     return handleWin(tail, mismatch); // verrebbe sovrascritto se non facciamo return
       default:  throw(std::runtime_error("conditions(): default statement")); break;
-      }  // clang-format on
-    if (mismatch.getTypes()[0] == Type::Void) return PlayState::Playing;
-    if (result == PlayState::Invalid) return PlayState::Invalid;
+      } // clang-format on
+    if (mismatch.getTypes()[0] == Type::Void)
+      return PlayState::Playing;
+    if (result == PlayState::Invalid)
+      return PlayState::Invalid;
   }
   return result;
 }
 
-}  // namespace Baba_Is_Us
+} // namespace Baba_Is_Us
